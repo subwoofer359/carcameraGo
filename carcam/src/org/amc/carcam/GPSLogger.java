@@ -16,7 +16,7 @@ import java.io.*;
 public class GPSLogger implements Runnable{
 	
 	private Path filename; 			//File to store GPS info
-	private int saverate; 			// save gps data every nth second
+	private final int saverate; 			// save gps data every nth second
 	
 	private boolean shutdown=false; // stop running the thread
 	
@@ -27,6 +27,11 @@ public class GPSLogger implements Runnable{
 	private PrintWriter out; 		// writing to the socket
 	private Pattern pattern; 		// Storing the pattern to retrieve lon,lat and speed values from the info received from the GPSD server
 	
+	/** GPSD Commands */
+	private final String WATCH_STREAM="?WATCH={\"enable\":true,\"json\":true}";
+	private final String WATCH_POLL="?WATCH={\"enable\":true};";
+	private final String WATCH_CLOSE="?WATCH={\"enable\":false}";
+	private final String POLL="?POLL;";
 	
 	
 	public GPSLogger(Path filename,int seconds) throws IOException
@@ -60,9 +65,10 @@ public class GPSLogger implements Runnable{
 			{
 				
 				// Send initialisation command
-				String initCommand="?WATCH={\"enable\":true,\"json\":true}";
+				//String initCommand=WATCH_STREAM;
+				String initCommand=WATCH_POLL;
 				out.println(initCommand);
-				out.println(initCommand);
+				//out.println(initCommand);
 				out.flush();
 			}
 			catch(Exception e)
@@ -75,9 +81,21 @@ public class GPSLogger implements Runnable{
 	/**
 	 * Set the shutdown boolean
 	 */
-	public void shutdown()
+	public void setShutdown()
 	{
-		this.shutdown=false;
+		this.shutdown=true;
+	}
+	
+	public void shutdown(boolean wait)
+	{
+		if(wait)
+		{
+			setShutdown();
+		}
+			//Cancel request to monitor GPSD
+			out.println(WATCH_CLOSE);
+			out.flush();
+		
 	}
 	
 	/**
@@ -91,15 +109,18 @@ public class GPSLogger implements Runnable{
 			Matcher matcher;
 			while(!shutdown)
 			{
-				String input=in.readLine();
+				
+				out.println(POLL); // Poll GPSD
+				out.flush();
+				String input=in.readLine();//Read GPS rate
 				//System.out.println(input);
 				
-				matcher=pattern.matcher(input);
+				matcher=pattern.matcher(input); // Find required info if possible
 				
 				boolean found=false; //if no match don't save a new line and flush
 				while(matcher.find())
 				{
-					output.write(matcher.group()+" ");
+					output.write(matcher.group()+" "); // Save date
 					found=true;
 				}
 				if(found)
@@ -107,7 +128,16 @@ public class GPSLogger implements Runnable{
 					output.newLine();
 					output.flush();
 				}
-				Thread.sleep(saverate*1000);
+				
+				//Controls the GPS (Poll and save) to file rate
+				try
+				{	
+					Thread.sleep(saverate*1000);
+				}
+				catch(InterruptedException e)
+				{
+					//do nothing
+				}
 			}
 		}
 		catch(Exception e)
@@ -123,13 +153,15 @@ public class GPSLogger implements Runnable{
 		gpsinit();
 		saveGPSData();
 	}
+	
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception 
 	{
 		Path path=Paths.get("/home/adrian/gps.txt");
-		GPSLogger logger= new GPSLogger(path,1);
+		GPSLogger logger= new GPSLogger(path,10);
 		logger.gpsinit();
 		logger.saveGPSData();
 	
