@@ -4,18 +4,20 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
+import static org.amc.carcam.ConfigurationFile.propertyName.*;
 
 public class CarCamera 
 {
-	private final String command="raspivid";
+	private String command;
 	//private final String command="touch"; //testing string
-	private final int duration=5*60*1000; //Minutes * (minute) * (1000 milliseconds)
-	private Path location=Paths.get("/mnt/external"); // Directory where to store the video 
-	private Path logfile=location.resolve(Paths.get("camera.log"));
+	private int duration; //Minutes * (minute) * (1000 milliseconds)
+	private Path location; // Directory where to store the video 
+	private Path logfile;
 	
 	//GPS file 
-	private Path gpsfile=location.resolve(Paths.get("gps.log"));
-	private int saverate=1;
+	private Path gpsfile;
+	private int saverate; // rate to save GPS information
 	
 	//Path filename=Paths.get("video.h264"); //replaced by PoolManager.getNextFilename()
 	
@@ -25,18 +27,24 @@ public class CarCamera
 	
 	private Thread gpslogger; //gpslogger thread @todo a lot of work
 	
-	private String prefix="video";
-	private String suffix=".h264";
-	private int number_of_files=6;
+	private String prefix;
+	private String suffix;
+	private int number_of_files;
 	
+	private Path configurationFile=Paths.get("CarCamera.config");
 	/**
 	 * @param args
 	 */
 	public CarCamera()
-	{
+	{	
+		// load configuration file
+		loadConfigurationFile();
+		
 		log=Logger.getInstance(logfile);
 		
 		poolManager=PoolManager.getInstance(location, prefix, suffix, number_of_files);
+		
+		
 		
 		try
 		{
@@ -50,6 +58,29 @@ public class CarCamera
 	}
 	
 	
+	//Needs to be tested and check for problems
+	private void loadConfigurationFile()
+	{
+		ConfigurationFile configurefile=new ConfigurationFile(configurationFile);
+		command=configurefile.getProperty(COMMAND);
+		location=Paths.get(configurefile.getProperty(LOCATION)); // Directory where to store the video 
+		logfile=location.resolve(configurefile.getProperty(LOGFILE)); 
+		gpsfile=location.resolve(Paths.get(configurefile.getProperty(GPSFILE)));
+		prefix=configurefile.getProperty(PREFIX);
+		suffix=configurefile.getProperty(SUFFIX);
+		
+		try
+		{
+			duration=Integer.parseInt(configurefile.getProperty(FILE_DURATION))*60*1000; //Minutes * (minute) * (1000 milliseconds)
+			saverate=Integer.parseInt(configurefile.getProperty(SAVERATE)); // rate to save GPS information
+			number_of_files=Integer.parseInt(configurefile.getProperty(NO_OF_FILES));
+		}
+		catch(NumberFormatException nfe)
+		{
+			log.writeToLog("Configuration File Parsing Error");
+		}
+		
+	}
 	
 	public void record()
 	{
@@ -58,7 +89,7 @@ public class CarCamera
 		
 		Path filename=poolManager.getNextFilename();
 		
-		String arg=String.format("%s -t %d -o %s",command,duration,filename);
+		String arg=String.format("%s -ew night -t %d -o %s",command,duration,filename);
 		
 		//String arg=String.format("%s %3$s",command,duration,filename);//testing string
 		
