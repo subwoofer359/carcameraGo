@@ -16,7 +16,7 @@ import java.io.*;
 public class GPSLogger implements Runnable{
 	
 	private Path filename; 			//File to store GPS info
-	private final int saverate; 			// save gps data every nth second
+	private final int saverate; 	// save gps data every nth second
 	
 	private boolean shutdown=false; // stop running the thread
 	

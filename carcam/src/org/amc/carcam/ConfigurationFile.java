@@ -2,7 +2,6 @@ package org.amc.carcam;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -41,6 +40,7 @@ public class ConfigurationFile
 	private String[][] defaults=
 		{
 			{propertyName.COMMAND.toString(),"raspivid"},
+			{propertyName.COMMAND_ARGS.toString(),""},
 			{propertyName.FILE_DURATION.toString(),"5"},
 			{propertyName.LOCATION.toString(),"/mnt/external"},
 			{propertyName.LOGFILE.toString(),"camera.log"},
@@ -103,6 +103,10 @@ public class ConfigurationFile
 		}
 	}
 	
+	public String getProperty(propertyName propertyName)
+	{
+		return prop.getProperty(propertyName.toString());
+	}
 	
 	public static void main(String[] args)
 	{
