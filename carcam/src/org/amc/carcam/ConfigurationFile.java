@@ -103,9 +103,22 @@ public class ConfigurationFile
 		}
 	}
 	
+	/**
+	 * 
+	 * @param propertyName
+	 * @return if property doesn't exist return empty String not null
+	 */
 	public String getProperty(propertyName propertyName)
 	{
-		return prop.getProperty(propertyName.toString());
+		String result=prop.getProperty(propertyName.toString());
+		if(result==null)
+		{
+			return "";
+		}
+		else
+		{
+			return result;
+		}
 	}
 	
 	public static void main(String[] args)

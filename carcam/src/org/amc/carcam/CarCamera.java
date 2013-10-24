@@ -15,6 +15,7 @@ import static org.amc.carcam.ConfigurationFile.propertyName.*;
  */
 public class CarCamera 
 {
+	
 	private String command;
 	//private final String command="touch"; //testing string
 	private String command_args; //runtime arguments for command
