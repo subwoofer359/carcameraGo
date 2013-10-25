@@ -34,7 +34,7 @@ public class CarCamera
 	
 	private PoolManager poolManager; // PoolManager
 	
-	private Thread gpslogger; //gpslogger thread @todo a lot of work
+	private Thread gpslogger; //gpslogger thread 
 	
 	private String prefix;
 	private String suffix;

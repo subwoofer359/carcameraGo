@@ -121,6 +121,7 @@ public class ConfigurationFile
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args)
 	{
 		ConfigurationFile cfile=new ConfigurationFile(Paths.get("config.file"));
