@@ -43,6 +43,7 @@ public class ConfigurationFile
 			{propertyName.COMMAND_ARGS.toString(),""},
 			{propertyName.FILE_DURATION.toString(),"5"},
 			{propertyName.LOCATION.toString(),"/mnt/external"},
+			//{propertyName.LOCATION.toString(),"/home/adrian/external"},
 			{propertyName.LOGFILE.toString(),"camera.log"},
 			{propertyName.GPSFILE.toString(),"gps.log"},
 			{propertyName.SAVERATE.toString(),"30"},
@@ -123,7 +124,10 @@ public class ConfigurationFile
 	
 	public static void main(String[] args)
 	{
+		
 		ConfigurationFile cfile=new ConfigurationFile(Paths.get("config.file"));
+		
+		
 	}
 	
 }
