@@ -125,7 +125,8 @@ public class ConfigurationFile
 	public static void main(String[] args)
 	{
 		
-		ConfigurationFile cfile=new ConfigurationFile(Paths.get("config.file"));
+		ConfigurationFile cfile=new ConfigurationFile(Paths.get("config3.file"));
+		System.out.println("Command:"+cfile.getProperty(propertyName.COMMAND));
 		
 		
 	}

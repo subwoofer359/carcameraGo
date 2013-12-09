@@ -40,7 +40,7 @@ public class CarCamera
 	private String suffix;
 	private int number_of_files;
 	
-	private Path configurationFile=Paths.get("CarCamera.config");
+	private Path configurationFile=Paths.get("/mnt/external/CarCamera.config");
 	/**
 	 * @param args
 	 */
@@ -50,9 +50,9 @@ public class CarCamera
 		{
 			// load configuration file
 			loadConfigurationFile();
-		
+			
 			log=Logger.getInstance(logfile);
-		
+			log.writeToLog("Loading configuration file:"+configurationFile.toAbsolutePath());
 			poolManager=PoolManager.getInstance(location, prefix, suffix, number_of_files);
 		
 		
@@ -80,6 +80,7 @@ public class CarCamera
 	//Needs to be tested and check for problems
 	private void loadConfigurationFile()
 	{
+		
 		ConfigurationFile configurefile=new ConfigurationFile(configurationFile);// Load Configuration file
 		command=configurefile.getProperty(COMMAND);
 		command_args=configurefile.getProperty(COMMAND_ARGS);// Command arguments
