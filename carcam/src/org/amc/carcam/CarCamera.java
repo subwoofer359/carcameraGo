@@ -40,14 +40,17 @@ public class CarCamera
 	private String suffix;
 	private int number_of_files;
 	
-	private Path configurationFile=Paths.get("CarCamera.config");
+	//private Path configurationFile;
+	private ConfigurationFile configurefile;
 	/**
-	 * @param args
+	 * 
+	 * @param configFile The file to open for the configuration. Needed for testing
 	 */
-	public CarCamera()
+	public CarCamera(ConfigurationFile configFile)
 	{	
 		try
 		{
+			this.configurefile=configFile;
 			// load configuration file
 			loadConfigurationFile();
 		
@@ -80,7 +83,7 @@ public class CarCamera
 	//Needs to be tested and check for problems
 	private void loadConfigurationFile()
 	{
-		ConfigurationFile configurefile=new ConfigurationFile(configurationFile);// Load Configuration file
+		
 		command=configurefile.getProperty(COMMAND);
 		command_args=configurefile.getProperty(COMMAND_ARGS);// Command arguments
 		location=Paths.get(configurefile.getProperty(LOCATION)); // Directory where to store the video 
@@ -98,7 +101,7 @@ public class CarCamera
 	
 	public void record()
 	{
-		Runtime r=Runtime.getRuntime();
+		//Runtime r=Runtime.getRuntime();
 		log.writeToLog("Starting Camera command");
 		
 		Path filename=poolManager.getNextFilename();
@@ -110,20 +113,13 @@ public class CarCamera
 		log.writeToLog(arg);
 		try
 		{
-			Process process=r.exec(arg);
+			ProcessBuilder pb=new ProcessBuilder(arg);
+			//Process process=r.exec(arg);
+			pb.redirectErrorStream(true);
+			pb.redirectError(logfile.toFile());
+			Process process=pb.start();
+			//BufferedReader reader=new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			
-			BufferedReader reader=new BufferedReader(new InputStreamReader(process.getErrorStream()));
-			String error="2";
-			while(error!=null)
-			{
-				error=reader.readLine();
-				if(error!=null)
-				{
-					log.writeToLog(error);
-				}
-			}
-			
-			reader.close();
 			process.waitFor();
 			log.writeToLog("Process ID:"+process.exitValue());
 			
@@ -145,7 +141,8 @@ public class CarCamera
 	
 	public static void main(String[] args) throws InterruptedException 
 	{
-		CarCamera carCamera=new CarCamera();
+		ConfigurationFile config=new ConfigurationFile(Paths.get("CarCamera.config"));// Load Configuration file
+		CarCamera carCamera=new CarCamera(config);
 		while(true)
 		{
 			carCamera.record();

@@ -53,7 +53,7 @@ public class PoolManager
 		this.NUMBER_OF_FILES=number_of_files;
 		this.suffix=suffix;
 		this.prefix=prefix;
-		
+		//Presumes the Logger object has already been called so no need to pass anything but null
 		log=Logger.getInstance(null);
 		
 		

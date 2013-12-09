@@ -91,7 +91,7 @@ public class ConfigurationFile
 		saveConfigurationInfo();
 	}
 	
-	private void saveConfigurationInfo()
+	public void saveConfigurationInfo()
 	{
 		try(BufferedWriter writer=Files.newBufferedWriter(configurationfile, Charset.defaultCharset()))
 		{
