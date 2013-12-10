@@ -1,11 +1,10 @@
 package org.amc.carcam;
 
-import java.io.BufferedReader;
-import java.io.File;
+import java.util.List;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import static org.amc.carcam.ConfigurationFile.propertyName.*;
 
@@ -107,14 +106,29 @@ public class CarCamera
 		
 		Path filename=poolManager.getNextFilename();
 		
-		String arg=String.format("-t %d -o %s",duration,filename);
+		//String arg=String.format("-t %d -o %s",duration,filename);
 		
 		//String arg=String.format("%2$s",duration,filename);//testing string
+		List<String> commands=new ArrayList<>();
+		
+		commands.add(command);
+		
+		//Break up args from Config file and add piece by piece
+		String[] args=command_args.split("\\s");
+		for(int i=0;i<args.length;i++)
+		{
+			commands.add(args[i]);
+		}
+		commands.add("-t");
+		commands.add(String.valueOf(duration));
+		commands.add("-o");
+		commands.add(filename.toString());
+		
 		
 		try
 		{
-			//ProcessBuilder pb=new ProcessBuilder(command,command_args,"-t "+duration,"-o "+filename.toString());
-			ProcessBuilder pb=new ProcessBuilder(command,command_args,arg);
+			ProcessBuilder pb=new ProcessBuilder(commands);
+			//ProcessBuilder pb=new ProcessBuilder(command,command_args,arg);
 			log.writeToLog("ProcessBuilder:"+pb.command());
 
 			
@@ -123,7 +137,7 @@ public class CarCamera
 			pb.redirectError(ProcessBuilder.Redirect.appendTo(logfile.toFile()));
 			Process process=pb.start();
 
-			
+		
 			process.waitFor();
 			log.writeToLog("Process ID:"+process.exitValue());
 			
@@ -145,7 +159,7 @@ public class CarCamera
 	
 	public static void main(String[] args) throws InterruptedException 
 	{
-		ConfigurationFile config=new ConfigurationFile(Paths.get("CarCamera.config"));// Load Configuration file
+		ConfigurationFile config=new ConfigurationFile(Paths.get("/mnt/external/CarCamera.config"));// Load Configuration file
 		CarCamera carCamera=new CarCamera(config);
 		while(true)
 		{

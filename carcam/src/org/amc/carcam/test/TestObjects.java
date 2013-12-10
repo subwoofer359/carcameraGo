@@ -32,7 +32,7 @@ public class TestObjects
 	{
 		ConfigurationFile config=mock(ConfigurationFile.class);
 		when(config.getProperty(COMMAND)).thenReturn(getTestDirectory().resolve("raspivid.sh").toString());
-		when(config.getProperty(COMMAND_ARGS)).thenReturn("");
+		when(config.getProperty(COMMAND_ARGS)).thenReturn("-ex night");
 		when(config.getProperty(LOCATION)).thenReturn(getTestDirectory().toString());
 		when(config.getProperty(FILE_DURATION)).thenReturn("5");
 		when(config.getProperty(LOGFILE)).thenReturn("testlog.log");
