@@ -1,6 +1,7 @@
 package org.amc.carcam;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -55,7 +56,7 @@ public class CarCamera
 			loadConfigurationFile();
 			
 			log=Logger.getInstance(logfile);
-			log.writeToLog("Loading configuration file:"+configurationFile.toAbsolutePath());
+			
 			poolManager=PoolManager.getInstance(location, prefix, suffix, number_of_files);
 		
 		
@@ -106,19 +107,22 @@ public class CarCamera
 		
 		Path filename=poolManager.getNextFilename();
 		
-		String arg=String.format("%s %s -t %d -o %s",command,command_args,duration,filename);
+		String arg=String.format("-t %d -o %s",duration,filename);
 		
-		//String arg=String.format("%s %3$s",command,duration,filename);//testing string
+		//String arg=String.format("%2$s",duration,filename);//testing string
 		
-		log.writeToLog(arg);
 		try
 		{
-			ProcessBuilder pb=new ProcessBuilder(arg);
-			//Process process=r.exec(arg);
+			//ProcessBuilder pb=new ProcessBuilder(command,command_args,"-t "+duration,"-o "+filename.toString());
+			ProcessBuilder pb=new ProcessBuilder(command,command_args,arg);
+			log.writeToLog("ProcessBuilder:"+pb.command());
+
+			
 			pb.redirectErrorStream(true);
-			pb.redirectError(logfile.toFile());
+			pb.redirectOutput(ProcessBuilder.Redirect.appendTo(logfile.toFile()));
+			pb.redirectError(ProcessBuilder.Redirect.appendTo(logfile.toFile()));
 			Process process=pb.start();
-			//BufferedReader reader=new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
 			
 			process.waitFor();
 			log.writeToLog("Process ID:"+process.exitValue());

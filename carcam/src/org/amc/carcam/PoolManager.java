@@ -78,7 +78,7 @@ public class PoolManager
 				{
 					try
 					{
-						System.out.println(matcher.group());
+						//System.out.println(matcher.group());
 						count=Integer.parseInt(matcher.group(1));
 						count++; //Increment count for next file index
 					}
