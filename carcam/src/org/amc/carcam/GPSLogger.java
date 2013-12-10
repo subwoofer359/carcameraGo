@@ -5,10 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import java.io.*;
 
 
@@ -28,6 +26,7 @@ public class GPSLogger implements Runnable{
 	private Pattern pattern; 		// Storing the pattern to retrieve lon,lat and speed values from the info received from the GPSD server
 	
 	/** GPSD Commands */
+	@SuppressWarnings("unused")
 	private final String WATCH_STREAM="?WATCH={\"enable\":true,\"json\":true}";
 	private final String WATCH_POLL="?WATCH={\"enable\":true};";
 	private final String WATCH_CLOSE="?WATCH={\"enable\":false}";
@@ -36,20 +35,25 @@ public class GPSLogger implements Runnable{
 	
 	public GPSLogger(Path filename,int seconds) throws IOException
 	{
+		try
+		{
+			this.filename=filename;
+			this.saverate=seconds;
 		
-		this.filename=filename;
-		this.saverate=seconds;
-		
-		this.hostAddress=InetAddress.getByName("127.0.0.1");
+			this.hostAddress=InetAddress.getByName("127.0.0.1");
 		//Create connection to the GPSD Server
-		this.socket=new Socket(hostAddress,port);
+			this.socket=new Socket(hostAddress,port);
 				//connect input and output streams
-		this.out=new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-		this.in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.out=new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+			this.in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			
 			//save REGEX pattern to retrieve Longitude, Latitude, Speed and Altitude
-		this.pattern =Pattern.compile("\\\"(lon|lat|speed|alt)\\\":-?\\d*.\\d*");
-		
+			this.pattern =Pattern.compile("\\\"(lon|lat|speed|alt)\\\":-?\\d*.\\d*");
+		}
+		catch(IOException ioe)
+		{
+			throw new IOException("GPSLogger:"+ioe.getMessage());
+		}
 		
 	}
 	

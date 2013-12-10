@@ -92,7 +92,7 @@ public class ConfigurationFile
 		saveConfigurationInfo();
 	}
 	
-	private void saveConfigurationInfo()
+	public void saveConfigurationInfo()
 	{
 		try(BufferedWriter writer=Files.newBufferedWriter(configurationfile, Charset.defaultCharset()))
 		{
@@ -122,6 +122,7 @@ public class ConfigurationFile
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args)
 	{
 		
