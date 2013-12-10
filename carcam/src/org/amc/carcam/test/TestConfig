@@ -1,0 +1,12 @@
+#
+#Tue Dec 10 14:17:25 GMT 2013
+LOCATION=/location/alpha
+SAVERATE=1000
+LOGFILE=logfile.log
+PREFIX=gnome
+COMMAND_ARGS=-w 22 -e 33 -p 3
+FILE_DURATION=53
+NO_OF_FILES=16
+COMMAND=/usr/bin/touch
+SUFFIX=.mpx
+GPSFILE=gps2.log22

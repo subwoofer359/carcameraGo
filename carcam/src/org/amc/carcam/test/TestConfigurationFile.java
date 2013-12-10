@@ -4,9 +4,8 @@ import java.nio.file.Paths;
 
 import org.amc.carcam.ConfigurationFile;
 import org.junit.*;
-import static org.junit.Assert.*;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 import static org.amc.carcam.ConfigurationFile.propertyName;
 
 public class TestConfigurationFile 
@@ -27,7 +26,7 @@ public class TestConfigurationFile
 	@Test
 	public void testConfigurationFile()
 	{
-		Path configurationFile=Paths.get("TestConfig");
+		Path configurationFile=Paths.get(System.getProperty("user.dir"),"src/org/amc/carcam/test/TestConfig");
 		ConfigurationFile cf =new ConfigurationFile(configurationFile);
 		//Location
 		assertEquals(cf.getProperty(propertyName.LOCATION),LOCATION);
@@ -73,7 +72,7 @@ public class TestConfigurationFile
 	@Test
 	public void testSaveConfig()
 	{
-		Path configurationFile=Paths.get("TestConfig");
+		Path configurationFile=Paths.get(System.getProperty("user.dir"),"src/org/amc/carcam/test/TestConfig");
 		ConfigurationFile cf =new ConfigurationFile(configurationFile);
 		
 		cf.saveConfigurationInfo();
