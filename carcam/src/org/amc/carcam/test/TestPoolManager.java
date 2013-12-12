@@ -20,7 +20,6 @@ import org.amc.carcam.PoolManager;
 import org.junit.*;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class TestPoolManager  
 {
@@ -200,7 +199,8 @@ public class TestPoolManager
 		{
 			DirectoryStream<Path> dir=Files.newDirectoryStream(TestObjects.getTestDirectory(),prefix+"*"+suffix);
 			int actualNoOfFiles=0;
-			for(Path p:dir)
+			
+			for(@SuppressWarnings("unused") Path p:dir)
 			{
 				actualNoOfFiles++;
 			}
