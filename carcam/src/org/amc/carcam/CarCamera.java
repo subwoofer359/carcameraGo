@@ -57,7 +57,7 @@ public class CarCamera
 		
 		
 		
-		
+			//Needs to be last in the method so if it throws an exception it's caught by the Catch block
 			gpslogger=new Thread(new GPSLogger(gpsfile, saverate));
 			gpslogger.start();
 		}
