@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class Logger 
 {
-	private Path logfile;
+	//private Path logfile;
 	
 	private static Logger instance;
 	
@@ -18,7 +18,7 @@ public class Logger
 	
 	private Logger(Path logfile)
 	{
-		this.logfile=logfile;
+		//this.logfile=logfile;
 		// do some checking
 		
 		try

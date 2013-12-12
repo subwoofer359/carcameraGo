@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -120,16 +119,6 @@ public class ConfigurationFile
 		{
 			return result;
 		}
-	}
-	
-	@SuppressWarnings("unused")
-	public static void main(String[] args)
-	{
-		
-		ConfigurationFile cfile=new ConfigurationFile(Paths.get("config3.file"));
-		System.out.println("Command:"+cfile.getProperty(propertyName.COMMAND));
-		
-		
 	}
 	
 }

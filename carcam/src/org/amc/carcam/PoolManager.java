@@ -1,15 +1,9 @@
 package org.amc.carcam;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-
-import java.nio.charset.Charset;
 import java.nio.file.*;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -216,46 +210,6 @@ public class PoolManager
 				//Error
 			}
 		}
-	}
-	
-	//for testing only
-	public static void main(String[] args)
-	{
-		Logger log=Logger.getInstance(Paths.get("/home/adrian/log.log"));
-		PoolManager pool=PoolManager.getInstance(Paths.get("/home/adrian"), "video", ".test", 3);	
-			try
-			{
-				int i=0;
-				while(i<100)
-				{
-					Path p=pool.getNextFilename();
-					Files.createFile(p);
-					
-					try(BufferedWriter buf=Files.newBufferedWriter(p, Charset.defaultCharset()))
-					{
-						for(int j=0;j<1000;j++)
-						{
-							buf.write("Helofkefkregjrgorojgrgjgjgrrgjorgorgrogrorgoogrjjjjjjjjjjjjjjjjjjjpogrpog" +
-									"fepflep[epepepfpepflpefepfleepplelpelppleplplfepleplepl");
-						}
-					}
-					
-					
-					pool.addCompleteFile(p);
-					Thread.sleep(2000);
-					i++;
-					System.out.println(pool.files);
-				}
-			}
-			catch(IOException ioe)
-			{
-				ioe.printStackTrace();
-			}
-			catch(InterruptedException ie)
-			{
-				ie.printStackTrace();
-			}
-	
 	}
 }
 	
