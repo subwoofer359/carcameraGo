@@ -1,11 +1,8 @@
 package org.amc.carcam;
 
-import java.util.List;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-
 import static org.amc.carcam.ConfigurationFile.propertyName.*;
 
 /**
@@ -101,34 +98,28 @@ public class CarCamera
 	
 	public void record()
 	{
-		//Runtime r=Runtime.getRuntime();
 		log.writeToLog("Starting Camera command");
 		
 		Path filename=poolManager.getNextFilename();
+		String[] commands;
 		
-		//String arg=String.format("-t %d -o %s",duration,filename);
 		
-		//String arg=String.format("%2$s",duration,filename);//testing string
-		List<String> commands=new ArrayList<>();
-		
-		commands.add(command);
 		
 		//Break up args from Config file and add piece by piece
 		String[] args=command_args.split("\\s");
-		for(int i=0;i<args.length;i++)
-		{
-			commands.add(args[i]);
-		}
-		commands.add("-t");
-		commands.add(String.valueOf(duration));
-		commands.add("-o");
-		commands.add(filename.toString());
-		
+		commands=new String[args.length+5];//5 space required for the other options
+		System.arraycopy(args, 0, commands, 1, args.length);//offset by one for the command to be added to the start after this line. 
+		commands[0]=command; // Place the command at the start
+		//Place last options at the end
+		commands[commands.length-4]="-t";
+		commands[commands.length-3]=String.valueOf(duration);
+		commands[commands.length-2]="-o";
+		commands[commands.length-1]=filename.toString();
 		
 		try
 		{
 			ProcessBuilder pb=new ProcessBuilder(commands);
-			//ProcessBuilder pb=new ProcessBuilder(command,command_args,arg);
+			
 			log.writeToLog("ProcessBuilder:"+pb.command());
 
 			
