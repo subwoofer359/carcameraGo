@@ -1,4 +1,4 @@
-package org.amc.carcam.test;
+package org.amc.carcamera;
 import static org.amc.carcam.ConfigurationFile.propertyName.COMMAND;
 import static org.amc.carcam.ConfigurationFile.propertyName.COMMAND_ARGS;
 import static org.amc.carcam.ConfigurationFile.propertyName.FILE_DURATION;
@@ -19,8 +19,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.amc.carcam.ConfigurationFile;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 public class TestObjects
 {
 	
@@ -30,7 +28,7 @@ public class TestObjects
 	 */
 	public static ConfigurationFile getMockConfigurationFile()
 	{
-		ConfigurationFile config=mock(ConfigurationFile.class);
+		ConfigurationFile config = mock(ConfigurationFile.class);
 		when(config.getProperty(COMMAND)).thenReturn(getTestDirectory().resolve("raspivid.sh").toString());
 		when(config.getProperty(COMMAND_ARGS)).thenReturn("-ex night");
 		when(config.getProperty(LOCATION)).thenReturn(getTestDirectory().toString());

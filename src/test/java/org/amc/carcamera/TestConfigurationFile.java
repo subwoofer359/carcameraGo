@@ -1,4 +1,4 @@
-package org.amc.carcam.test;
+package org.amc.carcamera;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 

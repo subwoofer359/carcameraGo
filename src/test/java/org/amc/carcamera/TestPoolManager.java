@@ -1,4 +1,4 @@
-package org.amc.carcam.test;
+package org.amc.carcamera;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
