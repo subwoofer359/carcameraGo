@@ -16,7 +16,7 @@ type storageManager struct {
 	workDir string
 }
 
-func (s *storageManager) getFileName() string {
+func (s *storageManager) getNextFileName() string {
 	incr := strconv.Itoa(s.index);
 	s.index = s.index + 1;
 	return PREFIX + incr + SUFFIX
@@ -39,9 +39,8 @@ func (s *storageManager) setLastIndex() {
 				}		
 			}
 		}
-		
-	}
 	
-	s.index = index;
+		s.index = index;	
+	}
 }
 

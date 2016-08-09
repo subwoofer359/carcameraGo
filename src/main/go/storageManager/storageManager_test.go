@@ -9,16 +9,16 @@ import (
 
 var index = 0;
 
-func TestGetFileName(t *testing.T) {
+func TestGetNextFileName(t *testing.T) {
 	t.Log("test filename creation")
 	storage := new(storageManager)
 	storage.index = 1;
 	
-	fileName := storage.getFileName()
+	fileName := storage.getNextFileName()
 	t.Log("test First call to getFileName")
 	testExpectedFileName(t, fileName)
 	
-	fileName = storage.getFileName()
+	fileName = storage.getNextFileName()
 	t.Log("test second call to getFileName")
 	testExpectedFileName(t, fileName)
 }
