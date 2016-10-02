@@ -26,7 +26,7 @@ type StorageManager struct {
 	prefix  string
 	suffix  string
 	index 	int
-	workDir string
+	WorkDir string
 	fileList []string
 }
 
@@ -42,7 +42,7 @@ func (s StorageManager) MaxNoOfFiles() int {
 func (s *StorageManager) Init() {
 	log.Println("StorageManager Init called")
 	
-	s.index, s.fileList = findAndSaveExistingFileNames(s.workDir);
+	s.index, s.fileList = findAndSaveExistingFileNames(s.WorkDir);
 }
 
 func findAndSaveExistingFileNames(workDir string) (int, []string) {
@@ -75,7 +75,7 @@ func (s *StorageManager) GetNextFileName() string {
 	incr := strconv.Itoa(s.index);
 	s.index = s.index + 1;
 	
-	newFileName := s.workDir + "/" + PREFIX + incr + SUFFIX;
+	newFileName := s.WorkDir + "/" + PREFIX + incr + SUFFIX;
 	
 	return newFileName
 }

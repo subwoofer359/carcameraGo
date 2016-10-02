@@ -29,7 +29,7 @@ func removeTestFiles() {
 func getNewStorageManager() *StorageManager {
 	storage := new(StorageManager)
 	storage.index = 0
-	storage.workDir = TMP
+	storage.WorkDir = TMP
 	storage.Init()
 	return storage;
 }
