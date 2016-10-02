@@ -20,7 +20,7 @@ var wg sync.WaitGroup;
 func (c *CameraCommand) Run() {
 	defer wg.Done()
 	
-	for c.loop.IsSet() {
+	for c.loop.IsSet() {		
 		buffer, err := exec.Command(c.command, c.args...).CombinedOutput();
 		if err != nil {
 			log.Fatal(err) 
@@ -39,6 +39,9 @@ func init() {
 		storageManager: storageManager.New(),
 	}
 	WebCamApp.loop.Set()
+	
+	WebCamApp.storageManager.WorkDir = "/tmp"
+	WebCamApp.storageManager.Init()
 }
 
 
