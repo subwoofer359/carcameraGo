@@ -22,7 +22,7 @@ const MIN_FILE_SIZE = 0
 const MAX_NO_OF_FILES = 20
 
 
-type storageManager struct {
+type StorageManager struct {
 	prefix  string
 	suffix  string
 	index 	int
@@ -30,11 +30,16 @@ type storageManager struct {
 	fileList []string
 }
 
-func (s storageManager) MaxNoOfFiles() int {
+func New() *StorageManager {
+	s := new(StorageManager)
+	return s
+}
+
+func (s StorageManager) MaxNoOfFiles() int {
 	return MAX_NO_OF_FILES
 }
 
-func (s *storageManager) Init() {
+func (s *StorageManager) Init() {
 	log.Println("StorageManager Init called")
 	
 	s.index, s.fileList = findAndSaveExistingFileNames(s.workDir);
@@ -66,7 +71,7 @@ func findAndSaveExistingFileNames(workDir string) (int, []string) {
 	return maxIndex, fileList;
 }
 
-func (s *storageManager) GetNextFileName() string {
+func (s *StorageManager) GetNextFileName() string {
 	incr := strconv.Itoa(s.index);
 	s.index = s.index + 1;
 	
@@ -75,13 +80,13 @@ func (s *storageManager) GetNextFileName() string {
 	return newFileName
 }
 
-func removeOldFiles(s *storageManager) {
+func removeOldFiles(s *StorageManager) {
 	for len(s.fileList) > MAX_NO_OF_FILES {
 		s.RemoveLRU()
 	}
 }
 
-func (s *storageManager) RemoveLRU() {
+func (s *StorageManager) RemoveLRU() {
 	if len(s.fileList) > 0 {
 		oldFileStr := s.fileList[0]
 		err := os.Remove(oldFileStr)
@@ -93,7 +98,7 @@ func (s *storageManager) RemoveLRU() {
 	}
 }
 
-func (s *storageManager) addCompleteFile(fileName string) error {
+func (s *StorageManager) addCompleteFile(fileName string) error {
 	
 	file, err := os.Stat(fileName);
 	if err != nil {

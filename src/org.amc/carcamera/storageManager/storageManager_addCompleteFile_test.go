@@ -37,7 +37,7 @@ func TestAddCompleteFileStaysWithinFileLimit(t *testing.T) {
 	}
 }
 
-func checkFileNameNotStored(storage *storageManager, t *testing.T) {
+func checkFileNameNotStored(storage *StorageManager, t *testing.T) {
 	if len(storage.fileList) > 0 {
 		log.Println(storage.fileList)
 		t.Error("Invalid file was added to file list")
