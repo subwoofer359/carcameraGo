@@ -13,13 +13,7 @@ func TestRun(t *testing.T) {
 		storageManager: storageManager.New(),		
 	}
 	
-	wg.Add(1)
-	
-	var err error
-	go func() {
-		err = command.Run()
-	}()
-	wg.Wait()
+	err := command.Run()
 	
 	if err.Error() != "completed" {
 		t.Fatal("Error running command")
@@ -33,13 +27,7 @@ func TestRunError(t *testing.T) {
 		storageManager: storageManager.New(),		
 	}
 	
-	wg.Add(1)
-	
-	var err error
-	go func() {
-		err = command.Run()
-	}()
-	wg.Wait()
+	err := command.Run()
 	
 	if err.Error() == "completed" {
 		t.Fatal("Should have been an Error thrown")
