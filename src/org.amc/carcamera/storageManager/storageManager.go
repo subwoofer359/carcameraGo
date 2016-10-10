@@ -7,21 +7,22 @@ import (
 	"regexp"
 	"os"
 )
-const PREFIX = "video";
-const SUFFIX = ".mpg";
 
-/* 
- *The minimum file size to be accepted
- */
+//PREFIX Filename prefix
+const PREFIX = "video"
+
+//SUFFIX Filename suffix
+const SUFFIX = ".mpg" 
+
 //const MIN_FILE_SIZE = 1024 * 1000
-const MIN_FILE_SIZE = 0
 
-/*
- * The maximum number of files
- */
-const MAX_NO_OF_FILES = 20
+//MinFileSize The minimum file size to be accepted
+const MinFileSize = 0 
 
+//MaxNoOfFiles The maximum number of files
+const MaxNoOfFiles = 20 
 
+//StorageManager object
 type StorageManager struct {
 	prefix  string
 	suffix  string
@@ -30,13 +31,15 @@ type StorageManager struct {
 	fileList []string
 }
 
+//New create new StorageManager
 func New() *StorageManager {
 	s := new(StorageManager)
 	return s
 }
 
+//MaxNoOfFiles return MaxNoOfFiles
 func (s StorageManager) MaxNoOfFiles() int {
-	return MAX_NO_OF_FILES
+	return MaxNoOfFiles
 }
 
 func (s *StorageManager) Init() {
@@ -81,7 +84,7 @@ func (s *StorageManager) GetNextFileName() string {
 }
 
 func removeOldFiles(s *StorageManager) {
-	for len(s.fileList) > MAX_NO_OF_FILES {
+	for len(s.fileList) > MaxNoOfFiles {
 		s.RemoveLRU()
 	}
 }
@@ -104,12 +107,12 @@ func (s *StorageManager) addCompleteFile(fileName string) error {
 	if err != nil {
 		return err
 	}
-	if file.Size() > MIN_FILE_SIZE {
+	if file.Size() > MinFileSize {
 		s.fileList = append(s.fileList, fileName)
 		removeOldFiles(s)
 		return nil
-	} else {
-		return os.Remove(fileName)
 	}
+	
+	return os.Remove(fileName)
 }
 
