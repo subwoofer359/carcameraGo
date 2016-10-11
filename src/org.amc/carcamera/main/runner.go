@@ -51,8 +51,8 @@ func (r *Runner) Start() error {
 		
 		case <-r.interrupt:
 			log.Println("command interrupted")
-			signal.Stop(r.interrupt)
 			r.stop() 
+			signal.Stop(r.interrupt)
 			return ErrInterrupt
 	}
 }

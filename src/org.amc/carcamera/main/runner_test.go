@@ -34,8 +34,8 @@ func TestRunnerStartTimeOut(t *testing.T) {
 	myRunner := New(timeout);
 	
 	command := &CameraCommand{
-		command: "/usr/bin/find",
-		args: []string{"/usr"},
+		command: "/bin/dd",
+		args: []string{"if=/dev/urandom", "of=/tmp/e"},
 		storageManager: storageManager.New(),
 	}
 	
@@ -47,23 +47,13 @@ func TestRunnerStartTimeOut(t *testing.T) {
 	}
 }
 
-type mySignal struct {
-}
-
-func (s mySignal) String() string {
-	return "My Interrupt"
-}
-func (s mySignal) Signal() {
-	
-}
-
 func TestRunnerStartInterrupted(t *testing.T) { 
 	
 	myRunner := New(10 * time.Second);
 	
 	command := &CameraCommand{
-		command: "/usr/bin/find",
-		args: []string{"/usr"},
+		command: "/bin/dd",
+		args: []string{"if=/dev/urandom", "of=/tmp/e"},
 		storageManager: storageManager.New(),
 	}
 	
