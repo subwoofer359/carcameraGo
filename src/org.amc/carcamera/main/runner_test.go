@@ -76,7 +76,7 @@ func TestRunnerStartInterrupted(t *testing.T) {
 	if err.Error() != "received interrupt" {
 		t.Fatal("Error runner should interupt")
 	} else {
-		log.Println("TR")
+		log.Println("Process has been interrupted")
 	}
 }
 
