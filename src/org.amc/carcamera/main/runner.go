@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	"log"
 )
 
 type Runner struct {
@@ -32,15 +33,33 @@ func (r *Runner) add(command CameraCommand) {
 
 func (r *Runner) Start() error {
 	signal.Notify(r.interrupt, os.Interrupt)
-	
-	r.complete <- r.command.Run()
+	log.Println("Signal Notified")
+	go func() {
+		r.complete <- r.command.Run()
+	}()
+	log.Println("command started")
 	
 	select {
 		case err :=  <-r.complete:
+			log.Println("command completed")
 			return err
 		
 		case <- r.timeout:
+			log.Println("command Timed out")
+			r.stop()
 			return ErrTimeout
+		
+		case <-r.interrupt:
+			log.Println("command interrupted")
+			signal.Stop(r.interrupt)
+			r.stop() 
+			return ErrInterrupt
+	}
+}
+
+func (r *Runner) stop() {
+	if r.command.process != nil {
+		r.command.process.Kill()
 	}
 }
 
