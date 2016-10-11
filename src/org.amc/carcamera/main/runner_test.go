@@ -14,7 +14,7 @@ func TestRunnerStart(t *testing.T) {
 	
 	myRunner := New(timeout);
 	
-	command := CameraCommand{
+	command := &CameraCommand{
 		command: "/bin/ls",
 		args: []string{"/tmp"},
 		storageManager: storageManager.New(),
@@ -33,7 +33,7 @@ func TestRunnerStartTimeOut(t *testing.T) {
 	
 	myRunner := New(timeout);
 	
-	command := CameraCommand{
+	command := &CameraCommand{
 		command: "/usr/bin/find",
 		args: []string{"/usr"},
 		storageManager: storageManager.New(),
@@ -61,7 +61,7 @@ func TestRunnerStartInterrupted(t *testing.T) {
 	
 	myRunner := New(10 * time.Second);
 	
-	command := CameraCommand{
+	command := &CameraCommand{
 		command: "/usr/bin/find",
 		args: []string{"/usr"},
 		storageManager: storageManager.New(),

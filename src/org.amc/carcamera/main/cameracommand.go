@@ -14,7 +14,7 @@ import (
 type CameraCommand struct {
 	command string
 	args []string
-	storageManager* storageManager.StorageManager
+	storageManager *storageManager.StorageManager
 	process *os.Process
 }
 
