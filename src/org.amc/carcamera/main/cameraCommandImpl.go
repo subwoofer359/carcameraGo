@@ -11,7 +11,7 @@ import (
 	"org.amc/carcamera/storageManager"
 )
 
-type CameraCommand struct {
+type CameraCommandImpl struct {
 	command string
 	args []string
 	storageManager storageManager.StorageManager
@@ -19,7 +19,11 @@ type CameraCommand struct {
 	exec func(string, ...string) *exec.Cmd
 }
 
-func (c *CameraCommand) Run() error {
+func (c CameraCommandImpl) Process() *os.Process {
+	return c.process
+}
+
+func (c *CameraCommandImpl) Run() error {
 	
 	filename := c.storageManager.GetNextFileName()
 	

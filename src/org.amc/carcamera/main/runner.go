@@ -12,7 +12,7 @@ type Runner struct {
 	interrupt chan os.Signal
 	complete chan error
 	timeout <-chan time.Time
-	command *CameraCommand
+	command CameraCommand
 }
 
 var ErrTimeout = errors.New("received timeout")
@@ -27,7 +27,7 @@ func New(d time.Duration) *Runner {
 	}
 }
 
-func (r *Runner) add(command *CameraCommand) {
+func (r *Runner) add(command CameraCommand) {
 	r.command = command
 } 
 
@@ -58,8 +58,8 @@ func (r *Runner) Start() error {
 }
 
 func (r *Runner) stop() {
-	if r.command.process != nil {
-		r.command.process.Kill()
+	if r.command.Process() != nil {
+		r.command.Process().Kill()
 	}
 }
 

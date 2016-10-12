@@ -5,11 +5,11 @@ import (
 	"os/exec"
 )
 
-var WebCamApp CameraCommand;
+var WebCamApp CameraCommandImpl;
 var runner Runner 
 
 func init() {
-	WebCamApp = CameraCommand {
+	WebCamApp = CameraCommandImpl {
 		command: "/usr/bin/raspivid",
 		args: []string{},
 		storageManager: storageManager.New(),
