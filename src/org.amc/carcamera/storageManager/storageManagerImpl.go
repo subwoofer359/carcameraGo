@@ -53,6 +53,10 @@ func (s StorageManagerImpl) WorkDir() string {
 	return s.workDir
 }
 
+func (s *StorageManagerImpl) SetWorkDir(workDir string) {
+	s.workDir = workDir
+}
+
 func (s StorageManagerImpl) FileList() []string {
 	return s.fileList
 }
@@ -67,10 +71,11 @@ func (s *StorageManagerImpl) Init() {
 	
 	s.index, s.fileList = findAndSaveExistingFileNames(s.WorkDir());
 	
+	log.Printf("StorageManager: %d previous files found\n", s.index)
+	
 	s.index = s.index + 1;
 	
-	log.Printf("StorageManager: %d previous files found\n", s.index)
-	log.Println(s.fileList)
+	log.Printf("StorageManager:%s\n", s.fileList)
 }
 
 func findAndSaveExistingFileNames(workDir string) (int, []string) {

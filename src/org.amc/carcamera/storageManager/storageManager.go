@@ -6,6 +6,7 @@ type StorageManager interface {
 	Suffix() string
 	Index() int
 	WorkDir() string
+	SetWorkDir(workDir string)
 	FileList() []string
 	MaxNoOfFiles() int
 	GetNextFileName() string

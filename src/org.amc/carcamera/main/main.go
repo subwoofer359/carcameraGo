@@ -2,21 +2,25 @@ package main
 
 import (
 	"org.amc/carcamera/storageManager"
+	"os/exec"
 )
 
 var WebCamApp CameraCommand;
+var runner Runner 
 
 func init() {
 	WebCamApp = CameraCommand {
 		command: "/usr/bin/raspivid",
 		args: []string{},
 		storageManager: storageManager.New(),
+		exec: exec.Command,
 	}
 	
-	WebCamApp.storageManager.WorkDir = "/tmp"
+	WebCamApp.storageManager.SetWorkDir("/tmp")
 	WebCamApp.storageManager.Init()
 }
 
 
 func main() {
+
 }
