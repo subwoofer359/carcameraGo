@@ -38,8 +38,8 @@ func TestInitForCorrectIndex(t *testing.T) {
 	expected := 2
 	storage := getNewStorageManager()
 	
-	if(storage.index != expected) {
-		t.Errorf("Last index should return %d but instead returned %d", expected, storage.index)
+	if(storage.Index() != expected) {
+		t.Errorf("Last index should return %d but instead returned %d", expected, storage.Index())
 	}
 }
 

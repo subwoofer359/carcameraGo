@@ -32,14 +32,14 @@ func TestAddCompleteFileStaysWithinFileLimit(t *testing.T) {
 		storage.AddCompleteFile(storage.GetNextFileName())
 	}
 	
-	if len(storage.fileList) != storage.MaxNoOfFiles() {
+	if len(storage.FileList()) != storage.MaxNoOfFiles() {
 		t.Error("StorageManager not keeping files created within limits");
 	}
 }
 
-func checkFileNameNotStored(storage *StorageManager, t *testing.T) {
-	if len(storage.fileList) > 0 {
-		log.Println(storage.fileList)
+func checkFileNameNotStored(storage StorageManager, t *testing.T) {
+	if len(storage.FileList()) > 0 {
+		log.Println(storage.FileList())
 		t.Error("Invalid file was added to file list")
 	}
 }

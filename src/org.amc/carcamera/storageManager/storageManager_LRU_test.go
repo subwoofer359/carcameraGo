@@ -23,7 +23,7 @@ func TestRemoveLRU(t *testing.T) {
 	
 	checkFileDoesntExist(VIDEO + "0.mpg", t)
 	
-	if len(storage.fileList) == NumOfFiles {
+	if len(storage.FileList()) == NumOfFiles {
 		t.Error("File should have been removed from file list")
 	}
 }

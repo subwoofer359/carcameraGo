@@ -26,10 +26,10 @@ func removeTestFiles() {
 	}
 }
 
-func getNewStorageManager() *StorageManager {
-	storage := new(StorageManager)
+func getNewStorageManager() StorageManager {
+	storage := new(StorageManagerImpl)
 	storage.index = 0
-	storage.WorkDir = TMP
+	storage.workDir = TMP
 	storage.Init()
 	return storage;
 }
