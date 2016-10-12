@@ -2,15 +2,15 @@ package main
 
 import (
 	"testing"
-	"org.amc/carcamera/storageManager"
-	
+	"os/exec"
 )
 
-func TestRun(t *testing.T) {
+func TestCameraCommandRun(t *testing.T) {
 	command := CameraCommand{
 		command: "/bin/ls",
 		args: []string{"/tmp"},
-		storageManager: storageManager.New(),		
+		storageManager: GetMockStorageManager(),
+		exec: exec.Command, 		
 	}
 	
 	err := command.Run()
@@ -20,16 +20,57 @@ func TestRun(t *testing.T) {
 	}
 }
 
-func TestRunError(t *testing.T) {
+func TestCameraCommandRunError(t *testing.T) {
 	command := CameraCommand{
 		command: "/bin/l",
 		args: []string{"/tmp"},
-		storageManager: storageManager.New(),		
+		storageManager: GetMockStorageManager(),
+		exec: exec.Command,	
 	}
 	
 	err := command.Run()
 	
 	if err.Error() == "completed" {
 		t.Fatal("Should have been an Error thrown")
+	}
+}
+
+func TestStdoutPipeError(t *testing.T) {
+	
+	newCmd := exec.Cmd {}
+	
+	s,_ := newCmd.StdoutPipe()
+	s.Close()
+	
+	err := runPipeTest(&newCmd) 
+	
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
+func runPipeTest(newCmd *exec.Cmd) error {
+	command := CameraCommand{
+		command: "/bin/l",
+		args: []string{"/tmp"},
+		storageManager: GetMockStorageManager(),
+		exec: func(name string, args ...string) *exec.Cmd { return newCmd },
+	}
+	
+	return command.Run()
+}
+
+func TestStderrPipeError(t *testing.T) {
+	
+	newCmd := exec.Cmd {
+	}
+	
+	s,_ := newCmd.StderrPipe()
+	s.Close()
+	
+	err := runPipeTest(&newCmd) 
+	
+	if err == nil {
+		t.Fatal(err)
 	}
 }

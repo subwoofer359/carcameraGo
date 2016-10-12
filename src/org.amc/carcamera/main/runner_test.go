@@ -5,7 +5,7 @@ import (
 	"time"
 	"os"
 	"log"
-	"org.amc/carcamera/storageManager"
+	"os/exec"
 )
 
 const timeout = 1 * time.Second 
@@ -17,7 +17,8 @@ func TestRunnerStart(t *testing.T) {
 	command := &CameraCommand{
 		command: "/bin/ls",
 		args: []string{"/tmp"},
-		storageManager: storageManager.New(),
+		storageManager: GetMockStorageManager(),
+		exec: exec.Command,
 	}
 	
 	myRunner.add(command)
@@ -36,7 +37,8 @@ func TestRunnerStartTimeOut(t *testing.T) {
 	command := &CameraCommand{
 		command: "/bin/dd",
 		args: []string{"if=/dev/urandom", "of=/tmp/e"},
-		storageManager: storageManager.New(),
+		storageManager: GetMockStorageManager(),
+		exec: exec.Command,
 	}
 	
 	myRunner.add(command)
@@ -54,7 +56,8 @@ func TestRunnerStartInterrupted(t *testing.T) {
 	command := &CameraCommand{
 		command: "/bin/dd",
 		args: []string{"if=/dev/urandom", "of=/tmp/e"},
-		storageManager: storageManager.New(),
+		storageManager: GetMockStorageManager(),
+		exec: exec.Command,
 	}
 	
 	myRunner.add(command)
@@ -75,3 +78,4 @@ func interruptCommand(runner *Runner) {
 	log.Println("Trying to interrupt command")	
 	runner.interrupt <- os.Interrupt
 }
+

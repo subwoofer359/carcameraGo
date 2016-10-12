@@ -14,13 +14,20 @@ import (
 type CameraCommand struct {
 	command string
 	args []string
-	storageManager *storageManager.StorageManager
+	storageManager storageManager.StorageManager
 	process *os.Process
+	exec func(string, ...string) *exec.Cmd
 }
 
 func (c *CameraCommand) Run() error {
 	
-	cmd := exec.Command(c.command, c.args...)
+	filename := c.storageManager.GetNextFileName()
+	
+	if filename != "" {
+		c.args = append(c.args, filename)
+	}
+	
+	cmd := c.exec(c.command, c.args...)
 	
 	stdout, stderr, pipeError := setOutPipes(cmd)
 	
@@ -46,10 +53,16 @@ func (c *CameraCommand) Run() error {
 	
 	cmd.Wait()
 
+	c.storageManager.AddCompleteFile(filename)
 	return errors.New("completed")
 }
 
-func setOutPipes(cmd *exec.Cmd) (io.Reader, io.Reader, error) {
+type commandObject interface {
+	StdoutPipe() (io.ReadCloser, error)
+	StderrPipe() (io.ReadCloser, error)
+}
+
+func setOutPipes(cmd commandObject) (io.Reader, io.Reader, error) {
 	stdout, err := cmd.StdoutPipe()
 	
 	if err != nil {
