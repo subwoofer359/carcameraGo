@@ -10,9 +10,9 @@ func TestAddCompleteFileSizeLessThanAllowed(t *testing.T) {
 	t.Log("removing Least recently used")
 	storage := getNewStorageManager()
 	
-	createEmptyTestFile(0, t)
+	createEmptyTestFile(1, t)
 	
-	err := storage.addCompleteFile(storage.GetNextFileName())
+	err := storage.AddCompleteFile(storage.GetNextFileName())
 	
 	if err != nil {
 		t.Fatal(err)
@@ -27,9 +27,9 @@ func TestAddCompleteFileStaysWithinFileLimit(t *testing.T) {
 	removeTestFiles()
 	storage := getNewStorageManager()
 	
-	for i := 0; i < storage.MaxNoOfFiles() + 10; i = i + 1 {
+	for i := 1; i < storage.MaxNoOfFiles() + 10; i = i + 1 {
 		createTestFile(i, t)
-		storage.addCompleteFile(storage.GetNextFileName())
+		storage.AddCompleteFile(storage.GetNextFileName())
 	}
 	
 	if len(storage.fileList) != storage.MaxNoOfFiles() {

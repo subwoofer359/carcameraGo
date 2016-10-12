@@ -46,6 +46,11 @@ func (s *StorageManager) Init() {
 	log.Println("StorageManager Init called")
 	
 	s.index, s.fileList = findAndSaveExistingFileNames(s.WorkDir);
+	
+	s.index = s.index + 1;
+	
+	log.Printf("StorageManager: %d previous files found\n", s.index)
+	log.Println(s.fileList)
 }
 
 func findAndSaveExistingFileNames(workDir string) (int, []string) {
@@ -101,7 +106,7 @@ func (s *StorageManager) RemoveLRU() {
 	}
 }
 
-func (s *StorageManager) addCompleteFile(fileName string) error {
+func (s *StorageManager) AddCompleteFile(fileName string) error {
 	
 	file, err := os.Stat(fileName);
 	if err != nil {

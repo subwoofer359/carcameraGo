@@ -5,7 +5,7 @@ import (
     "strconv"
 )
 
-var index = 0
+var index = 1
 
 func TestGetNextFileName(t *testing.T) {
 	removeTestFiles();
@@ -35,7 +35,7 @@ func TestInitForCorrectIndex(t *testing.T) {
 	removeTestFiles()
 	
 	createTestFile(1, t)
-	expected := 1
+	expected := 2
 	storage := getNewStorageManager()
 	
 	if(storage.index != expected) {
