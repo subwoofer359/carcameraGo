@@ -1,8 +1,5 @@
 package main
 
-import (
-	 //"org.amc/carcamera/storageManager"
-)
 type mockStorageManager struct {
 	index int
 	workDir string
