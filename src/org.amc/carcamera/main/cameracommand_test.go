@@ -8,8 +8,7 @@ import (
 func TestCameraCommandRun(t *testing.T) {
 	command := CameraCommandImpl {
 		command: "/bin/ls",
-		args: []string{"/tmp"},
-		storageManager: GetMockStorageManager(),
+		storageManager: GetMockStorageManagerLS(),
 		exec: exec.Command, 		
 	}
 	
@@ -23,8 +22,7 @@ func TestCameraCommandRun(t *testing.T) {
 func TestCameraCommandRunError(t *testing.T) {
 	command := CameraCommandImpl {
 		command: "/bin/l",
-		args: []string{"/tmp"},
-		storageManager: GetMockStorageManager(),
+		storageManager: GetMockStorageManagerLS(),
 		exec: exec.Command,	
 	}
 	
@@ -52,8 +50,7 @@ func TestStdoutPipeError(t *testing.T) {
 func runPipeTest(newCmd *exec.Cmd) error {
 	command := CameraCommandImpl {
 		command: "/bin/l",
-		args: []string{"/tmp"},
-		storageManager: GetMockStorageManager(),
+		storageManager: GetMockStorageManagerLS(),
 		exec: func(name string, args ...string) *exec.Cmd { return newCmd },
 	}
 	

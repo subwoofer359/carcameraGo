@@ -1,7 +1,7 @@
 package main
 
 import (
-	 "org.amc/carcamera/storageManager"
+	 //"org.amc/carcamera/storageManager"
 )
 type mockStorageManager struct {
 	index int
@@ -40,18 +40,10 @@ func (m mockStorageManager) MaxNoOfFiles() int {
 	return 10
 }
 
-func (m mockStorageManager) GetNextFileName() string {
-	return ""
-}
-
 func (m mockStorageManager) RemoveLRU() {
 	
 }
 
 func (m mockStorageManager) AddCompleteFile(fileName string) error {
 	return nil
-}
-
-func GetMockStorageManager() storageManager.StorageManager {
-	return new(mockStorageManager)
-}
+} 

@@ -24,14 +24,10 @@ func (c CameraCommandImpl) Process() *os.Process {
 }
 
 func (c *CameraCommandImpl) Run() error {
-	
+		
 	filename := c.storageManager.GetNextFileName()
 	
-	if filename != "" {
-		c.args = append(c.args, filename)
-	}
-	
-	cmd := c.exec(c.command, c.args...)
+	cmd := c.exec(c.command, append(c.args, filename)...)
 	
 	stdout, stderr, pipeError := setOutPipes(cmd)
 	
@@ -39,7 +35,9 @@ func (c *CameraCommandImpl) Run() error {
 		return pipeError
 	}
 	
-	err := cmd.Start()
+	if err := cmd.Start(); err != nil {
+		return errors.New(strings.Join([]string{"ERROR:", err.Error()}, " "))
+	}
 	
 	c.process = cmd.Process
 	
@@ -49,13 +47,11 @@ func (c *CameraCommandImpl) Run() error {
 	
 	if readErr := readPipe(stderr); readErr != nil {
 		return readErr
-	}
-	
-	if err != nil {
-		return errors.New(strings.Join([]string{"ERROR:", err.Error()}, " "))
 	} 
 	
-	cmd.Wait()
+	if err := cmd.Wait(); err != nil {
+		return err
+	}
 
 	c.storageManager.AddCompleteFile(filename)
 	return errors.New("completed")

@@ -8,7 +8,7 @@ import (
 	"os/exec"
 )
 
-const timeout = 1 * time.Second 
+const timeout = 1 * time.Second
 
 func TestRunnerStart(t *testing.T) {
 	
@@ -17,7 +17,7 @@ func TestRunnerStart(t *testing.T) {
 	command := &CameraCommandImpl {
 		command: "/bin/ls",
 		args: []string{"/tmp"},
-		storageManager: GetMockStorageManager(),
+		storageManager: GetMockStorageManagerLS(),
 		exec: exec.Command,
 	}
 	
@@ -36,8 +36,8 @@ func TestRunnerStartTimeOut(t *testing.T) {
 	
 	command := &CameraCommandImpl {
 		command: "/bin/dd",
-		args: []string{"if=/dev/urandom", "of=/tmp/e"},
-		storageManager: GetMockStorageManager(),
+		args: []string{"if=/dev/urandom"},
+		storageManager: GetMockStorageManagerDD(),
 		exec: exec.Command,
 	}
 	
@@ -55,8 +55,8 @@ func TestRunnerStartInterrupted(t *testing.T) {
 	
 	command := &CameraCommandImpl {
 		command: "/bin/dd",
-		args: []string{"if=/dev/urandom", "of=/tmp/e"},
-		storageManager: GetMockStorageManager(),
+		args: []string{"if=/dev/urandom"},
+		storageManager: GetMockStorageManagerDD(),
 		exec: exec.Command,
 	}
 	
