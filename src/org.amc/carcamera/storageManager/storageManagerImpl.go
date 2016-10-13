@@ -6,6 +6,7 @@ import (
 	"log"
 	"regexp"
 	"os"
+	"fmt"
 )
 
 //PREFIX Filename prefix
@@ -13,8 +14,6 @@ const PREFIX = "video"
 
 //SUFFIX Filename suffix
 const SUFFIX = ".mpg" 
-
-//const MIN_FILE_SIZE = 1024 * 1000
 
 //MinFileSize The minimum file size to be accepted
 const MinFileSize = 0 
@@ -66,42 +65,46 @@ func (s StorageManagerImpl) MaxNoOfFiles() int {
 	return MaxNoOfFiles
 }
 
-func (s *StorageManagerImpl) Init() {
+func (s *StorageManagerImpl) Init() error {
 	log.Println("StorageManager Init called")
 	
-	s.index, s.fileList = findAndSaveExistingFileNames(s.WorkDir());
+	if index, fileList , err := findAndSaveExistingFileNames(s.WorkDir()); err != nil {
+		return fmt.Errorf("Error reading Work Directory %s\n", s.WorkDir())
+	} else {
+		s.index = index
+		s.fileList = fileList
+	}
 	
 	log.Printf("StorageManager: %d previous files found\n", s.index)
 	
 	s.index = s.index + 1;
 	
 	log.Printf("StorageManager:%s\n", s.fileList)
+	
+	return nil
 }
 
-func findAndSaveExistingFileNames(workDir string) (int, []string) {
+func findAndSaveExistingFileNames(workDir string) (int, []string, error) {
 	pattern := PREFIX + "(\\d+)\\" + SUFFIX
 	matcher := regexp.MustCompile(pattern)
-	files, err := ioutil.ReadDir(workDir)
-	index := 0;
 	maxIndex := 0;
 	fileList := []string{};
 	
-	if err != nil {
-		log.Fatal(err)
+	if files, err := ioutil.ReadDir(workDir); err != nil {
+		return 0, nil, err
 	} else {
 		for _, file := range files {
 			matches := matcher.FindStringSubmatch(file.Name())
 			if(len(matches) > 0) {
 				fileList = append(fileList, workDir + "/" + file.Name())
 				tmpIndex, _ := strconv.Atoi(matches[1])
-				if(tmpIndex > index) {
-					index = tmpIndex;
+				if(tmpIndex > maxIndex) {
+					maxIndex = tmpIndex;
 				}		
 			}
-		}
-		maxIndex = index;	
+		}	
 	}
-	return maxIndex, fileList;
+	return maxIndex, fileList, nil;
 }
 
 func (s *StorageManagerImpl) GetNextFileName() string {
@@ -127,7 +130,6 @@ func (s *StorageManagerImpl) RemoveLRU() {
 			log.Println(err)
 		}
 		s.fileList = s.fileList[1:]
-		
 	}
 }
 

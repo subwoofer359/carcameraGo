@@ -53,8 +53,9 @@ func createETestFile(number int, info *[]byte, t *testing.T) {
 }
 
 func checkFileDoesntExist(fileName string, t *testing.T) {
-	_, perr := os.Stat(TMP + "/" + fileName)
+	log.Printf("Checking if file %s exists\n", fileName)
+	_, perr := os.Stat(fileName)
 	if perr == nil {
-		t.Error("Last File still exists")
+		t.Errorf("File %s still exists\n", fileName)
 	}
 }

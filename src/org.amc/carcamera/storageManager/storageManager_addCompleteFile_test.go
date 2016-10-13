@@ -3,6 +3,7 @@ package storageManager
 import (
 	"testing"
 	"log"
+	"strings"
 )
 
 func TestAddCompleteFileSizeLessThanAllowed(t *testing.T) {
@@ -12,15 +13,31 @@ func TestAddCompleteFileSizeLessThanAllowed(t *testing.T) {
 	
 	createEmptyTestFile(1, t)
 	
-	err := storage.AddCompleteFile(storage.GetNextFileName())
+	filename := storage.GetNextFileName()
+	
+	err := storage.AddCompleteFile(filename)
 	
 	if err != nil {
 		t.Fatal(err)
 	}
 	
-	checkFileDoesntExist(VIDEO + "0.mpg", t)
+	checkFileDoesntExist(PREFIX + "1" + SUFFIX, t)
 	
 	checkFileNameNotStored(storage, t)
+}
+
+func TestAddCompleteFileForNonExistingFile(t *testing.T) {
+	removeTestFiles()
+	t.Log("removing Least recently used")
+	storage := getNewStorageManager()
+	
+	filename := storage.GetNextFileName()
+	
+	err := storage.AddCompleteFile(filename)
+	
+	if err == nil || !strings.Contains(err.Error(), "no such file or directory") {
+		t.Fatal("Should have thrown 'No such file' exception")
+	}
 }
 
 func TestAddCompleteFileStaysWithinFileLimit(t *testing.T) {

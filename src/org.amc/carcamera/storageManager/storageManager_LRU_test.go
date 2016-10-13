@@ -13,7 +13,7 @@ func TestRemoveLRU(t *testing.T) {
 	
 	storage := getNewStorageManager()
 	
-	for i:= 0; i < NumOfFiles; i++ {
+	for i:= 1; i < NumOfFiles; i++ {
 		createTestFile(i, t)
 	}
 	
@@ -21,9 +21,22 @@ func TestRemoveLRU(t *testing.T) {
 	
 	storage.RemoveLRU()
 	
-	checkFileDoesntExist(VIDEO + "0.mpg", t)
+	checkFileDoesntExist(VIDEO + "1.mpg", t)
 	
 	if len(storage.FileList()) == NumOfFiles {
 		t.Error("File should have been removed from file list")
 	}
+}
+
+func TestRemoveLRUFromEmptyList(t *testing.T) {
+	removeTestFiles()
+	
+	t.Log("removing Least recently used")
+	
+	storage := getNewStorageManager()
+	
+	storage.Init();
+	
+	storage.RemoveLRU()
+	
 }

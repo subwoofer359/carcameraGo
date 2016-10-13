@@ -5,8 +5,8 @@ type mockStorageManager struct {
 	workDir string
 }
 
-func (m mockStorageManager) Init() {
-	
+func (m mockStorageManager) Init() error {
+	return nil
 }
 
 func (m mockStorageManager) Prefix() string {

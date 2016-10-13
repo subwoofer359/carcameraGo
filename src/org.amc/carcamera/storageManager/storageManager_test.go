@@ -43,6 +43,17 @@ func TestInitForCorrectIndex(t *testing.T) {
 	}
 }
 
+func TestInitCantReadWorkDir(t *testing.T) {
+	removeTestFiles()
+	storage := new(StorageManagerImpl)
+	storage.index = 0
+	storage.workDir = "/root"
+	err := storage.Init()
+	if err == nil {
+		t.Error("Should have thrown an error on attempt to read directory")
+	}
+}
+
 
 
 
