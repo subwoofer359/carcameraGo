@@ -7,11 +7,10 @@ import (
 
 )
 
-func TestCameraCommandInitialised(t *testing.T) {
+func TestCreateCameraCommand(t *testing.T) {
+	command := createWebCamCommand()
 	
-	command := WebCamApp
-	
-	if command.command == "" {
-		t.Fatal("Command Not Set")
+	if command == nil {
+		t.Error("Command not created")
 	}
 }

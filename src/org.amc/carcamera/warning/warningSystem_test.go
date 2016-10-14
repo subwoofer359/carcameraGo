@@ -5,17 +5,20 @@ import (
 	"github.com/stianeikeland/go-rpio"
 )
 
+var open bool
+
 type mockGpio struct {
-	open bool
 	pins [48]GpioPin
 }
 
-func (m mockGpio) Open() error {
+func (m *mockGpio) Open() error {
+	open = true
 	return nil
 }
 
-func (m mockGpio) Close() {
-	
+func (m *mockGpio) Close() error {
+	open = false
+	return nil
 }
 
 func (m *mockGpio) Pin(i int) GpioPin {
@@ -114,5 +117,31 @@ func TestNotOk(t *testing.T) {
 
 
 func TestError(t *testing.T) {
+	warning := UserDisplay {
+		gpio: new(mockGpio),
+	}
 	
+	warning.Error()
+	
+	if warning.gpio.Pin(RedLED).Read() == rpio.Low {
+		t.Errorf("Red Led should light")
+	}
+}
+
+func TestOpenAndClose(t *testing.T) {
+	warning := UserDisplay {
+		gpio: new(mockGpio),
+	}
+	
+	warning.Open()
+	
+	if open == false {
+		t.Error("Open method not called")
+	}
+	
+	warning.Close()
+	
+	if open != false {
+		t.Error("Close method not called")
+	}
 }

@@ -5,7 +5,7 @@ import (
 )
 type Gpio interface {
 	Open() error
-	Close()
+	Close() error
 	Pin(int) GpioPin
 }
 

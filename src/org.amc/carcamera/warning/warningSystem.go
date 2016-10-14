@@ -13,10 +13,12 @@ const (
 	RedLED int = 18
 )
 
-
-
 type UserDisplay struct {
 	gpio Gpio
+}
+
+func (u *UserDisplay) SetGPIO(gpio Gpio) {
+	u.gpio = gpio
 }
 
 func (u *UserDisplay) Warn() {
@@ -30,10 +32,22 @@ func (u *UserDisplay) Ok() {
 	}
 }	
 
+func (u *UserDisplay) Error() {
+	setHigh(u, RedLED)
+}
+
 func (u *UserDisplay) Reset() {
 	setLow(u, YellowLED)
 	setLow(u, GreenLED)
 	setLow(u, RedLED)
+}
+
+func (u *UserDisplay) Open() {
+	u.gpio.Open()
+}
+
+func (u *UserDisplay) Close() {
+	u.gpio.Close()
 }
 
 func setHigh(u *UserDisplay, colour int) {
