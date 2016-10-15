@@ -11,31 +11,69 @@ import (
 
 const appTimeout time.Duration = time.Duration(7) * time.Minute
 
-var (
-
-	runner Runner
-
+type app struct {
+	runner *Runner
 	lights warning.UserDisplay
-	
 	WebCamApp *CameraCommandImpl
-)
+}
 
-func init() {
+func (a *app) Init() {
 	log.Println("Starting WebCam Program")
-	lights.SetGPIO(warning.RpioImpl{})
+	a.lights.Open()
+	a.lights.Reset()
+	
+	a.WebCamApp  = createWebCamCommand()
+}
+
+func (a *app) InitStorageManager() error {
+	a.WebCamApp.storageManager.SetWorkDir("/tmp")
+	if err := a.WebCamApp.storageManager.Init(); err != nil {
+		a.lights.Error()
+		return err
+	}
+	return nil
+}
+
+func (a *app) Start() error {
+	for {
+		a.runner = New(appTimeout)
+		a.runner.add(a.WebCamApp)
+		
+		err := a.runner.Start()
+		
+		if err != nil && err.Error() != "completed" {
+			a.lights.Error()
+			return err
+		}
+	}
+	
+	return nil
+}
+
+func (a *app) Close() {
+	a.lights.Reset()
+	a.lights.Close()
+}
+
+var myapp app = app {
+	
 }
 
 func main() {
-	lights.Open()
-	defer lights.Close()
+	myapp.lights.SetGPIO(warning.RpioImpl{})
+	myapp.Init()
 	
-	WebCamApp = createWebCamCommand() 
+	defer myapp.Close()
 	
-	initStorageManager()
+	if err := myapp.InitStorageManager(); err != nil {
+		log.Fatal(err)
+	}
 
-	lights.Ok()
+	myapp.lights.Ok()
 	
-	start()
+	if err := myapp.Start(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func createWebCamCommand() *CameraCommandImpl {
@@ -44,27 +82,5 @@ func createWebCamCommand() *CameraCommandImpl {
 		args: []string{},
 		storageManager: storageManager.New(),
 		exec: exec.Command,
-	}
-}
-
-func initStorageManager() {
-	WebCamApp.storageManager.SetWorkDir("/tmp")
-	if err := WebCamApp.storageManager.Init(); err != nil {
-		lights.Error()
-		log.Fatal(err)
-	}
-}
-
-func start() {
-	for {
-		runner := New(appTimeout)
-		runner.add(WebCamApp)
-		
-		err := runner.Start()
-		
-		if err != nil && err.Error() != "completed" {
-			lights.Error()
-			log.Fatal(err)
-		}
 	}
 }
