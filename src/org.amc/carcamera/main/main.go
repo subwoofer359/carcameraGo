@@ -1,6 +1,7 @@
 package main
 
 import (
+	C "org.amc/carcamera/constants"
 	"org.amc/carcamera/storageManager"
 	"org.amc/carcamera/warning"
 	"os/exec"
@@ -8,15 +9,16 @@ import (
 	"log"
 )
 
+
 var ( 
 	myapp app = app {} //myapp Application object
-	context = map[string] string {
-		"WORKDIR": "/mnt/external",
-		"TIMEOUT": "7m",
-		"PREFIX": "video",
-		"SUFFIX": ".h264",
-		"MINFILESIZE": "0",
-		"MAXNOOFFILES": "20",
+	context = map[int] string {
+		C.WORKDIR: "/mnt/external",
+		C.TIMEOUT: "7m",
+		C.PREFIX: "video",
+		C.SUFFIX: ".h264",
+		C.MINFILESIZE: "0",
+		C.MAXNOOFFILES: "20",
 	}
 )
 
@@ -34,13 +36,13 @@ func (a *app) Init() {
 	
 	a.WebCamApp  = createWebCamCommand()
 	
-	timeout,_ := time.ParseDuration(context["TIMEOUT"])
+	timeout,_ := time.ParseDuration(context[C.TIMEOUT])
 	
 	a.appTimeOut = timeout
 }
 
 func (a *app) InitStorageManager() error {
-	a.WebCamApp.storageManager.SetWorkDir(context["WORKDIR"])
+	a.WebCamApp.storageManager.SetWorkDir(context[C.WORKDIR])
 	if err := a.WebCamApp.storageManager.Init(); err != nil {
 		a.lights.Error()
 		return err

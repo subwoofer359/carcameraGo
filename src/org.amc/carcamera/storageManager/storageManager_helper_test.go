@@ -1,6 +1,7 @@
 package storageManager
 
 import (
+	C "org.amc/carcamera/constants"
 	"io/ioutil"
 	"os"
 	"log"
@@ -25,13 +26,13 @@ func removeTestFiles() {
 }
 
 func getNewStorageManager() StorageManager {
-	context := map[string] string {
-		"WORKDIR": T_WORKDIR,
-		"TIMEOUT": "5s",
-		"PREFIX": T_PREFIX,
-		"SUFFIX": T_SUFFIX,
-		"MINFILESIZE": "0",
-		"MAXNOOFFILES": "10",
+	context := map[int] string {
+		C.WORKDIR: T_WORKDIR,
+		C.TIMEOUT: "5s",
+		C.PREFIX: T_PREFIX,
+		C.SUFFIX: T_SUFFIX,
+		C.MINFILESIZE: "0",
+		C.MAXNOOFFILES: "10",
 	}
 	storage := new(StorageManagerImpl)
 	storage.index = 0

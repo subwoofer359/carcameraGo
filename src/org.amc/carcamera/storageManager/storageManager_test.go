@@ -19,21 +19,21 @@ func TestGetNextFileName(t *testing.T) {
 	storage := getNewStorageManager()	
 	
 	fileName := storage.GetNextFileName()
-	testExpectedFileName(t, storage.GetContext(), fileName)
+	testExpectedFileName(t, fileName)
 	
 	fileName = storage.GetNextFileName()
-	testExpectedFileName(t, storage.GetContext(), fileName)
+	testExpectedFileName(t, fileName)
 }
 
-func testExpectedFileName(t *testing.T, context map[string] string, fileName string) {
-	expectedFileName := getExpectedFileName(context)
+func testExpectedFileName(t *testing.T, fileName string) {
+	expectedFileName := getExpectedFileName()
 	if(fileName != expectedFileName) {
 		t.Errorf("Invalid filename generation: expected(%s), actual(%s)", expectedFileName, fileName)
 	}
 }
 
-func getExpectedFileName(context map[string] string) string {
-	fileName := context["WORKDIR"] + "/" + context["PREFIX"] + strconv.Itoa(index) + context["SUFFIX"]
+func getExpectedFileName() string {
+	fileName := T_WORKDIR + "/" + T_PREFIX + strconv.Itoa(index) + T_SUFFIX
 	index ++
 	return fileName;
 }

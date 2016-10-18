@@ -1,10 +1,11 @@
 package main
 
 import (
-    "testing"
-    "org.amc/carcamera/warning"
-    "github.com/stianeikeland/go-rpio"
+	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/warning"
     "errors"
+    "testing"
+    "github.com/stianeikeland/go-rpio"
 	
 )
 
@@ -15,7 +16,7 @@ var testapp *app
 func setup() {
 	mockGPIO = warning.NewMockGPIO()
 	
-	context["WORKDIR"] = "/tmp" // set workdir to /tmp for testing
+	context[C.WORKDIR] = "/tmp" // set workdir to /tmp for testing
 	
 	testapp = new(app)
 	testapp.lights.SetGPIO(mockGPIO)

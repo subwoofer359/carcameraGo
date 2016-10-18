@@ -1,6 +1,7 @@
 package storageManager
 
 import (
+	C "org.amc/carcamera/constants"
 	"strconv"
 	"io/ioutil"
 	"log"
@@ -13,22 +14,22 @@ import (
 type StorageManagerImpl struct {
 	index 	int
 	fileList []string
-	context map[string] string
+	context map[int] string
 }
 
 //New create new StorageManager
-func New(context map[string] string) StorageManager {
+func New(context map[int] string) StorageManager {
 	s := new(StorageManagerImpl)
 	s.context = context
 	return s
 }
 
 func (s StorageManagerImpl) Prefix() string {
-	return s.context["PREFIX"];
+	return s.context[C.PREFIX];
 }
 
 func (s StorageManagerImpl) Suffix() string {
-	return s.context["SUFFIX"]
+	return s.context[C.SUFFIX]
 }
 
 func (s StorageManagerImpl) Index() int {
@@ -36,11 +37,11 @@ func (s StorageManagerImpl) Index() int {
 }
 
 func (s StorageManagerImpl) WorkDir() string {
-	return s.context["WORKDIR"]
+	return s.context[C.WORKDIR]
 }
 
 func (s *StorageManagerImpl) SetWorkDir(workDir string) {
-	s.context["WORKDIR"] = workDir
+	s.context[C.WORKDIR] = workDir
 }
 
 func (s StorageManagerImpl) FileList() []string {
@@ -49,16 +50,16 @@ func (s StorageManagerImpl) FileList() []string {
 
 //MaxNoOfFiles return MaxNoOfFiles
 func (s StorageManagerImpl) MaxNoOfFiles() int {
-	maxfiles,_ := strconv.Atoi(s.context["MAXNOOFFILES"])
+	maxfiles,_ := strconv.Atoi(s.context[C.MAXNOOFFILES])
 	return maxfiles
 }
 
 func (s StorageManagerImpl) MinFileSize() int64 {
-	minfileSize,_ := strconv.Atoi(s.context["MINFILESIZE"])
+	minfileSize,_ := strconv.Atoi(s.context[C.MINFILESIZE])
 	return int64(minfileSize)
 }
 
-func (s *StorageManagerImpl) GetContext() map[string] string {
+func (s *StorageManagerImpl) GetContext() map[int] string {
 	return s.context
 }
 
