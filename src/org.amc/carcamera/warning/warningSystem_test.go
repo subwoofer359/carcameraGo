@@ -7,7 +7,7 @@ import (
 
 func TestReset(t *testing.T) {
 	warning := UserDisplay {
-		gpio: new(mockGpio),
+		gpio: new(MockGpio),
 	}
 	
 	warning.gpio.Pin(GreenLED).High()
@@ -27,7 +27,7 @@ func TestReset(t *testing.T) {
 
 func TestWarning(t *testing.T) {
 	warning := UserDisplay {
-		gpio: new(mockGpio),
+		gpio: new(MockGpio),
 	}
 	warning.Ok()
 	
@@ -44,7 +44,7 @@ func TestWarning(t *testing.T) {
 
 func TestOk(t *testing.T) {
 	warning := UserDisplay {
-		gpio: new(mockGpio),
+		gpio: new(MockGpio),
 	}
 	
 	warning.Ok()
@@ -61,7 +61,7 @@ func TestOk(t *testing.T) {
 
 func TestNotOk(t *testing.T) {
 	warning := UserDisplay {
-		gpio: new(mockGpio),
+		gpio: new(MockGpio),
 	}
 	
 	warning.Warn()
@@ -75,7 +75,7 @@ func TestNotOk(t *testing.T) {
 
 func TestError(t *testing.T) {
 	warning := UserDisplay {
-		gpio: new(mockGpio),
+		gpio: new(MockGpio),
 	}
 	
 	warning.Error()
@@ -87,7 +87,7 @@ func TestError(t *testing.T) {
 
 func TestOpenAndClose(t *testing.T) {
 	warning := UserDisplay {
-		gpio: new(mockGpio),
+		gpio: new(MockGpio),
 	}
 	
 	warning.Open()
