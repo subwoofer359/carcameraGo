@@ -1,5 +1,9 @@
 package constants
 
+
+import (
+	"os"
+)
 const (
 	WORKDIR = iota //WORKDIR directory to write files to
 	TIMEOUT = iota //TIMEOUT kill the spawned process after set time out
@@ -8,3 +12,8 @@ const (
 	MINFILESIZE = iota //MINFILESIZE Mininum file size
 	MAXNOOFFILES = iota //MAXNOOFFILES maximum no of files in the WORKDIR
 )
+
+const (
+	SLASH string = string(os.PathSeparator)
+)
+

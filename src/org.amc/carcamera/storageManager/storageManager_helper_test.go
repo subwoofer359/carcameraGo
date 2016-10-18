@@ -20,7 +20,7 @@ func removeTestFiles() {
 	
 	for _, f := range files {
 		if !f.Mode().IsDir() && strings.HasPrefix(f.Name(), T_PREFIX) {
-			err = os.Remove(T_WORKDIR + "/" + f.Name());
+			err = os.Remove(T_WORKDIR + C.SLASH + f.Name());
 		}
 	}
 }
@@ -52,7 +52,7 @@ func createEmptyTestFile(number int, t *testing.T) {
 
 func createETestFile(number int, info *[]byte, t *testing.T) {
 	index := strconv.Itoa(number)
-	err := ioutil.WriteFile(T_WORKDIR + "/" + T_PREFIX + index + T_SUFFIX, *info, os.FileMode(0777))
+	err := ioutil.WriteFile(T_WORKDIR + C.SLASH + T_PREFIX + index + T_SUFFIX, *info, os.FileMode(0777))
 	if(err == nil) {
 		return
 	}

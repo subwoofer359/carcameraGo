@@ -63,8 +63,26 @@ func (s *StorageManagerImpl) GetContext() map[int] string {
 	return s.context
 }
 
+// isDirectoryWritable
+// param directory string directory to test for writing to
+func isDirectoryWritable(directory string) error {
+	const TESTFILENAME string = "test"
+	
+	if file, err := os.Create(directory + C.SLASH + TESTFILENAME); err != nil {
+		return err
+	} else {
+		_, err := file.WriteString("Test")
+		return err
+	}
+	
+} 
+
 func (s *StorageManagerImpl) Init() error {
 	log.Println("StorageManager Init called")
+		
+	if err:= isDirectoryWritable(s.WorkDir()); err != nil {
+		return err
+	}
 	
 	if index, fileList , err := findAndSaveExistingFileNames(s); err != nil {
 		return fmt.Errorf("Error reading Work Directory %s\n", s.WorkDir())
@@ -94,7 +112,7 @@ func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) 
 		for _, file := range files {
 			matches := matcher.FindStringSubmatch(file.Name())
 			if(len(matches) > 0) {
-				fileList = append(fileList, s.WorkDir() + "/" + file.Name())
+				fileList = append(fileList, s.WorkDir() +C.SLASH + file.Name())
 				tmpIndex, _ := strconv.Atoi(matches[1])
 				if(tmpIndex > maxIndex) {
 					maxIndex = tmpIndex;
@@ -109,7 +127,7 @@ func (s *StorageManagerImpl) GetNextFileName() string {
 	incr := strconv.Itoa(s.index);
 	s.index = s.index + 1;
 	
-	newFileName := s.WorkDir() + "/" + s.Prefix() + incr + s.Suffix();
+	newFileName := s.WorkDir() + C.SLASH + s.Prefix() + incr + s.Suffix();
 	
 	return newFileName
 }
