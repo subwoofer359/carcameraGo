@@ -10,26 +10,32 @@ import (
 	"testing"
 )
 
-const TMP string = "/tmp"
-const VIDEO string = "video"
 func removeTestFiles() {
-	files, err := ioutil.ReadDir(TMP);
+	files, err := ioutil.ReadDir(T_WORKDIR);
 	
 	if err != nil {
 		log.Fatal(err);
 	}
 	
 	for _, f := range files {
-		if !f.Mode().IsDir() && strings.HasPrefix(f.Name(), VIDEO) {
-			err = os.Remove(TMP + "/" + f.Name());
+		if !f.Mode().IsDir() && strings.HasPrefix(f.Name(), T_PREFIX) {
+			err = os.Remove(T_WORKDIR + "/" + f.Name());
 		}
 	}
 }
 
 func getNewStorageManager() StorageManager {
+	context := map[string] string {
+		"WORKDIR": T_WORKDIR,
+		"TIMEOUT": "5s",
+		"PREFIX": T_PREFIX,
+		"SUFFIX": T_SUFFIX,
+		"MINFILESIZE": "0",
+		"MAXNOOFFILES": "10",
+	}
 	storage := new(StorageManagerImpl)
 	storage.index = 0
-	storage.workDir = TMP
+	storage.context = context
 	storage.Init()
 	return storage;
 }
@@ -45,7 +51,7 @@ func createEmptyTestFile(number int, t *testing.T) {
 
 func createETestFile(number int, info *[]byte, t *testing.T) {
 	index := strconv.Itoa(number)
-	err := ioutil.WriteFile(TMP + "/" + VIDEO + index + ".mpg", *info, os.FileMode(0777))
+	err := ioutil.WriteFile(T_WORKDIR + "/" + T_PREFIX + index + T_SUFFIX, *info, os.FileMode(0777))
 	if(err == nil) {
 		return
 	}

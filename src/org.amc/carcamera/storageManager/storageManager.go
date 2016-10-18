@@ -9,7 +9,9 @@ type StorageManager interface {
 	SetWorkDir(workDir string)
 	FileList() []string
 	MaxNoOfFiles() int
+	MinFileSize() int64
 	GetNextFileName() string
 	RemoveLRU()
 	AddCompleteFile(fileName string) error
+	GetContext() map[string] string
 }

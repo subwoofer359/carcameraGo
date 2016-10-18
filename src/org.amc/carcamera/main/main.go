@@ -8,15 +8,15 @@ import (
 	"log"
 )
 
-
-
-
-
 var ( 
 	myapp app = app {} //myapp Application object
 	context = map[string] string {
 		"WORKDIR": "/mnt/external",
 		"TIMEOUT": "7m",
+		"PREFIX": "video",
+		"SUFFIX": ".h264",
+		"MINFILESIZE": "0",
+		"MAXNOOFFILES": "20",
 	}
 )
 
@@ -73,7 +73,7 @@ func createWebCamCommand() *CameraCommandImpl {
 	return &CameraCommandImpl {
 		command: "/usr/bin/raspivid",
 		args: []string{"-o"},
-		storageManager: storageManager.New(),
+		storageManager: storageManager.New(context),
 		exec: exec.Command,
 	}
 }

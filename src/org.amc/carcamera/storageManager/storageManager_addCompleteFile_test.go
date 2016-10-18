@@ -21,7 +21,7 @@ func TestAddCompleteFileSizeLessThanAllowed(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	checkFileDoesntExist(PREFIX + "1" + SUFFIX, t)
+	checkFileDoesntExist(storage.Prefix() + "1" + storage.Suffix(), t)
 	
 	checkFileNameNotStored(storage, t)
 }

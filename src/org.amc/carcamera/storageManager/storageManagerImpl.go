@@ -9,39 +9,26 @@ import (
 	"fmt"
 )
 
-//PREFIX Filename prefix
-const PREFIX = "video"
-
-//SUFFIX Filename suffix
-const SUFFIX = ".mpg" 
-
-//MinFileSize The minimum file size to be accepted
-const MinFileSize = 0 
-
-//MaxNoOfFiles The maximum number of files
-const MaxNoOfFiles = 20 
-
 //StorageManager object
 type StorageManagerImpl struct {
-	prefix  string
-	suffix  string
 	index 	int
-	workDir string
 	fileList []string
+	context map[string] string
 }
 
 //New create new StorageManager
-func New() StorageManager {
+func New(context map[string] string) StorageManager {
 	s := new(StorageManagerImpl)
+	s.context = context
 	return s
 }
 
 func (s StorageManagerImpl) Prefix() string {
-	return s.prefix;
+	return s.context["PREFIX"];
 }
 
 func (s StorageManagerImpl) Suffix() string {
-	return s.prefix
+	return s.context["SUFFIX"]
 }
 
 func (s StorageManagerImpl) Index() int {
@@ -49,11 +36,11 @@ func (s StorageManagerImpl) Index() int {
 }
 
 func (s StorageManagerImpl) WorkDir() string {
-	return s.workDir
+	return s.context["WORKDIR"]
 }
 
 func (s *StorageManagerImpl) SetWorkDir(workDir string) {
-	s.workDir = workDir
+	s.context["WORKDIR"] = workDir
 }
 
 func (s StorageManagerImpl) FileList() []string {
@@ -62,13 +49,23 @@ func (s StorageManagerImpl) FileList() []string {
 
 //MaxNoOfFiles return MaxNoOfFiles
 func (s StorageManagerImpl) MaxNoOfFiles() int {
-	return MaxNoOfFiles
+	maxfiles,_ := strconv.Atoi(s.context["MAXNOOFFILES"])
+	return maxfiles
+}
+
+func (s StorageManagerImpl) MinFileSize() int64 {
+	minfileSize,_ := strconv.Atoi(s.context["MINFILESIZE"])
+	return int64(minfileSize)
+}
+
+func (s *StorageManagerImpl) GetContext() map[string] string {
+	return s.context
 }
 
 func (s *StorageManagerImpl) Init() error {
 	log.Println("StorageManager Init called")
 	
-	if index, fileList , err := findAndSaveExistingFileNames(s.WorkDir()); err != nil {
+	if index, fileList , err := findAndSaveExistingFileNames(s); err != nil {
 		return fmt.Errorf("Error reading Work Directory %s\n", s.WorkDir())
 	} else {
 		s.index = index
@@ -84,19 +81,19 @@ func (s *StorageManagerImpl) Init() error {
 	return nil
 }
 
-func findAndSaveExistingFileNames(workDir string) (int, []string, error) {
-	pattern := PREFIX + "(\\d+)\\" + SUFFIX
+func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) {
+	pattern := s.Prefix() + "(\\d+)\\" + s.Suffix()
 	matcher := regexp.MustCompile(pattern)
 	maxIndex := 0;
 	fileList := []string{};
 	
-	if files, err := ioutil.ReadDir(workDir); err != nil {
+	if files, err := ioutil.ReadDir(s.WorkDir()); err != nil {
 		return 0, nil, err
 	} else {
 		for _, file := range files {
 			matches := matcher.FindStringSubmatch(file.Name())
 			if(len(matches) > 0) {
-				fileList = append(fileList, workDir + "/" + file.Name())
+				fileList = append(fileList, s.WorkDir() + "/" + file.Name())
 				tmpIndex, _ := strconv.Atoi(matches[1])
 				if(tmpIndex > maxIndex) {
 					maxIndex = tmpIndex;
@@ -111,13 +108,13 @@ func (s *StorageManagerImpl) GetNextFileName() string {
 	incr := strconv.Itoa(s.index);
 	s.index = s.index + 1;
 	
-	newFileName := s.WorkDir() + "/" + PREFIX + incr + SUFFIX;
+	newFileName := s.WorkDir() + "/" + s.Prefix() + incr + s.Suffix();
 	
 	return newFileName
 }
 
 func removeOldFiles(s *StorageManagerImpl) {
-	for len(s.fileList) > MaxNoOfFiles {
+	for len(s.fileList) > s.MaxNoOfFiles() {
 		s.RemoveLRU()
 	}
 }
@@ -139,7 +136,7 @@ func (s *StorageManagerImpl) AddCompleteFile(fileName string) error {
 	if err != nil {
 		return err
 	}
-	if file.Size() > MinFileSize {
+	if file.Size() > s.MinFileSize() {
 		s.fileList = append(s.fileList, fileName)
 		removeOldFiles(s)
 		return nil

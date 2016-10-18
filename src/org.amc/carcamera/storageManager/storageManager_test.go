@@ -5,28 +5,35 @@ import (
     "strconv"
 )
 
-var index = 1
+var (
+		index = 1 //index starting at one
+)
+const (
+		T_WORKDIR = "/tmp" //T_WORKDIR Directory to use for testing
+		T_PREFIX = "VIDEO" //T_PREFIX filename prefix
+		T_SUFFIX = ".h264" //T_SUFFIX filename extension
+)
 
 func TestGetNextFileName(t *testing.T) {
 	removeTestFiles();
 	storage := getNewStorageManager()	
 	
 	fileName := storage.GetNextFileName()
-	testExpectedFileName(t, fileName)
+	testExpectedFileName(t, storage.GetContext(), fileName)
 	
 	fileName = storage.GetNextFileName()
-	testExpectedFileName(t, fileName)
+	testExpectedFileName(t, storage.GetContext(), fileName)
 }
 
-func testExpectedFileName(t *testing.T, fileName string) {
-	expectedFileName := getExpectedFileName()
+func testExpectedFileName(t *testing.T, context map[string] string, fileName string) {
+	expectedFileName := getExpectedFileName(context)
 	if(fileName != expectedFileName) {
 		t.Errorf("Invalid filename generation: expected(%s), actual(%s)", expectedFileName, fileName)
 	}
 }
 
-func getExpectedFileName() string {
-	fileName :=TMP + "/" + PREFIX + strconv.Itoa(index) + SUFFIX
+func getExpectedFileName(context map[string] string) string {
+	fileName := context["WORKDIR"] + "/" + context["PREFIX"] + strconv.Itoa(index) + context["SUFFIX"]
 	index ++
 	return fileName;
 }
@@ -45,9 +52,8 @@ func TestInitForCorrectIndex(t *testing.T) {
 
 func TestInitCantReadWorkDir(t *testing.T) {
 	removeTestFiles()
-	storage := new(StorageManagerImpl)
-	storage.index = 0
-	storage.workDir = "/root"
+	storage := getNewStorageManager()
+	storage.SetWorkDir("/root")
 	err := storage.Init()
 	if err == nil {
 		t.Error("Should have thrown an error on attempt to read directory")
