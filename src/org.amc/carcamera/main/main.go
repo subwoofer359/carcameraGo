@@ -9,12 +9,22 @@ import (
 )
 
 
-const appTimeout time.Duration = time.Duration(7) * time.Minute
+
+
+
+var ( 
+	myapp app = app {} //myapp Application object
+	context = map[string] string {
+		"WORKDIR": "/mnt/external",
+		"TIMEOUT": "7m",
+	}
+)
 
 type app struct {
 	runner *Runner
 	lights warning.UserDisplay
 	WebCamApp *CameraCommandImpl
+	appTimeOut time.Duration
 }
 
 func (a *app) Init() {
@@ -23,10 +33,14 @@ func (a *app) Init() {
 	a.lights.Reset()
 	
 	a.WebCamApp  = createWebCamCommand()
+	
+	timeout,_ := time.ParseDuration(context["TIMEOUT"])
+	
+	a.appTimeOut = timeout
 }
 
 func (a *app) InitStorageManager() error {
-	a.WebCamApp.storageManager.SetWorkDir("/tmp")
+	a.WebCamApp.storageManager.SetWorkDir(context["WORKDIR"])
 	if err := a.WebCamApp.storageManager.Init(); err != nil {
 		a.lights.Error()
 		return err
@@ -36,7 +50,7 @@ func (a *app) InitStorageManager() error {
 
 func (a *app) Start() error {
 	for {
-		a.runner = New(appTimeout)
+		a.runner = New(a.appTimeOut)
 		a.runner.add(a.WebCamApp)
 		
 		err := a.runner.Start()
@@ -55,8 +69,13 @@ func (a *app) Close() {
 	a.lights.Close()
 }
 
-var myapp app = app {
-	
+func createWebCamCommand() *CameraCommandImpl {
+	return &CameraCommandImpl {
+		command: "/usr/bin/raspivid",
+		args: []string{"-o"},
+		storageManager: storageManager.New(),
+		exec: exec.Command,
+	}
 }
 
 func main() {
@@ -73,14 +92,5 @@ func main() {
 	
 	if err := myapp.Start(); err != nil {
 		log.Fatal(err)
-	}
-}
-
-func createWebCamCommand() *CameraCommandImpl {
-	return &CameraCommandImpl {
-		command: "/usr/bin/raspivid",
-		args: []string{},
-		storageManager: storageManager.New(),
-		exec: exec.Command,
 	}
 }

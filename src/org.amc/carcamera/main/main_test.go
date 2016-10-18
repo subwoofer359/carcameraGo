@@ -9,7 +9,21 @@ import (
 )
 
 
+var mockGPIO *warning.MockGpio
+var testapp *app
+
+func setup() {
+	mockGPIO = warning.NewMockGPIO()
+	
+	context["WORKDIR"] = "/tmp" // set workdir to /tmp for testing
+	
+	testapp = new(app)
+	testapp.lights.SetGPIO(mockGPIO)
+	testapp.Init()
+}
+
 func TestCreateCameraCommand(t *testing.T) {
+	setup()
 	command := createWebCamCommand()
 	
 	if command == nil {
@@ -18,10 +32,7 @@ func TestCreateCameraCommand(t *testing.T) {
 }
 
 func TestAppInit(t *testing.T) {
-	var myapp app;
-	mockGPIO := warning.NewMockGPIO()
-	myapp.lights.SetGPIO(mockGPIO)
-	myapp.Init()
+	setup()
 	
 	if !mockGPIO.IsOpen() {
 		t.Error("GPIO should be set to open")
@@ -39,39 +50,29 @@ func TestAppInit(t *testing.T) {
 		t.Error("Green light should be off")
 	}
 	
-	if myapp.WebCamApp == nil {
+	if testapp.WebCamApp == nil {
 		t.Error("WebCamApp should not be nil")
 	}
 }
 
 func TestInitStorageManager(t *testing.T) {
+	setup()
 	
-	var myapp app
-	myapp.lights.SetGPIO(warning.NewMockGPIO())
-	
-	myapp.Init()
-	
-	if err := myapp.InitStorageManager(); err != nil {
-		t.Error("Call to InitStorageManager() shouldn't thrown an exception")
+	if err := testapp.InitStorageManager(); err != nil {
+		t.Error("Call to InitStorageManager() shouldn't throw an exception")
 	}
-	
-	
-	
-	if myapp.WebCamApp.storageManager.WorkDir == nil {
+
+	if testapp.WebCamApp.storageManager.WorkDir == nil {
 		t.Error("Work Directory for StorageManager not set")
 	}	
 }
 
 func TestInitStorageManagerError(t *testing.T) {
-	var myapp app
-	mockGPIO := warning.NewMockGPIO()
-	myapp.lights.SetGPIO(mockGPIO)
-	
-	myapp.Init()
+	setup()
 
-	myapp.WebCamApp.storageManager = new(mainMockStorageManager)
+	testapp.WebCamApp.storageManager = new(mainMockStorageManager)
 
-	myapp.InitStorageManager()
+	testapp.InitStorageManager()
 	
 	if mockGPIO.Pin(warning.RedLED).Read() != rpio.High {
 		t.Error("Red light not turned on")
@@ -82,22 +83,16 @@ func TestInitStorageManagerError(t *testing.T) {
 
 
 func TestStartError(t *testing.T) {
-	var myapp app;
-	mockGPIO := warning.NewMockGPIO()
-	myapp.lights.SetGPIO(mockGPIO)
-	myapp.Init()
+	setup()
 	
+	testapp.WebCamApp.command = "/bin/l"
+	testapp.WebCamApp.storageManager = GetMockStorageManagerLS()
 	
-	myapp.WebCamApp.command = "/bin/l"
-	myapp.WebCamApp.storageManager = GetMockStorageManagerLS()
+	testapp.InitStorageManager()
 	
-	myapp.InitStorageManager()
-	
-	if err := myapp.Start(); err == nil {
+	if err := testapp.Start(); err == nil {
 		t.Error("An error should have been thrown")
 	}
-	
-	
 	
 	if mockGPIO.Pin(warning.RedLED).Read() != rpio.High {
 		t.Error("Red led should be light as there is an error in execution")
