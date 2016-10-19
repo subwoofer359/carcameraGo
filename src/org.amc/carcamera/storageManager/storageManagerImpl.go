@@ -111,10 +111,10 @@ func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) 
 	} else {
 		for _, file := range files {
 			matches := matcher.FindStringSubmatch(file.Name())
-			if(len(matches) > 0) {
+			if len(matches) > 0 {
 				fileList = append(fileList, s.WorkDir() +C.SLASH + file.Name())
 				tmpIndex, _ := strconv.Atoi(matches[1])
-				if(tmpIndex > maxIndex) {
+				if tmpIndex > maxIndex {
 					maxIndex = tmpIndex;
 				}		
 			}
@@ -141,8 +141,7 @@ func removeOldFiles(s *StorageManagerImpl) {
 func (s *StorageManagerImpl) RemoveLRU() {
 	if len(s.fileList) > 0 {
 		oldFileStr := s.fileList[0]
-		err := os.Remove(oldFileStr)
-		if err != nil {
+		if err := os.Remove(oldFileStr); err != nil {
 			log.Println(err)
 		}
 		s.fileList = s.fileList[1:]
@@ -151,11 +150,9 @@ func (s *StorageManagerImpl) RemoveLRU() {
 
 func (s *StorageManagerImpl) AddCompleteFile(fileName string) error {
 	
-	file, err := os.Stat(fileName);
-	if err != nil {
+	if file, err := os.Stat(fileName); err != nil {
 		return err
-	}
-	if file.Size() > s.MinFileSize() {
+	} else if file.Size() > s.MinFileSize() {
 		s.fileList = append(s.fileList, fileName)
 		removeOldFiles(s)
 		return nil
