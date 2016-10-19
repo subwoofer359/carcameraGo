@@ -5,10 +5,10 @@ import (
 	"os"
 )
 const (
-	COMMAND = iota
+	COMMAND = iota //COMMAND the external program to execute
 	WORKDIR = iota //WORKDIR directory to write files to
 	TIMEOUT = iota //TIMEOUT kill the spawned process after set time out
-	VIDEOLENGTH = iota
+	VIDEOLENGTH = iota //VIDEOLENGTH the length of the video to record (MILLISECONDS)
 	PREFIX = iota //PREFIX file name prefix
 	SUFFIX = iota //SUFFIX file extension
 	MINFILESIZE = iota //MINFILESIZE Mininum file size
@@ -16,6 +16,6 @@ const (
 )
 
 const (
-	SLASH string = string(os.PathSeparator)
+	SLASH string = string(os.PathSeparator) //SLASH path separator
 )
 
