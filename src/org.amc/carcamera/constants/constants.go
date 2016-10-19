@@ -5,6 +5,7 @@ import (
 	"os"
 )
 const (
+	COMMAND = iota
 	WORKDIR = iota //WORKDIR directory to write files to
 	TIMEOUT = iota //TIMEOUT kill the spawned process after set time out
 	VIDEOLENGTH = iota

@@ -13,6 +13,7 @@ import (
 var ( 
 	myapp app = app {} //myapp Application object
 	context = map[int] string {
+		C.COMMAND: "/usr/bin/raspivid",
 		C.WORKDIR: "/mnt/external",
 		C.TIMEOUT: "7m",
 		C.VIDEOLENGTH: "300000",
@@ -20,6 +21,7 @@ var (
 		C.SUFFIX: ".h264",
 		C.MINFILESIZE: "0",
 		C.MAXNOOFFILES: "20",
+		
 	}
 )
 
@@ -44,7 +46,7 @@ func (a *app) Init() {
 
 func createWebCamCommand() *CameraCommandImpl {
 	return &CameraCommandImpl {
-		command: "/usr/bin/raspivid",
+		command: context[C.COMMAND],
 		args: []string{"-t", context[C.VIDEOLENGTH], "-rot", "270", "-o"},
 		storageManager: storageManager.New(context),
 		exec: exec.Command,
