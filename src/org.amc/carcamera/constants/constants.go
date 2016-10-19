@@ -7,6 +7,7 @@ import (
 const (
 	WORKDIR = iota //WORKDIR directory to write files to
 	TIMEOUT = iota //TIMEOUT kill the spawned process after set time out
+	VIDEOLENGTH = iota
 	PREFIX = iota //PREFIX file name prefix
 	SUFFIX = iota //SUFFIX file extension
 	MINFILESIZE = iota //MINFILESIZE Mininum file size

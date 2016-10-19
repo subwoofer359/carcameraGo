@@ -15,6 +15,7 @@ var (
 	context = map[int] string {
 		C.WORKDIR: "/mnt/external",
 		C.TIMEOUT: "7m",
+		C.VIDEOLENGTH: "300000",
 		C.PREFIX: "video",
 		C.SUFFIX: ".h264",
 		C.MINFILESIZE: "0",
@@ -39,6 +40,15 @@ func (a *app) Init() {
 	timeout,_ := time.ParseDuration(context[C.TIMEOUT])
 	
 	a.appTimeOut = timeout
+}
+
+func createWebCamCommand() *CameraCommandImpl {
+	return &CameraCommandImpl {
+		command: "/usr/bin/raspivid",
+		args: []string{"-t", context[C.VIDEOLENGTH], "-rot", "270", "-o"},
+		storageManager: storageManager.New(context),
+		exec: exec.Command,
+	}
 }
 
 func (a *app) InitStorageManager() error {
@@ -69,15 +79,6 @@ func (a *app) Start() error {
 func (a *app) Close() {
 	a.lights.Reset()
 	a.lights.Close()
-}
-
-func createWebCamCommand() *CameraCommandImpl {
-	return &CameraCommandImpl {
-		command: "/usr/bin/raspivid",
-		args: []string{"-o"},
-		storageManager: storageManager.New(context),
-		exec: exec.Command,
-	}
 }
 
 func main() {
