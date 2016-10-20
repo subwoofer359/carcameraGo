@@ -6,8 +6,8 @@ import (
 	"log"
 )
 
-func readConfigurationFile(jsonReader io.Reader) (map[string] interface{}, error) {
-	var context map[string] interface{}
+func ReadConfigurationFile(jsonReader io.Reader) (map[string] string, error) {
+	var context map[string] string
 	
 	err := json.NewDecoder(jsonReader).Decode(&context)
 	

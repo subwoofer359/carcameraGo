@@ -1,0 +1,10 @@
+{
+	"COMMAND": "/usr/bin/raspivid",
+	"WORKDIR": "/mnt/external",
+	"TIMEOUT": "7m",
+	"VIDEOLENGTH": "300000",
+	"PREFIX": "video",
+	"SUFFIX": ".h264",
+	"MINFILESIZE": "0",
+	"MAXNOOFFILES": "20"
+}

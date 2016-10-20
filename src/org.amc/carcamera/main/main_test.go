@@ -6,6 +6,7 @@ import (
     "errors"
     "testing"
     "github.com/stianeikeland/go-rpio"
+    "os"
 	
 )
 
@@ -101,6 +102,21 @@ func TestStartError(t *testing.T) {
 	if mockGPIO.Pin(warning.RedLED).Read() != rpio.High {
 		t.Error("Red led should be light as there is an error in execution")
 	}
+}
+
+func TestLoadConfiguration(t *testing.T) {
+	testapp = new(app)
+	var filename string = os.ExpandEnv("$GOPATH") + "/configuration.json"
+	err := testapp.LoadConfiguration(filename)
+	
+	if err != nil {
+		t.Error(err)
+	}
+	
+	if context[C.COMMAND] == "" {
+		t.Errorf("%s shouldn't be empty\n", C.COMMAND)
+	}
+	
 }
 
 //mainMockStorageManager Mock StorageManager

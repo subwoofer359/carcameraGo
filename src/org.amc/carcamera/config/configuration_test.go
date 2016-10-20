@@ -23,7 +23,7 @@ func TestReadConfFile(t *testing.T) {
 	
 	reader := strings.NewReader(JSON)
 	
-	context, err := readConfigurationFile(reader)
+	context, err := ReadConfigurationFile(reader)
 	
 	if err != nil {
 		t.Error(err)
