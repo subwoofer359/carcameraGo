@@ -44,6 +44,13 @@ func (u *UserDisplay) Reset() {
 
 func (u *UserDisplay) Open() {
 	u.gpio.Open()
+        setPinToOutput(u)
+}
+
+func setPinToOutput(u *UserDisplay) {
+        u.gpio.Pin(GreenLED).Output()
+        u.gpio.Pin(RedLED).Output()
+        u.gpio.Pin(YellowLED).Output()
 }
 
 func (u *UserDisplay) Close() {
