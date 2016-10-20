@@ -14,11 +14,11 @@ import (
 type StorageManagerImpl struct {
 	index 	int
 	fileList []string
-	context map[int] string
+	context map[string] string
 }
 
 //New create new StorageManager
-func New(context map[int] string) StorageManager {
+func New(context map[string] string) StorageManager {
 	s := new(StorageManagerImpl)
 	s.context = context
 	return s
@@ -59,7 +59,7 @@ func (s StorageManagerImpl) MinFileSize() int64 {
 	return int64(minfileSize)
 }
 
-func (s *StorageManagerImpl) GetContext() map[int] string {
+func (s *StorageManagerImpl) GetContext() map[string] string {
 	return s.context
 }
 

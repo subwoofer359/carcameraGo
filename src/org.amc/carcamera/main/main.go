@@ -12,7 +12,7 @@ import (
 
 var ( 
 	myapp app = app {} //myapp Application object
-	context = map[int] string {
+	context = map[string] string {
 		C.COMMAND: "/usr/bin/raspivid",
 		C.WORKDIR: "/mnt/external",
 		C.TIMEOUT: "7m",

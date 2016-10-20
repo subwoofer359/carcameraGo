@@ -13,5 +13,5 @@ type StorageManager interface {
 	GetNextFileName() string
 	RemoveLRU()
 	AddCompleteFile(fileName string) error
-	GetContext() map[int] string
+	GetContext() map[string] string
 }

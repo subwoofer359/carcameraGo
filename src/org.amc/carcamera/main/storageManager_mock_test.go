@@ -3,7 +3,7 @@ package main
 type mockStorageManager struct {
 	index int
 	workDir string
-	context map[int] string
+	context map[string] string
 }
 
 func (m mockStorageManager) Init() error {
@@ -50,6 +50,6 @@ func (m mockStorageManager) AddCompleteFile(fileName string) error {
 	return nil
 }
 
-func (m *mockStorageManager) GetContext() map[int] string {
+func (m *mockStorageManager) GetContext() map[string] string {
 	return m.context
 }
