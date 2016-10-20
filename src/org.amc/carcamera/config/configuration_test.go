@@ -6,16 +6,18 @@ import (
 	"strings"
 )
 
-var JSON = `{
-	"COMMAND": "/bin/ls",
-	"WORKDIR": "/tmp",
-	"TIMEOUT": "5s",
-	"VIDEOLENGTH": "1000",
-	"PREFIX": "myPrefix",
-	"SUFFIX": "mySuffix",
-	"MINFILESIZE": "0",
-	"MAXNOOFFILES": "2"
-}`
+var (
+	JSON = `{
+		"COMMAND": "/bin/ls",
+		"WORKDIR": "/tmp",
+		"TIMEOUT": "5s",
+		"VIDEOLENGTH": "1000",
+		"PREFIX": "myPrefix",
+		"SUFFIX": "mySuffix",
+		"MINFILESIZE": "0",
+		"MAXNOOFFILES": "2"
+	}`
+)
 
 func TestReadConfFile(t *testing.T) {
 	
@@ -33,5 +35,9 @@ func TestReadConfFile(t *testing.T) {
 	
 	if context[C.COMMAND] != "/bin/ls" {
 		t.Error("Configuration not loaded in map")
+	}
+	
+	if context[C.MAXNOOFFILES] != "2" {
+		t.Errorf("Configuration not loaded in map for %s\n", C.MAXNOOFFILES)
 	}
 }
