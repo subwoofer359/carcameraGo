@@ -16,8 +16,11 @@ var testapp *app
 func setup() {
 	mockGPIO = warning.NewMockGPIO()
 	
-	context[C.WORKDIR] = "/tmp" // set workdir to /tmp for testing
-	
+	context = map[string] string {
+		C.WORKDIR: "/tmp", // set workdir to /tmp for testing
+		C.PREFIX: "video",
+		C.SUFFIX: ".h264",
+	}
 	testapp = new(app)
 	testapp.lights.SetGPIO(mockGPIO)
 	testapp.Init()
