@@ -4,6 +4,8 @@ import (
 	"testing"
 	"log"
 	"strings"
+	"math/rand"
+	"time"
 )
 
 func TestAddCompleteFileSizeLessThanAllowed(t *testing.T) {
@@ -42,15 +44,58 @@ func TestAddCompleteFileForNonExistingFile(t *testing.T) {
 
 func TestAddCompleteFileStaysWithinFileLimit(t *testing.T) {
 	removeTestFiles()
-	storage := getNewStorageManager()
 	
-	for i := 1; i < storage.MaxNoOfFiles() + 10; i = i + 1 {
+	//Create some old files to clean up
+	for i := 1; i < 10; i = i + 1 {
 		createTestFile(i, t)
-		storage.AddCompleteFile(storage.GetNextFileName())
 	}
 	
-	if len(storage.FileList()) != storage.MaxNoOfFiles() {
-		t.Error("StorageManager not keeping files created within limits");
+	storage := getNewStorageManager()
+	
+	log.Printf("Minimum file size is %d", storage.MinFileSize())
+	log.Printf("Maximum no of files is %d", storage.MaxNoOfFiles())
+	
+	for i := 10; i < storage.MaxNoOfFiles() + 100; i = i + 1 {
+		createTestFile(i, t)
+		if err := storage.AddCompleteFile(storage.GetNextFileName()); err != nil {
+			t.Error(err)
+		}
+	}
+	
+	if len(storage.FileList()) > storage.MaxNoOfFiles() {
+		t.Errorf("StorageManager not keeping files created within limits.\n" + 
+			"Filelimit %d but number of files is %d", storage.MaxNoOfFiles(), len(storage.FileList()));
+	}
+}
+
+//TestAddCompleteRemovesEmptyFiles creates files greater and less than
+// MinFileSize to see if the MaxNoOfFiles is respected
+func TestAddCompleteRemovesEmptyFiles(t *testing.T) {
+	removeTestFiles()
+	
+	storage := getNewStorageManager()
+	
+	log.Printf("Minimum file size is %d", storage.MinFileSize())
+	log.Printf("Maximum no of files is %d", storage.MaxNoOfFiles())
+	
+	
+	rand.Seed(time.Now().UnixNano())
+	
+	for i := 1; i < storage.MaxNoOfFiles() + 100; i = i + 1 {
+		r := rand.Intn(10)
+		if r < 4 {
+			createTestFile(i, t)
+		} else {
+			createEmptyTestFile(i, t)
+		}
+		if err := storage.AddCompleteFile(storage.GetNextFileName()); err != nil {
+			t.Error(err)
+		}
+	}
+	
+	if len(storage.FileList()) > storage.MaxNoOfFiles() {
+		t.Errorf("StorageManager not keeping files created within limits.\n" + 
+			"Filelimit %d but number of files is %d", storage.MaxNoOfFiles(), len(storage.FileList()));
 	}
 }
 
