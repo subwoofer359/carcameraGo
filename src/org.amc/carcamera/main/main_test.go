@@ -61,10 +61,6 @@ func TestAppInit(t *testing.T) {
 		t.Error("Red light should be off")
 	}
 	
-	if mockGPIO.Pin(warning.YellowLED).Read() != rpio.Low {
-		t.Error("Yellow light should be off")
-	}
-	
 	if mockGPIO.Pin(warning.GreenLED).Read() != rpio.Low {
 		t.Error("Green light should be off")
 	}

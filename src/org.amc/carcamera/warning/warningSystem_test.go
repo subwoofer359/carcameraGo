@@ -11,12 +11,11 @@ func TestReset(t *testing.T) {
 	}
 	
 	warning.gpio.Pin(GreenLED).High()
-	warning.gpio.Pin(YellowLED).High()
 	warning.gpio.Pin(RedLED).High()
 	
 	warning.Reset()
 	
-	if warning.gpio.Pin(GreenLED).Read() == rpio.Low && warning.gpio.Pin(YellowLED).Read() == rpio.Low &&
+	if warning.gpio.Pin(GreenLED).Read() == rpio.Low &&
 		warning.gpio.Pin(RedLED).Read() == rpio.Low {
 			
 		} else {
@@ -25,22 +24,6 @@ func TestReset(t *testing.T) {
 		}
 }
 
-func TestWarning(t *testing.T) {
-	warning := UserDisplay {
-		gpio: new(MockGpio),
-	}
-	warning.Ok()
-	
-	warning.Warn()
-	
-	if warning.gpio.Pin(GreenLED).Read() == rpio.High {
-		t.Error("Green LED should be off")
-	}
-	
-	if warning.gpio.Pin(YellowLED).Read() == rpio.Low {
-		t.Errorf("Pin %d not set high\n", YellowLED)
-	}
-}
 
 func TestOk(t *testing.T) {
 	warning := UserDisplay {
@@ -53,22 +36,20 @@ func TestOk(t *testing.T) {
 		t.Errorf("Pin %d not set high\n", GreenLED)
 	}
 	
-	if warning.gpio.Pin(YellowLED).Read() == rpio.High ||
-		warning.gpio.Pin(RedLED).Read() == rpio.High {
+	if warning.gpio.Pin(RedLED).Read() == rpio.High {
 			t.Error("Yellow and Red light still on")	
-		}
+	}
 }
 
 func TestNotOk(t *testing.T) {
 	warning := UserDisplay {
 		gpio: new(MockGpio),
 	}
-	
-	warning.Warn()
+	warning.Error()
 	warning.Ok()
 	
 	if warning.gpio.Pin(GreenLED).Read() == rpio.High {
-		t.Errorf("Green Led shouldnt be light when Yellow and Red Led are light")
+		t.Errorf("Green Led shouldnt be light when Red Led is light")
 	}
 }
 

@@ -8,8 +8,6 @@ import (
 const (
 	GreenLED int = 24
 
-	YellowLED int = 23
-
 	RedLED int = 18
 )
 
@@ -21,13 +19,8 @@ func (u *UserDisplay) SetGPIO(gpio Gpio) {
 	u.gpio = gpio
 }
 
-func (u *UserDisplay) Warn() {
-	setLow(u, GreenLED)
-	setHigh(u, YellowLED)
-}
-
 func (u *UserDisplay) Ok() {
-	if !(isHigh(u, YellowLED) || isHigh(u, RedLED)) {
+	if !isHigh(u, RedLED) {
 			setHigh(u, GreenLED)
 	}
 }	
@@ -37,7 +30,6 @@ func (u *UserDisplay) Error() {
 }
 
 func (u *UserDisplay) Reset() {
-	setLow(u, YellowLED)
 	setLow(u, GreenLED)
 	setLow(u, RedLED)
 }
@@ -50,7 +42,6 @@ func (u *UserDisplay) Open() {
 func setPinToOutput(u *UserDisplay) {
         u.gpio.Pin(GreenLED).Output()
         u.gpio.Pin(RedLED).Output()
-        u.gpio.Pin(YellowLED).Output()
 }
 
 func (u *UserDisplay) Close() {
