@@ -13,6 +13,7 @@ const (
 	SUFFIX = "SUFFIX" //SUFFIX file extension
 	MINFILESIZE = "MINFILESIZE" //MINFILESIZE Mininum file size
 	MAXNOOFFILES = "MAXNOOFFILES" //MAXNOOFFILES maximum no of files in the WORKDIR
+	OPTIONS = "OPTIONS" //OPTIONS command line options
 )
 
 const (

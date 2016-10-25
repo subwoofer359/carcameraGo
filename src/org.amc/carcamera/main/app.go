@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -33,9 +34,13 @@ func (a *app) Init() {
 }
 
 func createWebCamCommand() *CameraCommandImpl {
+	//concatenate options string and durations string which are separate
+	options := append([]string {"-t", context[C.VIDEOLENGTH]}, 
+		strings.Split(context[C.OPTIONS], " ")...)
+	
 	return &CameraCommandImpl {
 		command: context[C.COMMAND],
-		args: []string{"-t", context[C.VIDEOLENGTH], "-rot", "270", "-o"},
+		args: options,
 		storageManager: storageManager.New(context),
 		exec: exec.Command,
 	}

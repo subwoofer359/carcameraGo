@@ -7,7 +7,7 @@ import (
     "testing"
     "github.com/stianeikeland/go-rpio"
     "os"
-	
+	"sort"
 )
 
 
@@ -21,6 +21,7 @@ func setup() {
 		C.WORKDIR: "/tmp", // set workdir to /tmp for testing
 		C.PREFIX: "video",
 		C.SUFFIX: ".h264",
+		C.OPTIONS: "-ss 70000 -rot 90",
 	}
 	testapp = new(app)
 	testapp.lights.SetGPIO(mockGPIO)
@@ -34,6 +35,19 @@ func TestCreateCameraCommand(t *testing.T) {
 	if command == nil {
 		t.Error("Command not created")
 	}
+	
+	if sort.SearchStrings(command.args, "-rot") >= len(command.args) {
+		t.Error("Option Rotate not found")
+	}
+	
+	if sort.SearchStrings(command.args, "90") >= len(command.args) {
+		t.Error("Option Rotate argument not found")
+	}
+	
+	if sort.SearchStrings(command.args, "help") < len(command.args) {
+		t.Error("Unspecified option found")
+	}
+	
 }
 
 func TestAppInit(t *testing.T) {

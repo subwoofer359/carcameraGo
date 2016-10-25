@@ -6,5 +6,6 @@
 	"PREFIX": "video",
 	"SUFFIX": ".h264",
 	"MINFILESIZE": "0",
-	"MAXNOOFFILES": "20"
+	"MAXNOOFFILES": "20",
+	"OPTIONS": "-fps 25 -ex night -rot 90 -n -a 12 -o"
 }
