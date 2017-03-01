@@ -21,7 +21,7 @@ func TestDestinationIsWritable (t *testing.T) {
 	
 	
 	
-	context := map[string] string {
+	context := map[string] interface{} {
 		C.WORKDIR: TESTDIR,
 		C.TIMEOUT: "5s",
 		C.PREFIX: T_PREFIX,

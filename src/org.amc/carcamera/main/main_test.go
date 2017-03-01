@@ -8,6 +8,7 @@ import (
     "github.com/stianeikeland/go-rpio"
     "os"
 	"sort"
+	"log"
 )
 
 
@@ -17,18 +18,23 @@ var testapp *app
 func setup() {
 	mockGPIO = warning.NewMockGPIO()
 	
-	context = map[string] string {
-		C.WORKDIR: "/tmp", // set workdir to /tmp for testing
-		C.PREFIX: "video",
-		C.SUFFIX: ".h264",
-		C.OPTIONS: "-ss 70000 -rot 90",
-	}
+	context = make(map[string] interface{}) 
+	
+	context[C.COMMAND] = "/bin/ls"
+	context[C.WORKDIR] = "/tmp" // set workdir to /tmp for testing
+	context[C.PREFIX] = "video"
+	context[C.SUFFIX] = ".h264"
+	context[C.OPTIONS]  = []string {"-ss", "70000", "-rot", "90"}
+	context[C.TIMEOUT]  = "1000"
+	
+	log.Println(context)
 	testapp = new(app)
 	testapp.lights.SetGPIO(mockGPIO)
 	testapp.Init()
 }
 
 func TestCreateCameraCommand(t *testing.T) {
+	
 	setup()
 	command := createWebCamCommand()
 	

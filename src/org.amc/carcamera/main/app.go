@@ -8,11 +8,10 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 	"time"
 )
 
-var	context map[string] string
+var	context map[string] interface{}
 
 type app struct {
 	runner *Runner
@@ -28,26 +27,22 @@ func (a *app) Init() {
 	
 	a.WebCamApp  = createWebCamCommand()
 	
-	timeout,_ := time.ParseDuration(context[C.TIMEOUT])
+	timeout,_ := time.ParseDuration(context[C.TIMEOUT].(string))
 	
 	a.appTimeOut = timeout
 }
 
 func createWebCamCommand() *CameraCommandImpl {
-	//concatenate options string and durations string which are separate
-	options := append([]string {"-t", context[C.VIDEOLENGTH]}, 
-		strings.Split(context[C.OPTIONS], " ")...)
-	
 	return &CameraCommandImpl {
-		command: context[C.COMMAND],
-		args: options,
+		command: context[C.COMMAND].(string),
+		args: context[C.OPTIONS].([]string),
 		storageManager: storageManager.New(context),
 		exec: exec.Command,
 	}
 }
 
 func (a *app) InitStorageManager() error {
-	a.WebCamApp.storageManager.SetWorkDir(context[C.WORKDIR])
+	a.WebCamApp.storageManager.SetWorkDir(context[C.WORKDIR].(string))
 	if err := a.WebCamApp.storageManager.Init(); err != nil {
 		a.lights.Error()
 		return err

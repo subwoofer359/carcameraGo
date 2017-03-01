@@ -14,22 +14,22 @@ import (
 type StorageManagerImpl struct {
 	index 	int
 	fileList []string
-	context map[string] string
+	context map[string] interface{}
 }
 
 //New create new StorageManager
-func New(context map[string] string) StorageManager {
+func New(context map[string] interface{}) StorageManager {
 	s := new(StorageManagerImpl)
 	s.context = context
 	return s
 }
 
 func (s StorageManagerImpl) Prefix() string {
-	return s.context[C.PREFIX];
+	return s.context[C.PREFIX].(string);
 }
 
 func (s StorageManagerImpl) Suffix() string {
-	return s.context[C.SUFFIX]
+	return s.context[C.SUFFIX].(string)
 }
 
 func (s StorageManagerImpl) Index() int {
@@ -37,7 +37,7 @@ func (s StorageManagerImpl) Index() int {
 }
 
 func (s StorageManagerImpl) WorkDir() string {
-	return s.context[C.WORKDIR]
+	return s.context[C.WORKDIR].(string)
 }
 
 func (s *StorageManagerImpl) SetWorkDir(workDir string) {
@@ -50,16 +50,16 @@ func (s StorageManagerImpl) FileList() []string {
 
 //MaxNoOfFiles return MaxNoOfFiles
 func (s StorageManagerImpl) MaxNoOfFiles() int {
-	maxfiles,_ := strconv.Atoi(s.context[C.MAXNOOFFILES])
+	maxfiles,_ := strconv.Atoi(s.context[C.MAXNOOFFILES].(string))
 	return maxfiles
 }
 
 func (s StorageManagerImpl) MinFileSize() int64 {
-	minfileSize,_ := strconv.Atoi(s.context[C.MINFILESIZE])
+	minfileSize,_ := strconv.Atoi(s.context[C.MINFILESIZE].(string))
 	return int64(minfileSize)
 }
 
-func (s *StorageManagerImpl) GetContext() map[string] string {
+func (s *StorageManagerImpl) GetContext() map[string] interface{} {
 	return s.context
 }
 

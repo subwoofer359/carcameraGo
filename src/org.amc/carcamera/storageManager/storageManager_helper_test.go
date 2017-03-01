@@ -26,7 +26,7 @@ func removeTestFiles() {
 }
 
 func getNewStorageManager() StorageManager {
-	context := map[string] string {
+	context := map[string] interface{} {
 		C.WORKDIR: T_WORKDIR,
 		C.TIMEOUT: "5s",
 		C.PREFIX: T_PREFIX,
