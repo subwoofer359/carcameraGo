@@ -27,23 +27,12 @@ func (testS *testService) Error(message string) {
 
 
 type testServiceFail struct {
-	initCalled bool
-	errMessage string
-	started bool
-	
+	testService
 }
 
 func (testS *testServiceFail) Init() error {
 	
 	return errors.New("Test Error")
-}
-
-func (testS *testServiceFail) Error(message string) {
-	testS.errMessage = message
-}
-
-func (testS *testServiceFail) Started() {
-	testS.started = true
 }
 
 
