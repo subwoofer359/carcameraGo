@@ -8,6 +8,7 @@ type messageService interface {
 	Init() error
 	Error(message string)
 	Started()
+	Stopped()
 	
 }
 
@@ -37,6 +38,12 @@ func (m Message) Init() error {
 func (m Message) Started() {
 	for _, service := range m.services {
 		service.Started()
+	}
+}
+
+func (m Message) Stopped() {
+	for _, service := range m.services {
+		service.Stopped()
 	}
 }
 

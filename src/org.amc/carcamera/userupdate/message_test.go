@@ -20,6 +20,10 @@ func (testS *testService) Started() {
 	testS.started = true
 }
 
+func (testS *testService) Stopped() {
+	testS.started = false
+}
+
 func (testS *testService) Error(message string) {
 	testS.errMessage = message
 }
@@ -98,5 +102,23 @@ func TestStarted(t *testing.T) {
 	
 	if tService.started == false {
 		t.Error("Service not started")
+	}
+}
+
+func TestStopped(t *testing.T) {
+	message := new(Message)
+	tService := new(testService)
+	message.AddService(tService)
+	
+	message.Started()
+	
+	if tService.started == false {
+		t.Error("Service not started")
+	}
+	
+	message.Stopped()
+	
+	if tService.started != false {
+		t.Error("Service should be stopped")
 	}
 }
