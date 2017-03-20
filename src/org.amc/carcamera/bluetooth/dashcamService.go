@@ -36,7 +36,7 @@ func NewDashCamService() *gatt.Service {
 	c.HandleNotifyFunc(
 		func(r gatt.Request, n gatt.Notifier) {
 			notify(n, dcBTServ)
-		})G
+		})
 	c.AddDescriptor(gatt.UUID16(0x2901)).SetValue([]byte("Dashcam status"))
 	
 	c.AddDescriptor(gatt.UUID16(0x2904)).SetValue([]byte{0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00})
