@@ -36,7 +36,7 @@ func (u *UserDisplay) Reset() {
 
 func (u *UserDisplay) Open() {
 	u.gpio.Open()
-        setPinToOutput(u)
+    setPinToOutput(u)
 }
 
 func setPinToOutput(u *UserDisplay) {
