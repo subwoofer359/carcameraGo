@@ -5,6 +5,7 @@ import (
 	"github.com/paypal/gatt/linux/cmd"
 	"log"
 	"fmt"
+	"runtime"
 )
 //============== Main Service ==================
 var DefaultClientOptions = []gatt.Option{
@@ -53,5 +54,9 @@ func StartBLE() {
 	}
 	
 	d.Init(onStateChanged)
-	select {}
+	
+	for {
+		GetDashCamBTService().Update()
+		runtime.Gosched()
+	}
 }
