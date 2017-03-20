@@ -2,6 +2,7 @@ package bluetooth
 
 import (
 	"testing"
+	"time"
 )
 
 func TestDashCamService(t *testing.T) {
@@ -26,5 +27,13 @@ func TestDashCamService(t *testing.T) {
 }
 
 func TestStartBLE(t *testing.T) {
-	StartBLE()
+	go StartBLE()
+	dcBTServ.SendStatus(true)
+	dcBTServ.SendStatus(true)
+	time.Sleep(1 * time.Second)
+	dcBTServ.SendStatus(false)
+	time.Sleep(1 * time.Second)
+	dcBTServ.SendStatus(true)
+	dcBTServ.SendStatus(false)
+	time.Sleep(1 * time.Second)
 }
