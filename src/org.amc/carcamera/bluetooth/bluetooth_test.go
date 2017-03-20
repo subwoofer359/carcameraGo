@@ -26,14 +26,18 @@ func TestDashCamService(t *testing.T) {
 	}
 }
 
+
 func TestStartBLE(t *testing.T) {
 	go StartBLE()
+	time.Sleep(10 * time.Second)
 	dcBTServ.SendStatus(true)
+	time.Sleep(1 * time.Second)
 	dcBTServ.SendStatus(true)
 	time.Sleep(1 * time.Second)
 	dcBTServ.SendStatus(false)
 	time.Sleep(1 * time.Second)
 	dcBTServ.SendStatus(true)
+	time.Sleep(1 * time.Second)
 	dcBTServ.SendStatus(false)
 	time.Sleep(1 * time.Second)
 }

@@ -9,6 +9,7 @@ import (
 //=========== DashCam Service ===================
 
 type dashCamBTService struct {
+	statusChanged bool
 	status bool
 	dsStatus chan bool
 }
@@ -30,12 +31,12 @@ func NewDashCamService() *gatt.Service {
 	
 	c.HandleReadFunc(
 		func(rsp gatt.ResponseWriter, req *gatt.ReadRequest) {
-			rsp.Write([]byte(strconv.FormatBool(getStatus())))
+			rsp.Write([]byte(strconv.FormatBool(dcBTServ.getStatus())))
 		})
 	c.HandleNotifyFunc(
 		func(r gatt.Request, n gatt.Notifier) {
-			notify(n)
-		})
+			notify(n, dcBTServ)
+		})G
 	c.AddDescriptor(gatt.UUID16(0x2901)).SetValue([]byte("Dashcam status"))
 	
 	c.AddDescriptor(gatt.UUID16(0x2904)).SetValue([]byte{0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00})
@@ -43,33 +44,45 @@ func NewDashCamService() *gatt.Service {
 	return s
 }
 
+func notify(n gatt.Notifier, d *dashCamBTService) {
+	for !n.Done() {
+		if d.statusChanged == true {
+			var statusStr string = strconv.FormatBool(d.getStatus())
+			log.Printf("Notify: written message: %s", statusStr)
+			n.Write([]byte(statusStr))
+			d.statusChanged = false
+			
+		}
+	}
+	log.Println("Notify method exited")
+}
+
 func (d *dashCamBTService) SendStatus(status bool) {
+	log.Println("Sending Status")
 	d.dsStatus <- status
+}
+
+func (d *dashCamBTService) getStatus() bool {
+	log.Println("Getting status")
+	
+	return d.status
+}
+
+func (d *dashCamBTService) Update() {
+	select {
+		case status := <- d.dsStatus:
+			d.setStatus(status)						
+		default:
+	}
+}
+
+func (d *dashCamBTService) setStatus(status bool) {
+	if d.status != status {
+		d.statusChanged = true
+	}
+	d.status = status
 }
 
 func GetDashCamBTService() *dashCamBTService {
 	return dcBTServ
-}
-
-func getStatus() bool {
-	select {
-			case status := <- dcBTServ.dsStatus:
-			dcBTServ.status = status				
-			default:
-		}
-	return dcBTServ.status
-}
-
-func notify(n gatt.Notifier) {
-	for !n.Done() {
-		select {
-			case status := <- dcBTServ.dsStatus:
-				log.Printf("Notify: written message: %s", strconv.FormatBool(status))
-				dcBTServ.status = status
-				n.Write([]byte(strconv.FormatBool(status)))
-			default:
-				//log.Println("Notify:No message received")
-		}
-	}
-	log.Println("Notify method exited")
 }
