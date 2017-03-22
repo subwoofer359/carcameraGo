@@ -4,16 +4,17 @@ import (
 
 )
 
-type messageService interface {
+type MessageService interface {
 	Init() error
 	Error(message string)
-	Started()
-	Stopped()
+	Started() //message that the monitored program has started
+	Stopped() //message that the monitored program has stopped
+	Close()
 	
 }
 
 type Message struct {
-	services []messageService
+	services []MessageService
 }
 
 func (m Message) Error(message string) {
@@ -47,7 +48,12 @@ func (m Message) Stopped() {
 	}
 }
 
-
-func (m *Message) AddService(service messageService) {
+func (m *Message) AddService(service MessageService) {
 	m.services = append(m.services, service)
 } 
+
+func (m *Message) Close() {
+	for _, service := range m.services {
+		service.Close()
+	}
+}

@@ -23,6 +23,10 @@ func (l *LEDService) Started() {
 }
 
 func (l *LEDService) Stopped() {
+	l.led.Error()
+}
+
+func (l *LEDService) Close() {
 	l.led.Close()
 }
 

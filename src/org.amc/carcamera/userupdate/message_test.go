@@ -9,6 +9,7 @@ type testService struct {
 	initCalled bool
 	started bool
 	errMessage string
+	isClosed bool
 }
 
 func (testS *testService) Init() error {
@@ -28,6 +29,9 @@ func (testS *testService) Error(message string) {
 	testS.errMessage = message
 }
 
+func (testS *testService) Close() {
+	testS.isClosed = true
+}
 
 
 type testServiceFail struct {
@@ -120,5 +124,21 @@ func TestStopped(t *testing.T) {
 	
 	if tService.started != false {
 		t.Error("Service should be stopped")
+	}
+}
+
+func TestisClosed(t *testing.T) {
+	message := new(Message)
+	tService := new(testService)
+	message.AddService(tService)
+	
+	if tService.isClosed == true {
+		t.Error("Service shouldn't be closed")
+	}
+	
+	message.Close()
+	
+	if tService.isClosed != true {
+		t.Error("Service should be closed")
 	}
 }
