@@ -39,14 +39,14 @@ func StartBLE() {
 	
 		switch s {
 			case gatt.StatePoweredOn:
-				d.AddService(NewGapService("Gopher"))
+				d.AddService(NewGapService("DashCam"))
 				d.AddService(NewGattService())
 			
 				s1 := NewDashCamService()
 			
 				d.AddService(s1)
 			
-				d.AdvertiseNameAndServices("DashCam", []gatt.UUID{s1.UUID()})
+				d.AdvertiseNameAndServices("Dash Cam", []gatt.UUID{s1.UUID()})
 				
 				d.AdvertiseIBeacon(gatt.MustParseUUID("AA6062F098CA42118EC4193EB73CCEB6"), 1, 2, -59)
 			default:
