@@ -126,7 +126,30 @@ func TestLEDServiceStopped(t *testing.T) {
 	
 	ledService.Started()
 	
+	redPin := mockGPIO.Pin(warning.RedLED)
+	
+	
+	if redPin.Read() == rpio.High {
+		t.Error("Red light should not be on")
+	}
+	
 	ledService.Stopped()
+	
+	if redPin.Read() != rpio.High {
+		t.Error("Red light should be on")
+	}
+}
+
+func TestLEDServiceIsClosed(t *testing.T) {
+	ledService := new (LEDService)
+	
+	mockGPIO := warning.NewMockGPIO()
+	
+	ledService.SetGPIO(mockGPIO)
+	
+	ledService.Init()
+	
+	ledService.Close()
 	
 	if mockGPIO.IsOpen() {
 		t.Error("GPIO wasn't closed")
