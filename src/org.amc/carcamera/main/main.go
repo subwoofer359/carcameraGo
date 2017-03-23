@@ -2,6 +2,7 @@ package main
 
 import (
 	"org.amc/carcamera/warning"
+	"org.amc/carcamera/userupdate"
 	"log"
 	"flag"
 )
@@ -23,8 +24,16 @@ func main() {
 		log.Fatal(err)
 	}
 	
-	myapp.lights.SetGPIO(warning.RpioImpl{})
+	ledService := new(userupdate.LEDService)
+	ledService.SetGPIO(warning.RpioImpl{})
+	
 	myapp.Init()
+	
+	myapp.message.AddService(ledService)
+	
+	if err := myapp.message.Init(); err !=nil {
+		log.Fatal(err)
+	}
 	
 	defer myapp.Close()
 	
@@ -32,7 +41,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	myapp.lights.Ok()
+	myapp.message.Started()
 	
 	if err := myapp.Start(); err != nil {
 		log.Fatal(err)

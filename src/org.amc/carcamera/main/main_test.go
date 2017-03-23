@@ -3,6 +3,7 @@ package main
 import (
 	C "org.amc/carcamera/constants"
 	"org.amc/carcamera/warning"
+	"org.amc/carcamera/userupdate"
     "errors"
     "testing"
     "github.com/stianeikeland/go-rpio"
@@ -29,8 +30,15 @@ func setup() {
 	
 	log.Println(context)
 	testapp = new(app)
-	testapp.lights.SetGPIO(mockGPIO)
+	
+	ledService := new(userupdate.LEDService)
+	ledService.SetGPIO(mockGPIO)
+	
 	testapp.Init()
+	
+	testapp.message.AddService(ledService)
+	
+	testapp.message.Init()
 }
 
 func TestCreateCameraCommand(t *testing.T) {
