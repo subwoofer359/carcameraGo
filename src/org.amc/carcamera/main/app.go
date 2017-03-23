@@ -5,6 +5,7 @@ import (
 	C "org.amc/carcamera/constants"
 	"org.amc/carcamera/warning"
 	"org.amc/carcamera/storageManager"
+	"org.amc/carcamera/userupdate"
 	"log"
 	"os"
 	"os/exec"
@@ -16,20 +17,22 @@ var	context map[string] interface{}
 type app struct {
 	runner *Runner
 	lights warning.UserDisplay
+	message *userupdate.Message
 	WebCamApp *CameraCommandImpl
 	appTimeOut time.Duration
 }
 
 func (a *app) Init() {
 	log.Println("Starting WebCam Program")
-	a.lights.Open()
-	a.lights.Reset()
+	
+	a.message = new(userupdate.Message)
 	
 	a.WebCamApp  = createWebCamCommand()
 	
 	timeout,_ := time.ParseDuration(context[C.TIMEOUT].(string))
 	
 	a.appTimeOut = timeout
+	
 }
 
 func createWebCamCommand() *CameraCommandImpl {
@@ -44,7 +47,7 @@ func createWebCamCommand() *CameraCommandImpl {
 func (a *app) InitStorageManager() error {
 	a.WebCamApp.storageManager.SetWorkDir(context[C.WORKDIR].(string))
 	if err := a.WebCamApp.storageManager.Init(); err != nil {
-		a.lights.Error()
+		a.message.Error(err.Error())
 		return err
 	}
 	return nil
@@ -58,7 +61,7 @@ func (a *app) Start() error {
 		err := a.runner.Start()
 		
 		if err != nil && err.Error() != "completed" {
-			a.lights.Error()
+			a.message.Error(err.Error())
 			return err
 		}
 	}
@@ -67,8 +70,7 @@ func (a *app) Start() error {
 }
 
 func (a *app) Close() {
-	a.lights.Reset()
-	a.lights.Close()
+	a.message.Stopped()
 }
 
 func (a app) LoadConfiguration(filename string) error {
