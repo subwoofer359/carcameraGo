@@ -17,6 +17,7 @@ type dashCamBTService struct {
 var ( 
 	attrDCSUUID = gatt.MustParseUUID("0104988e-59eb-4a00-b051-3e7b2565f631")
 	attrSTATUSUUID = gatt.MustParseUUID("1f5cf887-d886-484c-8140-8ec407d0e9e6")
+	attrERRORUUID = gatt.MustParseUUID("bcc13eef-ad4e-45d3-a2b7-a0b4a4d3d296")
 	dcBTServ = new (dashCamBTService)
 	
 )
@@ -27,6 +28,16 @@ func init() {
 
 func NewDashCamService() *gatt.Service {
 	s := gatt.NewService(attrDCSUUID)
+	
+	addStatusCharacteristic(s)
+	return s
+}
+
+/*
+ * Set up Characteristic for Status
+ */
+
+func addStatusCharacteristic(s *gatt.Service) {
 	c := s.AddCharacteristic(attrSTATUSUUID)
 	
 	c.HandleReadFunc(
@@ -40,8 +51,6 @@ func NewDashCamService() *gatt.Service {
 	c.AddDescriptor(gatt.UUID16(0x2901)).SetValue([]byte("Dashcam status"))
 	
 	c.AddDescriptor(gatt.UUID16(0x2904)).SetValue([]byte{0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00})
-	
-	return s
 }
 
 func notify(n gatt.Notifier, d *dashCamBTService) {
