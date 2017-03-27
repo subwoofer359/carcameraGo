@@ -35,9 +35,10 @@ func TestStartBLE(t *testing.T) {
 	dcBTServ.SendStatus(true)
 	time.Sleep(1 * time.Second)
 	dcBTServ.SendStatus(false)
+	dcBTServ.SendError("Help me!")
 	time.Sleep(1 * time.Second)
 	dcBTServ.SendStatus(true)
 	time.Sleep(1 * time.Second)
 	dcBTServ.SendStatus(false)
-	time.Sleep(1 * time.Second)
+	time.Sleep(60 * time.Second)
 }

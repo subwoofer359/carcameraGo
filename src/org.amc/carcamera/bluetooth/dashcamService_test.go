@@ -12,16 +12,19 @@ import (
 func getTestDashCamBTService() *dashCamBTService {
 	service := new (dashCamBTService)
 	service.dsStatus = make(chan bool, 1)
+	service.dsErrorMsg = make(chan string, 1)
 	return service
 }
 
 type mockNotifier struct {
+	wasWritten bool
 	written []byte
 	check bool
 }
 
 func (m *mockNotifier) Write(data []byte) (int, error) {
 	m.written = data
+	m.wasWritten = true
 	m.check = true
 	return 0, nil
 }
@@ -34,11 +37,10 @@ func (m mockNotifier) Cap() int {
 	return 0
 }
 
-func TestNotify(t *testing.T) {
-	
+func TestNotify(t *testing.T) {	
 	service := getTestDashCamBTService()
 	notifier := new(mockNotifier)
-	go notify(notifier, service)
+	go notifyStatus(notifier, service)
 	log.Println("Sending message true")
 	service.SendStatus(true)
 	service.Update()
