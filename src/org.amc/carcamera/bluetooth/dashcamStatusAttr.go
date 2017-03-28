@@ -45,7 +45,11 @@ func notifyStatus(n gatt.Notifier, d *dashCamBTService) {
 
 func (d *dashCamBTService) SendStatus(status bool) {
 	log.Println("Sending Status")
-	d.dsStatus <- status
+	select {
+		case d.dsStatus <- status:
+		default:
+			log.Println("Status channel is full")
+	}
 }
 
 func (d *dashCamBTService) getStatus() bool {

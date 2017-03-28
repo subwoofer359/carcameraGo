@@ -5,6 +5,7 @@ import (
 	"org.amc/carcamera/userupdate"
 	"log"
 	"flag"
+	"time"
 )
 
 
@@ -24,26 +25,36 @@ func main() {
 		log.Fatal(err)
 	}
 	
+	btService := new(userupdate.BTService)
+	
 	ledService := new(userupdate.LEDService)
 	ledService.SetGPIO(warning.RpioImpl{})
 	
 	myapp.Init()
 	
 	myapp.message.AddService(ledService)
+	myapp.message.AddService(btService)
 	
 	if err := myapp.message.Init(); err !=nil {
 		log.Fatal(err)
 	}
 	
 	defer myapp.Close()
-	
-	if err := myapp.InitStorageManager(); err != nil {
-		log.Fatal(err)
-	}
-
 	myapp.message.Started()
 	
-	if err := myapp.Start(); err != nil {
-		log.Fatal(err)
+	if err := myapp.InitStorageManager(); err != nil {
+		myapp.message.Error(err.Error())
+		mainExit()
 	}
+	
+	if err := myapp.Start(); err != nil {
+		myapp.message.Error(err.Error())
+		mainExit()
+	}
+}
+
+func mainExit() {
+        myapp.message.Stopped()
+        time.Sleep(30 * time.Second)
+        log.Fatal("Program stopped due to error conditions")
 }

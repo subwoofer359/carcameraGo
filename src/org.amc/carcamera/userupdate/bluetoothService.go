@@ -12,6 +12,7 @@ type BTService struct {
 }
 
 func (bt *BTService) Init() error {
+	bt.dashService = bluetooth.GetDashCamBTService()
 	go bluetooth.StartBLE()
 	return nil
 }
