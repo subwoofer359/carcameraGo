@@ -2,6 +2,7 @@ package bluetooth
 
 import (
 	"github.com/paypal/gatt"
+	"org.amc/carcamera/util"
 	"log"
 )
 
@@ -17,7 +18,7 @@ func addErrorCharacteristic(s *gatt.Service) {
 		func(rsp gatt.ResponseWriter, req *gatt.ReadRequest) {
 			message := dcBTServ.getErrorMsg()
 			if len(message) > MESSAGE_SIZE {
-				for _, frag := range stringChop(message, MESSAGE_SIZE) {
+				for _, frag := range util.StringChop(message, MESSAGE_SIZE) {
 					rsp.Write([]byte(frag))
 				}
 			} else { 
@@ -34,23 +35,6 @@ func addErrorCharacteristic(s *gatt.Service) {
 	c.AddDescriptor(gatt.UUID16(0x2904)).SetValue([]byte{0x1A, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00})
 	
 }
-
-func stringChop(sentence string, length int) []string {
-	s := []string{}
-	if len(sentence) < length {
-		return []string{sentence}
-	} else {
-		for pointer := 0; pointer < len(sentence); pointer += length {
-			end := pointer + length
-			if end >= len(sentence){
-				end = len(sentence)
-			}
-			log.Println(sentence[ pointer : end])
-			s = append(s,sentence[pointer : end])
-		} 
-	}
-	return s
-} 
 
 func notifyError(n gatt.Notifier, d *dashCamBTService) {
 	for !n.Done() {

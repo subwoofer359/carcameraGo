@@ -1,4 +1,4 @@
-package bluetooth
+package util
 
 import (
     "testing"
