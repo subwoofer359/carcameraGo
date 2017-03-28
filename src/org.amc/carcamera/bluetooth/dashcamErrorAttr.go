@@ -7,6 +7,7 @@ import (
 
 var (
 	attrERRORUUID = gatt.MustParseUUID("bcc13eef-ad4e-45d3-a2b7-a0b4a4d3d296")
+	MESSAGE_SIZE int = 22
 )
 
 func addErrorCharacteristic(s *gatt.Service) {
@@ -14,7 +15,14 @@ func addErrorCharacteristic(s *gatt.Service) {
 	
 	c.HandleReadFunc(
 		func(rsp gatt.ResponseWriter, req *gatt.ReadRequest) {
-			rsp.Write([]byte(dcBTServ.getErrorMsg()))
+			message := dcBTServ.getErrorMsg()
+			if len(message) > MESSAGE_SIZE {
+				for _, frag := range stringChop(message, MESSAGE_SIZE) {
+					rsp.Write([]byte(frag))
+				}
+			} else { 
+				rsp.Write([]byte(message))
+			}
 		})
 	c.HandleNotifyFunc(
 		func(r gatt.Request, n gatt.Notifier) {
@@ -26,6 +34,23 @@ func addErrorCharacteristic(s *gatt.Service) {
 	c.AddDescriptor(gatt.UUID16(0x2904)).SetValue([]byte{0x1A, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00})
 	
 }
+
+func stringChop(sentence string, length int) []string {
+	s := []string{}
+	if len(sentence) < length {
+		return []string{sentence}
+	} else {
+		for pointer := 0; pointer < len(sentence); pointer += length {
+			end := pointer + length
+			if end >= len(sentence){
+				end = len(sentence)
+			}
+			log.Println(sentence[ pointer : end])
+			s = append(s,sentence[pointer : end])
+		} 
+	}
+	return s
+} 
 
 func notifyError(n gatt.Notifier, d *dashCamBTService) {
 	for !n.Done() {
@@ -40,7 +65,11 @@ func notifyError(n gatt.Notifier, d *dashCamBTService) {
 
 func (d *dashCamBTService) SendError(errorMsg string) {
 	log.Printf("Sending error message(%s)", errorMsg)
-	d.dsErrorMsg <- errorMsg
+	select {
+		case d.dsErrorMsg <- errorMsg:
+		default:
+			log.Println("Error channel is full")
+	}
 }
 
 func (d *dashCamBTService) setErrorMsg(errorMsg string) {
