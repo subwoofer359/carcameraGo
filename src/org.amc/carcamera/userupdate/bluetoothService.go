@@ -5,7 +5,10 @@ import (
 )
 
 type BTService struct {
-	 dashService interface{ SendStatus(val bool)}
+	 dashService interface { 
+	 	SendStatus(val bool)
+	 	SendError(errorMsg string)
+	 }
 }
 
 func (bt *BTService) Init() error {
@@ -14,7 +17,7 @@ func (bt *BTService) Init() error {
 }
 
 func (bt BTService)	Error(message string) {
-	//Todo
+	bt.dashService.SendError(message)
 }
 
 func (bt *BTService) Started() {
