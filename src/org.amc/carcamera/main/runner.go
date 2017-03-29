@@ -19,7 +19,7 @@ var ErrTimeout = errors.New("received timeout")
 
 var ErrInterrupt = errors.New("received interrupt")
 
-func New(d time.Duration) *Runner {
+func NewRunner(d time.Duration) *Runner {
 	return &Runner{
 		interrupt: make(chan os.Signal, 1),
 		complete: make(chan error),

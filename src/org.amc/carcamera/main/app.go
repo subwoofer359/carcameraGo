@@ -55,7 +55,7 @@ func (a *app) InitStorageManager() error {
 
 func (a *app) Start() error {
 	for {
-		a.runner = New(a.appTimeOut)
+		a.runner = NewRunner(a.appTimeOut)
 		a.runner.add(a.WebCamApp)
 		
 		err := a.runner.Start()

@@ -12,7 +12,7 @@ const timeout = 1 * time.Second
 
 func TestRunnerStart(t *testing.T) {
 	
-	myRunner := New(timeout);
+	myRunner := NewRunner(timeout);
 	
 	command := &CameraCommandImpl {
 		command: "/bin/ls",
@@ -32,7 +32,7 @@ func TestRunnerStart(t *testing.T) {
 
 func TestRunnerStartTimeOut(t *testing.T) { 
 	
-	myRunner := New(timeout);
+	myRunner := NewRunner(timeout);
 	
 	command := &CameraCommandImpl {
 		command: "/bin/dd",
@@ -51,7 +51,7 @@ func TestRunnerStartTimeOut(t *testing.T) {
 
 func TestRunnerStartInterrupted(t *testing.T) { 
 	
-	myRunner := New(10 * time.Second);
+	myRunner := NewRunner(10 * time.Second);
 	
 	command := &CameraCommandImpl {
 		command: "/bin/dd",
