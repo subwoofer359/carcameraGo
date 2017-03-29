@@ -4,6 +4,7 @@ import (
 	"github.com/paypal/gatt"
 	"strconv"
 	"log"
+	"time"
 )
 
 var (
@@ -35,6 +36,7 @@ func notifyStatus(n gatt.Notifier, d *dashCamBTService) {
 			d.statusChanged = false
 			
 		}
+		time.Sleep(NOTIFY_DELAY)	
 	}
 	log.Println("Notify method exited")
 }

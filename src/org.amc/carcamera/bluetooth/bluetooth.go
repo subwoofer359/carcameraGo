@@ -6,23 +6,30 @@ import (
 	"log"
 	"fmt"
 	"runtime"
+	"time"
 )
 //============== Main Service ==================
-var DefaultClientOptions = []gatt.Option{
+
+var (
+	DefaultClientOptions = []gatt.Option {
 	gatt.LnxMaxConnections(1),
 	gatt.LnxDeviceID(-1, true),
 }
 
-var DefaultServerOptions = []gatt.Option{
-	gatt.LnxMaxConnections(2),
-	gatt.LnxDeviceID(-1, true),
-	gatt.LnxSetAdvertisingParameters(&cmd.LESetAdvertisingParameters{
-		AdvertisingIntervalMin: 0x00f4,
-		AdvertisingIntervalMax: 0x00f4,
-		AdvertisingChannelMap:  0x7,
-	}),
-}
-
+	DefaultServerOptions = []gatt.Option {
+		gatt.LnxMaxConnections(2),
+		gatt.LnxDeviceID(-1, true),
+		gatt.LnxSetAdvertisingParameters(&cmd.LESetAdvertisingParameters{
+			AdvertisingIntervalMin: 0x00f4,
+			AdvertisingIntervalMax: 0x00f4,
+			AdvertisingChannelMap:  0x7,
+		}),
+	}
+	
+	UPDATE_DELAY = 10 * time.Second
+	
+	NOTIFY_DELAY = 2 * time.Second
+)
 func StartBLE() {
 	d, err := gatt.NewDevice(DefaultServerOptions...)
 	if err != nil {
@@ -58,5 +65,6 @@ func StartBLE() {
 	for {
 		GetDashCamBTService().Update()
 		runtime.Gosched()
+		time.Sleep(UPDATE_DELAY)
 	}
 }

@@ -20,6 +20,10 @@ func testErrorInit() {
 }
 
 func TestSendError(t *testing.T) {
+	// reduce notify delay
+	oldNotifyDelay := NOTIFY_DELAY 
+	NOTIFY_DELAY = 0
+	
 	testErrorInit()
 	
 	go notifyError(notifier, service)
@@ -40,6 +44,9 @@ func TestSendError(t *testing.T) {
 	} else {
 		log.Printf("Message received: %s", string(notifier.written))
 	}
+	
+	//restore notify delay
+	NOTIFY_DELAY = oldNotifyDelay
 }
 
 /**

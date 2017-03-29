@@ -4,6 +4,7 @@ import (
 	"github.com/paypal/gatt"
 	"org.amc/carcamera/util"
 	"log"
+	"time"
 )
 
 var (
@@ -43,6 +44,7 @@ func notifyError(n gatt.Notifier, d *dashCamBTService) {
 			n.Write([]byte(d.errorMsg))
 			d.errorChanged = false
 		}
+		time.Sleep(NOTIFY_DELAY)
 	}
 	log.Println("Notify method exited")
 }
