@@ -45,7 +45,7 @@ func (c *CameraCommandImpl) Run() error {
 		return readErr
 	}
 	
-	if readErr := readPipe(stderr); readErr != nil {
+	if readErr := readErrPipe(stderr); readErr != nil {
 		return readErr
 	} 
 	
@@ -84,5 +84,21 @@ func readPipe(pipe io.Reader) error {
 		log.Printf(in.Text())
 	}
 	
+	return in.Err()
+}
+
+func readErrPipe(pipe io.Reader) error {
+	in := bufio.NewScanner(pipe)
+	
+	errorMsg := []string{}
+	
+	for in.Scan() {
+		log.Printf(in.Text())
+		errorMsg = append(errorMsg, in.Text())
+	}
+	
+	if errorMsg != nil && len(errorMsg) > 0 {
+		return errors.New(strings.Join(errorMsg, ""))
+	}
 	return in.Err()
 }

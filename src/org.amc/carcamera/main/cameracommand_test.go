@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 	"os/exec"
+	"strings"
+	"log"
 )
 
 func TestCameraCommandRun(t *testing.T) {
@@ -69,5 +71,25 @@ func TestStderrPipeError(t *testing.T) {
 	
 	if err == nil {
 		t.Fatal(err)
+	}
+}
+
+
+
+func TestStderrPipe(t *testing.T) {
+	errOutput := "There has been a terrible failure detected"
+	
+	reader := strings.NewReader(errOutput)
+	
+	err := readErrPipe(reader)
+	
+	if err == nil {
+		t.Fatal("An error should be returned from pipe read")
+	}
+	
+	if err.Error() != errOutput {
+		t.Fatalf("Error message should be (%s) not (%s)", errOutput, err.Error()) 
+	} else {
+		log.Printf("Error message (%s) was returned which is correct", err.Error())
 	}
 }
