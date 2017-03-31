@@ -2,12 +2,12 @@ package storageManager
 
 import (
 	C "org.amc/carcamera/constants"
-	"strconv"
 	"io/ioutil"
 	"log"
 	"regexp"
 	"os"
 	"fmt"
+	"strconv"
 )
 
 //StorageManager object
@@ -16,6 +16,9 @@ type StorageManagerImpl struct {
 	fileList []string
 	context map[string] interface{}
 }
+
+// Filename is left padding with six zeros
+var FILENAME_FORMAT string = "%06d" 
 
 //New create new StorageManager
 func New(context map[string] interface{}) StorageManager {
@@ -124,7 +127,7 @@ func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) 
 }
 
 func (s *StorageManagerImpl) GetNextFileName() string {
-	incr := strconv.Itoa(s.index);
+	incr := fmt.Sprintf(FILENAME_FORMAT, s.index);
 	s.index = s.index + 1;
 	
 	newFileName := s.WorkDir() + C.SLASH + s.Prefix() + incr + s.Suffix();

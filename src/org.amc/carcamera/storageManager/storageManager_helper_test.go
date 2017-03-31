@@ -6,9 +6,9 @@ import (
 	"os"
 	"log"
 	"strings"
-	"strconv"
 	"bytes"
 	"testing"
+	"fmt"
 )
 
 func removeTestFiles() {
@@ -51,7 +51,7 @@ func createEmptyTestFile(number int, t *testing.T) {
 }
 
 func createETestFile(number int, info *[]byte, t *testing.T) {
-	index := strconv.Itoa(number)
+	index := fmt.Sprintf(FILENAME_FORMAT, number)
 	err := ioutil.WriteFile(T_WORKDIR + C.SLASH + T_PREFIX + index + T_SUFFIX, *info, os.FileMode(0777))
 	if(err == nil) {
 		return

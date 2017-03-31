@@ -3,7 +3,7 @@ package storageManager
 import (
 	C "org.amc/carcamera/constants"
     "testing"
-    "strconv"
+    "fmt"
 )
 
 var (
@@ -34,7 +34,7 @@ func testExpectedFileName(t *testing.T, fileName string) {
 }
 
 func getExpectedFileName() string {
-	fileName := T_WORKDIR + C.SLASH + T_PREFIX + strconv.Itoa(index) + T_SUFFIX
+	fileName := T_WORKDIR + C.SLASH + T_PREFIX + fmt.Sprintf(FILENAME_FORMAT, index) + T_SUFFIX
 	index ++
 	return fileName;
 }
