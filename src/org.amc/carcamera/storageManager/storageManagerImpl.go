@@ -2,6 +2,7 @@ package storageManager
 
 import (
 	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/check"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -18,7 +19,11 @@ type StorageManagerImpl struct {
 }
 
 // Filename is left padding with six zeros
-var FILENAME_FORMAT string = "%06d" 
+var (
+		FILENAME_FORMAT string = "%06d"
+		FILENAME_INDEX_LIMIT int = 999999
+		MOUNTED bool = true
+) 
 
 //New create new StorageManager
 func New(context map[string] interface{}) StorageManager {
@@ -66,24 +71,10 @@ func (s *StorageManagerImpl) GetContext() map[string] interface{} {
 	return s.context
 }
 
-// isDirectoryWritable
-// param directory string directory to test for writing to
-func isDirectoryWritable(directory string) error {
-	const TESTFILENAME string = "test"
-	
-	if file, err := os.Create(directory + C.SLASH + TESTFILENAME); err != nil {
-		return err
-	} else {
-		_, err := file.WriteString("Test")
-		return err
-	}
-	
-} 
-
 func (s *StorageManagerImpl) Init() error {
 	log.Println("StorageManager Init called")
 		
-	if err:= isDirectoryWritable(s.WorkDir()); err != nil {
+	if err:= check.CheckFileSystem(s.WorkDir(), MOUNTED); err != nil {
 		return err
 	}
 	
@@ -127,6 +118,10 @@ func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) 
 }
 
 func (s *StorageManagerImpl) GetNextFileName() string {
+	if s.index > FILENAME_INDEX_LIMIT {
+		s.index = 1
+	}
+	
 	incr := fmt.Sprintf(FILENAME_FORMAT, s.index);
 	s.index = s.index + 1;
 	

@@ -37,7 +37,8 @@ func getNewStorageManager() StorageManager {
 	storage := new(StorageManagerImpl)
 	storage.index = 0
 	storage.context = context
-	storage.Init()
+	err := storage.Init()
+	log.Println(err)
 	return storage;
 }
 
@@ -54,6 +55,7 @@ func createETestFile(number int, info *[]byte, t *testing.T) {
 	index := fmt.Sprintf(FILENAME_FORMAT, number)
 	err := ioutil.WriteFile(T_WORKDIR + C.SLASH + T_PREFIX + index + T_SUFFIX, *info, os.FileMode(0777))
 	if(err == nil) {
+		//log.Printf("Test file created (%s)", T_WORKDIR + C.SLASH + T_PREFIX + index + T_SUFFIX)
 		return
 	}
 	t.Error(err.Error())
