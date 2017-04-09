@@ -5,7 +5,7 @@
 	"VIDEOLENGTH": "300000",
 	"PREFIX": "video",
 	"SUFFIX": ".h264",
-	"MINFILESIZE": "0",
-	"MAXNOOFFILES": "20",
-	"OPTIONS": "-fps 25 -ex night -rot 90 -n -a 12 -o"
+	"MINFILESIZE": "1",
+	"MAXNOOFFILES": "30",
+	"OPTIONS": "-fps 25 -ex night -rot 90 -pf high -n -a 12 -o"
 }
