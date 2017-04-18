@@ -2,7 +2,7 @@ package bluetooth
 
 import (
 	"testing"
-	"time"
+	//"time"
 )
 
 func TestDashCamService(t *testing.T) {
@@ -27,18 +27,18 @@ func TestDashCamService(t *testing.T) {
 }
 
 
-func TestStartBLE(t *testing.T) {
-	go StartBLE()
-	time.Sleep(10 * time.Second)
-	dcBTServ.SendStatus(true)
-	time.Sleep(1 * time.Second)
-	dcBTServ.SendStatus(true)
-	time.Sleep(1 * time.Second)
-	dcBTServ.SendStatus(false)
-	dcBTServ.SendError("Help me!")
-	time.Sleep(1 * time.Second)
-	dcBTServ.SendStatus(true)
-	time.Sleep(1 * time.Second)
-	dcBTServ.SendStatus(false)
-	time.Sleep(60 * time.Second)
-}
+//func TestStartBLE(t *testing.T) {
+//	go StartBLE()
+//	time.Sleep(10 * time.Second)
+//	dcBTServ.SendStatus(true)
+//	time.Sleep(1 * time.Second)
+//	dcBTServ.SendStatus(true)
+//	time.Sleep(1 * time.Second)
+//	dcBTServ.SendStatus(false)
+//	dcBTServ.SendError("Help me!")
+//	time.Sleep(1 * time.Second)
+//	dcBTServ.SendStatus(true)
+//	time.Sleep(1 * time.Second)
+//	dcBTServ.SendStatus(false)
+//	time.Sleep(60 * time.Second)
+//}

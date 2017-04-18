@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"runtime"
 	"time"
+	"errors"
 )
 //============== Main Service ==================
 
@@ -29,11 +30,48 @@ var (
 	UPDATE_DELAY = 10 * time.Second
 	
 	NOTIFY_DELAY = 2 * time.Second
+	
+	BT_WAIT = 1 * time.Second
+	
+	BT_RETRY = 5
+	
+	BT_DEVICE_ERROR = errors.New("Could not open device")
 )
+
+func getBluetoothDevice(newDevice func(opts ...gatt.Option)(gatt.Device, error)) (gatt.Device, error) {
+	var (
+		d gatt.Device
+		bt_err error
+	)
+	//d, bt_err = gatt.NewDevice(DefaultServerOptions...)
+	d, bt_err = newDevice(DefaultServerOptions...)
+	if bt_err != nil {
+		log.Printf("Failed to open device, err: %s", bt_err)
+		for i := 0; i < BT_RETRY; i++ {
+			time.Sleep(BT_WAIT)
+			d, bt_err = newDevice(DefaultServerOptions...)
+			if bt_err != nil {
+				log.Printf("Failed to open device, err: %s", bt_err)
+			} else {
+				break
+			}
+		}
+	}
+	
+	if d == nil {
+		log.Println("Could not open bluetooth device")
+		return d, BT_DEVICE_ERROR
+	} else {
+		return d, nil
+	}
+}
+
 func StartBLE() {
-	d, err := gatt.NewDevice(DefaultServerOptions...)
+	d, err:= getBluetoothDevice(gatt.NewDevice)
+	
 	if err != nil {
-		log.Fatalf("Failed to open device, err: %s", err)
+		log.Printf("%s", err.Error())
+		return
 	}
 	
 	d.Handle(
