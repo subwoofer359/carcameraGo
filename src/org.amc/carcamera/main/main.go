@@ -11,7 +11,7 @@ import (
 
 var (
 	myapp app = app {} //myapp Application object
-	filename = flag.String("c","" , "Configuration file path")
+	filename = flag.String("c", "", "Configuration file path")
 )
 
 func main() {
@@ -32,6 +32,7 @@ func main() {
 	
 	myapp.Init()
 	
+	btService.SetContext(context)
 	myapp.message.AddService(ledService)
 	myapp.message.AddService(btService)
 	

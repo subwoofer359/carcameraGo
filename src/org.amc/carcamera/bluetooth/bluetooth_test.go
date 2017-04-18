@@ -2,6 +2,8 @@ package bluetooth
 
 import (
 	"testing"
+	"github.com/stretchr/testify/assert"
+	C "org.amc/carcamera/constants"
 	//"time"
 )
 
@@ -26,6 +28,21 @@ func TestDashCamService(t *testing.T) {
 	}
 }
 
+func TestSetServiceNames(t *testing.T) {
+	var context = map[string] interface {} {} 
+	gap := "Testing GAP Service"
+	gatt := "Testing GATT Service"
+	context[C.GAP_SERVICE_NAME] = gap
+	
+	assert.Equal(t, GAP_SERVICE_NAME, "DashCam")
+	setServiceNames(context)
+	assert.Equal(t, GAP_SERVICE_NAME, gap)
+	
+	assert.Equal(t, GATT_SERVICE_NAME, "Dash Cam")
+	context[C.GATT_SERVICE_NAME] = gatt
+	setServiceNames(context)
+	assert.Equal(t, GATT_SERVICE_NAME, gatt)
+}
 
 //func TestStartBLE(t *testing.T) {
 //	go StartBLE()

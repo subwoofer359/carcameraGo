@@ -14,6 +14,9 @@ const (
 	MINFILESIZE = "MINFILESIZE" //MINFILESIZE Mininum file size
 	MAXNOOFFILES = "MAXNOOFFILES" //MAXNOOFFILES maximum no of files in the WORKDIR
 	OPTIONS = "OPTIONS" //OPTIONS command line options
+	
+	GAP_SERVICE_NAME = "GAPSERVICENAME" // Name of GAP bluetooth service
+	GATT_SERVICE_NAME = "GATTSERVICENAME" // Name of GATT bluetooth service
 )
 
 const (

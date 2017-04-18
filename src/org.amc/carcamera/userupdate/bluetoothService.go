@@ -9,11 +9,13 @@ type BTService struct {
 	 	SendStatus(val bool)
 	 	SendError(errorMsg string)
 	 }
+	 context map[string] interface{}
+	 
 }
 
 func (bt *BTService) Init() error {
 	bt.dashService = bluetooth.GetDashCamBTService()
-	go bluetooth.StartBLE()
+	go bluetooth.StartBLE(bt.context)
 	return nil
 }
 
@@ -31,4 +33,8 @@ func (bt *BTService) Stopped() {
 
 func (bt *BTService) Close() {
 	//Todo
+}
+
+func (bt *BTService) SetContext(context map[string] interface{}) {
+	bt.context = context
 }
