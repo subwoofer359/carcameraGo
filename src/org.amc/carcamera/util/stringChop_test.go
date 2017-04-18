@@ -7,7 +7,7 @@ import (
 var testStr string = "Hello World How are you"
 
 func TestStringLessThanN(t *testing.T) {
-	strings := stringChop(testStr, 24)
+	strings := StringChop(testStr, 24)
 	if strings[0] != testStr {
 		t.Error("The function should return the same string") 
 	}
@@ -15,7 +15,7 @@ func TestStringLessThanN(t *testing.T) {
 
 func TestStringGreaterThan2(t *testing.T) {
 	size := 12
-	strings := stringChop(testStr, size)
+	strings := StringChop(testStr, size)
 	if len(strings) != 2 {
 		t.Fatal("The string array should contain two strings")
 	}
@@ -31,7 +31,7 @@ func TestStringGreaterThan2(t *testing.T) {
 func TestStringGreaterThanN(t *testing.T) {
 	size := 4
 	noOfStrings := 6
-	strings := stringChop(testStr, size)
+	strings := StringChop(testStr, size)
 	if len(strings) != noOfStrings {
 		t.Fatalf("The string array should contain %d strings", noOfStrings)
 	}
@@ -39,7 +39,7 @@ func TestStringGreaterThanN(t *testing.T) {
 }
 
 func TestStringEmpty(t *testing.T) {
-	strings := stringChop("", 24)
+	strings := StringChop("", 24)
 	if len(strings) != 1 {
 		t.Fatal("String array should have size of one")
 	}
