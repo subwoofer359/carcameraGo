@@ -45,6 +45,7 @@ func setPinToOutput(u *UserDisplay) {
 }
 
 func (u *UserDisplay) Close() {
+	setLow(u, GreenLED)
 	u.gpio.Close()
 }
 
