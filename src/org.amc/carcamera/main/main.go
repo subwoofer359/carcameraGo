@@ -35,7 +35,7 @@ func main() {
 	myapp.message.AddService(ledService)
 	myapp.message.AddService(btService)
 	
-	if err := myapp.message.Init(); err !=nil {
+	if err := myapp.message.Init(); err != nil {
 		log.Fatal(err)
 	}
 	
@@ -45,9 +45,7 @@ func main() {
 	if err := myapp.InitStorageManager(); err != nil {
 		myapp.message.Error(err.Error())
 		mainExit()
-	}
-	
-	if err := myapp.Start(); err != nil {
+	} else if err := myapp.Start(); err != nil {
 		myapp.message.Error(err.Error())
 		mainExit()
 	}
