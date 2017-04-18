@@ -1,31 +1,36 @@
 package storageManager
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"log"
 	"strings"
 	"math/rand"
 	"time"
+	"fmt"
 )
 
 func TestAddCompleteFileSizeLessThanAllowed(t *testing.T) {
 	removeTestFiles()
 	t.Log("removing Least recently used")
+	
+	index := 1
+	
 	storage := getNewStorageManager()
 	
-	createEmptyTestFile(1, t)
+	createEmptyTestFile(index, t)
 	
 	filename := storage.GetNextFileName()
 	
-	err := storage.AddCompleteFile(filename)
-	
-	if err != nil {
+	if err := storage.AddCompleteFile(filename); err != nil {
 		t.Fatal(err)
 	}
 	
-	checkFileDoesntExist(storage.Prefix() + "1" + storage.Suffix(), t)
+	checkFileDoesntExist(storage.Prefix() + fmt.Sprintf("%d", index) + storage.Suffix(), t)
 	
 	checkFileNameNotStored(storage, t)
+	
+	assert.Equal(t, index, storage.Index())
 }
 
 func TestAddCompleteFileForNonExistingFile(t *testing.T) {

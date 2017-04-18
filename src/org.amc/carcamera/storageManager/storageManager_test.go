@@ -2,9 +2,11 @@ package storageManager
 
 import (
 	C "org.amc/carcamera/constants"
+	"github.com/stretchr/testify/assert"
     "testing"
     "fmt"
     "os"
+    "log"
 )
 
 var (
@@ -103,21 +105,34 @@ func TestGetNextFileResetsFileLimit(t *testing.T) {
  */
 func TestAfterIndexWrapAroundCorrectIndex(t *testing.T) {
 	removeTestFiles()
+	startID := 999989
+	endID := 1000000
 	
 	//Create some old files to clean up
-	for i := 999989; i < 1000000; i = i + 1 {
+	for i := startID; i < endID; i = i + 1 {
 		createTestFile(i, t)
 	}
 	
-	for i := 1; i < 10; i = i + 1 {
+	for i := 2; i < 10; i = i + 1 {
 		createTestFile(i, t)
 	}
 	
 	storage := getNewStorageManager()
-	storage.GetNextFileName()
+	log.Println(storage.FileList())
 	
 	if storage.Index() != 10 {
 		t.Errorf("Filename index (%d) is incorrect", storage.Index())	
 	}
 	
+	fileList := storage.FileList()
+
+	assert.NotNil(t, fileList, "FileList should not be nil")
+	assert.NotEmpty(t, fileList, "FileList should not be empty")
+	
+	
+	x := 0
+	for i := startID; i < endID; i = i +1 {
+		assert.Equal(t, fileList[x],  storage.WorkDir() +C.SLASH + T_PREFIX + fmt.Sprintf(FILENAME_FORMAT, i) + T_SUFFIX)
+		x = x + 1
+	}
 }

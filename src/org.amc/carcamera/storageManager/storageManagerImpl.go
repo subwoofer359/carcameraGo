@@ -11,19 +11,20 @@ import (
 	"strconv"
 )
 
+// Filename is left padding with six zeros
+var (
+		FILENAME_FORMAT string = "%06d"
+		FILENAME_INDEX_LIMIT int = 999999
+		MOUNTED bool = true
+		REGEXP_NUMBER string = "(\\d+)\\"
+) 
+
 //StorageManager object
 type StorageManagerImpl struct {
 	index 	int
 	fileList []string
 	context map[string] interface{}
 }
-
-// Filename is left padding with six zeros
-var (
-		FILENAME_FORMAT string = "%06d"
-		FILENAME_INDEX_LIMIT int = 999999
-		MOUNTED bool = true
-) 
 
 //New create new StorageManager
 func New(context map[string] interface{}) StorageManager {
@@ -95,26 +96,55 @@ func (s *StorageManagerImpl) Init() error {
 }
 
 func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) {
-	pattern := s.Prefix() + "(\\d+)\\" + s.Suffix()
-	matcher := regexp.MustCompile(pattern)
-	maxIndex := 0;
-	fileList := []string{};
-	
 	if files, err := ioutil.ReadDir(s.WorkDir()); err != nil {
 		return 0, nil, err
 	} else {
-		for _, file := range files {
+		maxIndex, fileList := sortFilenames(files, s) 
+		return maxIndex, fileList, nil
+	}
+}
+
+func sortFilenames(files []os.FileInfo, s *StorageManagerImpl) (int, []string) {
+	const NO_INDEX int = 0
+	fileList := []string{}
+	oldList := []string{}
+	
+	pattern := s.Prefix() + REGEXP_NUMBER + s.Suffix()
+	maxIndex := 0
+	lastIndex := 0
+	matcher := regexp.MustCompile(pattern)
+	
+	for _, file := range files {
 			matches := matcher.FindStringSubmatch(file.Name())
-			if len(matches) > 0 {
-				fileList = append(fileList, s.WorkDir() +C.SLASH + file.Name())
-				tmpIndex, _ := strconv.Atoi(matches[1])
-				if tmpIndex > maxIndex {
-					maxIndex = tmpIndex;
+			if foundVideoFile(matches) {
+				index := getFileNumber(matches[1])
+				fileName := s.WorkDir() + C.SLASH + file.Name()
+				if lastIndex == NO_INDEX || isFileNameIndexConsecutive(lastIndex, index) {
+					fileList = append(fileList, fileName)
+					lastIndex = index
+					if index > maxIndex {
+						maxIndex = index;
+					}
+				} else {
+					oldList = append(oldList, fileName)
 				}		
 			}
-		}	
+			
 	}
-	return maxIndex, fileList, nil;
+	return maxIndex, append(oldList, fileList...)
+}
+
+func foundVideoFile(matches []string) bool {
+	return len(matches) > 0
+}
+
+func getFileNumber(filenumberStr string) int {
+	number, _ := strconv.Atoi(filenumberStr)
+	return number
+}
+
+func isFileNameIndexConsecutive(previousIndex int, index int) bool {
+	return index - previousIndex == 1
 }
 
 func (s *StorageManagerImpl) GetNextFileName() string {
@@ -154,6 +184,9 @@ func (s *StorageManagerImpl) AddCompleteFile(fileName string) error {
 		s.fileList = append(s.fileList, fileName)
 		removeOldFiles(s)
 		return nil
+	} else if s.Index() > 0 {
+			s.index = s.index - 1
+			log.Println(s.index)
 	}
 	
 	return os.Remove(fileName)
