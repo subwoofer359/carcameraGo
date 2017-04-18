@@ -71,6 +71,7 @@ func (a *app) Start() error {
 
 func (a *app) Close() {
 	a.message.Stopped()
+	a.message.Close()
 }
 
 func (a app) LoadConfiguration(filename string) error {
