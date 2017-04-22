@@ -3,6 +3,7 @@ package bluetooth
 import (
 	"github.com/paypal/gatt"
 )
+
 //=========== GAP ==============
 var (
 	attrGAPUUID = gatt.UUID16(0x1800)

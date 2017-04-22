@@ -1,8 +1,6 @@
-package userupdate 
+package userupdate
 
-import (
-
-)
+import ()
 
 type MessageService interface {
 	Init() error
@@ -10,7 +8,6 @@ type MessageService interface {
 	Started() //message that the monitored program has started
 	Stopped() //message that the monitored program has stopped
 	Close()
-	
 }
 
 type Message struct {
@@ -50,7 +47,7 @@ func (m Message) Stopped() {
 
 func (m *Message) AddService(service MessageService) {
 	m.services = append(m.services, service)
-} 
+}
 
 func (m *Message) Close() {
 	for _, service := range m.services {

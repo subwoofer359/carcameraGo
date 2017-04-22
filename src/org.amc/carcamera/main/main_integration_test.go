@@ -1,4 +1,5 @@
 package main
+
 //
 //import (
 //	"testing"
@@ -15,18 +16,18 @@ package main
 //		storageManager: storageManager.New(),
 //		exec: exec.Command,
 //	}
-//	
+//
 //	WebCamApp.storageManager.SetWorkDir("/tmp")
 //	WebCamApp.storageManager.Init()
-//	
-//	
-//	
+//
+//
+//
 //	for t := 0; t < 2; t++ {
 //		runner := New(7 * time.Second)
 //		runner.add(WebCamApp)
 //		err := runner.Start()
 //		if err != nil && err.Error() != "completed" {
-//			log.Fatal(err)	
+//			log.Fatal(err)
 //		}
 //	}
 //}

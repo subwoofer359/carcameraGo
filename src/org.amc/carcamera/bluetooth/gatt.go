@@ -1,8 +1,8 @@
 package bluetooth
 
 import (
-	"log"
 	"github.com/paypal/gatt"
+	"log"
 )
 
 // ================ GATT =================

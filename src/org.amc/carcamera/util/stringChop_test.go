@@ -1,7 +1,7 @@
 package util
 
 import (
-    "testing"
+	"testing"
 )
 
 var testStr string = "Hello World How are you"
@@ -9,7 +9,7 @@ var testStr string = "Hello World How are you"
 func TestStringLessThanN(t *testing.T) {
 	strings := StringChop(testStr, 24)
 	if strings[0] != testStr {
-		t.Error("The function should return the same string") 
+		t.Error("The function should return the same string")
 	}
 }
 
@@ -20,11 +20,11 @@ func TestStringGreaterThan2(t *testing.T) {
 		t.Fatal("The string array should contain two strings")
 	}
 	if strings[0] != testStr[0:size] {
-		t.Fatal("The function should return the same string") 
+		t.Fatal("The function should return the same string")
 	}
-	
+
 	if strings[1] != testStr[size:] {
-		t.Fatal("The function should return the same string") 
+		t.Fatal("The function should return the same string")
 	}
 }
 
@@ -43,9 +43,8 @@ func TestStringEmpty(t *testing.T) {
 	if len(strings) != 1 {
 		t.Fatal("String array should have size of one")
 	}
-	
+
 	if strings[0] != "" {
 		t.Fatal("The null string should be in the array")
 	}
 }
-

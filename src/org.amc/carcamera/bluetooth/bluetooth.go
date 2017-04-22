@@ -1,24 +1,25 @@
 package bluetooth
 
 import (
-	C "org.amc/carcamera/constants"
+	"errors"
+	"fmt"
 	"github.com/paypal/gatt"
 	"github.com/paypal/gatt/linux/cmd"
 	"log"
-	"fmt"
+	C "org.amc/carcamera/constants"
 	"runtime"
 	"time"
-	"errors"
 )
+
 //============== Main Service ==================
 
 var (
-	DefaultClientOptions = []gatt.Option {
-	gatt.LnxMaxConnections(1),
-	gatt.LnxDeviceID(-1, true),
-}
+	DefaultClientOptions = []gatt.Option{
+		gatt.LnxMaxConnections(1),
+		gatt.LnxDeviceID(-1, true),
+	}
 
-	DefaultServerOptions = []gatt.Option {
+	DefaultServerOptions = []gatt.Option{
 		gatt.LnxMaxConnections(2),
 		gatt.LnxDeviceID(-1, true),
 		gatt.LnxSetAdvertisingParameters(&cmd.LESetAdvertisingParameters{
@@ -27,25 +28,25 @@ var (
 			AdvertisingChannelMap:  0x7,
 		}),
 	}
-	
+
 	UPDATE_DELAY = 10 * time.Second
-	
+
 	NOTIFY_DELAY = 2 * time.Second
-	
+
 	GATT_SERVICE_NAME string = "Dash Cam"
-	
+
 	GAP_SERVICE_NAME string = "DashCam"
-	
+
 	BT_WAIT = 1 * time.Second
-	
+
 	BT_RETRY = 5
-	
+
 	BT_DEVICE_ERROR = errors.New("Could not open device")
 )
 
-func getBluetoothDevice(newDevice func(opts ...gatt.Option)(gatt.Device, error)) (gatt.Device, error) {
+func getBluetoothDevice(newDevice func(opts ...gatt.Option) (gatt.Device, error)) (gatt.Device, error) {
 	var (
-		d gatt.Device
+		d      gatt.Device
 		bt_err error
 	)
 	d, bt_err = newDevice(DefaultServerOptions...)
@@ -61,7 +62,7 @@ func getBluetoothDevice(newDevice func(opts ...gatt.Option)(gatt.Device, error))
 			}
 		}
 	}
-	
+
 	if d == nil {
 		log.Println("Could not open bluetooth device")
 		return d, BT_DEVICE_ERROR
@@ -70,42 +71,42 @@ func getBluetoothDevice(newDevice func(opts ...gatt.Option)(gatt.Device, error))
 	}
 }
 
-func StartBLE(context map[string] interface{}) {
-	d, err:= getBluetoothDevice(gatt.NewDevice)
-	
+func StartBLE(context map[string]interface{}) {
+	d, err := getBluetoothDevice(gatt.NewDevice)
+
 	if err != nil {
 		log.Printf("%s", err.Error())
 		return
 	}
-	
+
 	setServiceNames(context)
-	
+
 	d.Handle(
 		gatt.CentralConnected(func(c gatt.Central) { fmt.Println("Connect: ", c.ID()) }),
 		gatt.CentralDisconnected(func(c gatt.Central) { fmt.Println("Disconnect: ", c.ID()) }),
 	)
-	
+
 	onStateChanged := func(d gatt.Device, s gatt.State) {
 		fmt.Printf("State: %s\n", s)
-	
+
 		switch s {
-			case gatt.StatePoweredOn:
-				d.AddService(NewGapService(GAP_SERVICE_NAME))
-				d.AddService(NewGattService())
-			
-				s1 := NewDashCamService()
-			
-				d.AddService(s1)
-			
-				d.AdvertiseNameAndServices(GATT_SERVICE_NAME, []gatt.UUID{s1.UUID()})
-				
-				d.AdvertiseIBeacon(gatt.MustParseUUID("AA6062F098CA42118EC4193EB73CCEB6"), 1, 2, -59)
-			default:
+		case gatt.StatePoweredOn:
+			d.AddService(NewGapService(GAP_SERVICE_NAME))
+			d.AddService(NewGattService())
+
+			s1 := NewDashCamService()
+
+			d.AddService(s1)
+
+			d.AdvertiseNameAndServices(GATT_SERVICE_NAME, []gatt.UUID{s1.UUID()})
+
+			d.AdvertiseIBeacon(gatt.MustParseUUID("AA6062F098CA42118EC4193EB73CCEB6"), 1, 2, -59)
+		default:
 		}
 	}
-	
+
 	d.Init(onStateChanged)
-	
+
 	for {
 		GetDashCamBTService().Update()
 		runtime.Gosched()
@@ -113,12 +114,12 @@ func StartBLE(context map[string] interface{}) {
 	}
 }
 
-func setServiceNames(context map[string] interface{}) {
+func setServiceNames(context map[string]interface{}) {
 	if context != nil {
 		if context[C.GAP_SERVICE_NAME] != nil {
 			GAP_SERVICE_NAME = context[C.GAP_SERVICE_NAME].(string)
 		}
-		
+
 		if context[C.GATT_SERVICE_NAME] != nil {
 			GATT_SERVICE_NAME = context[C.GATT_SERVICE_NAME].(string)
 		}

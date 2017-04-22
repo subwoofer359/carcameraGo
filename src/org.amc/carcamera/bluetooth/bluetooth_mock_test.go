@@ -2,13 +2,12 @@ package bluetooth
 
 import "github.com/paypal/gatt"
 
-type mockBlueToothDevice struct {}
+type mockBlueToothDevice struct{}
 
 func (m *mockBlueToothDevice) Init(stateChanged func(gatt.Device, gatt.State)) error {
 	return nil
 }
 
-    
 func (m *mockBlueToothDevice) Advertise(a *gatt.AdvPacket) error {
 	return nil
 }
@@ -39,8 +38,8 @@ func (m *mockBlueToothDevice) AddService(s *gatt.Service) error {
 func (m *mockBlueToothDevice) SetServices(ss []*gatt.Service) error {
 	return nil
 }
-func (m *mockBlueToothDevice)  Scan(ss []gatt.UUID, dup bool) {
-	
+func (m *mockBlueToothDevice) Scan(ss []gatt.UUID, dup bool) {
+
 }
 
 func (m *mockBlueToothDevice) StopScanning() {}

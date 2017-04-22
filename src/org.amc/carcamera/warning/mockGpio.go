@@ -22,7 +22,6 @@ func (m MockGpio) IsOpen() bool {
 	return open
 }
 
-
 func (m *MockGpio) Pin(i int) GpioPin {
 	if m.pins[i] == nil {
 		m.pins[i] = new(MockGpioPin)
@@ -43,17 +42,13 @@ func (m *MockGpioPin) Low() {
 }
 
 func (m MockGpioPin) Output() {
-	
+
 }
 
 func (m MockGpioPin) Read() rpio.State {
 	return m.state
 }
 
-
-
 func NewMockGPIO() *MockGpio {
 	return new(MockGpio)
 }
-
-

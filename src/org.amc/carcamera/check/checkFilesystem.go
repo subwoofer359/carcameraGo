@@ -1,27 +1,27 @@
 package check
 
 import (
+	"errors"
 	"os"
 	"os/exec"
-	"syscall"
-	"errors"
 	"regexp"
+	"syscall"
 )
 
 var (
 	PERMISSION_ERROR error = errors.New("No permission to file")
-	MOUNT_ERROR error = errors.New("Filesystem not mounted")
+	MOUNT_ERROR      error = errors.New("Filesystem not mounted")
 )
 
 func CheckFileSystem(path string, mounted bool) error {
 	if err := checkPathExist(path); err != nil {
 		return err
 	}
-	
-//	if err := checkIsOwnerOfPath(path); err != nil {
-//		return err
-//	}
-	
+
+	//	if err := checkIsOwnerOfPath(path); err != nil {
+	//		return err
+	//	}
+
 	if mounted {
 		if err := checkIsMounted(path); err != nil {
 			return err
@@ -43,11 +43,11 @@ func checkPathExist(path string) error {
 }
 
 func checkIsOwnerOfPath(path string) error {
-	fileInfo, err := os.Stat(path) 
+	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return err
 	}
-	
+
 	if fileInfo.Sys().(*syscall.Stat_t).Uid != uint32(os.Getuid()) {
 		return PERMISSION_ERROR
 	} else {
@@ -55,17 +55,17 @@ func checkIsOwnerOfPath(path string) error {
 	}
 }
 
-func checkIsMounted(path string) (error) {
+func checkIsMounted(path string) error {
 	cmd := exec.Command("mount")
-	
+
 	if result, err := cmd.Output(); err != nil {
 		return err
 	} else {
-		
+
 		output := string(result)
-		pattern := path +"\\s"
+		pattern := path + "\\s"
 		matcher := regexp.MustCompile(pattern)
-		
+
 		if matcher.FindStringIndex(output) == nil {
 			return MOUNT_ERROR
 		} else {
@@ -79,14 +79,14 @@ func checkIsMounted(path string) (error) {
 func isDirectoryWritable(path string) error {
 	const (
 		TESTFILENAME string = "test"
-		SLASH string = string(os.PathSeparator)
+		SLASH        string = string(os.PathSeparator)
 	)
-	
+
 	if file, err := os.Create(path + SLASH + TESTFILENAME); err != nil {
 		return err
 	} else {
 		_, err := file.WriteString("Test")
 		return err
 	}
-	
+
 }

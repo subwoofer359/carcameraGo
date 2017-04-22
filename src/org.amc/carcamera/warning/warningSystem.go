@@ -2,7 +2,7 @@ package warning
 
 import (
 	"github.com/stianeikeland/go-rpio"
-	//"log"	
+	//"log"
 )
 
 const (
@@ -21,9 +21,9 @@ func (u *UserDisplay) SetGPIO(gpio Gpio) {
 
 func (u *UserDisplay) Ok() {
 	if !isHigh(u, RedLED) {
-			setHigh(u, GreenLED)
+		setHigh(u, GreenLED)
 	}
-}	
+}
 
 func (u *UserDisplay) Error() {
 	setHigh(u, RedLED)
@@ -36,12 +36,12 @@ func (u *UserDisplay) Reset() {
 
 func (u *UserDisplay) Open() {
 	u.gpio.Open()
-    setPinToOutput(u)
+	setPinToOutput(u)
 }
 
 func setPinToOutput(u *UserDisplay) {
-        u.gpio.Pin(GreenLED).Output()
-        u.gpio.Pin(RedLED).Output()
+	u.gpio.Pin(GreenLED).Output()
+	u.gpio.Pin(RedLED).Output()
 }
 
 func (u *UserDisplay) Close() {

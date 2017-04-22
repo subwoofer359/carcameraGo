@@ -1,40 +1,40 @@
 package storageManager
 
 import (
-	C "org.amc/carcamera/constants"
-	"org.amc/carcamera/check"
+	"fmt"
 	"io/ioutil"
 	"log"
-	"regexp"
+	"org.amc/carcamera/check"
+	C "org.amc/carcamera/constants"
 	"os"
-	"fmt"
+	"regexp"
 	"strconv"
 )
 
 // Filename is left padding with six zeros
 var (
-		FILENAME_FORMAT string = "%06d"
-		FILENAME_INDEX_LIMIT int = 999999
-		MOUNTED bool = true
-		REGEXP_NUMBER string = "(\\d+)\\"
-) 
+	FILENAME_FORMAT      string = "%06d"
+	FILENAME_INDEX_LIMIT int    = 999999
+	MOUNTED              bool   = true
+	REGEXP_NUMBER        string = "(\\d+)\\"
+)
 
 //StorageManager object
 type StorageManagerImpl struct {
-	index int
+	index    int
 	fileList []string
-	context map[string] interface{}
+	context  map[string]interface{}
 }
 
 //New create new StorageManager
-func NewStorageManager(context map[string] interface{}) StorageManager {
+func NewStorageManager(context map[string]interface{}) StorageManager {
 	s := new(StorageManagerImpl)
 	s.context = context
 	return s
 }
 
 func (s StorageManagerImpl) Prefix() string {
-	return s.context[C.PREFIX].(string);
+	return s.context[C.PREFIX].(string)
 }
 
 func (s StorageManagerImpl) Suffix() string {
@@ -59,39 +59,39 @@ func (s StorageManagerImpl) FileList() []string {
 
 //MaxNoOfFiles return MaxNoOfFiles
 func (s StorageManagerImpl) MaxNoOfFiles() int {
-	maxfiles,_ := strconv.Atoi(s.context[C.MAXNOOFFILES].(string))
+	maxfiles, _ := strconv.Atoi(s.context[C.MAXNOOFFILES].(string))
 	return maxfiles
 }
 
 func (s StorageManagerImpl) MinFileSize() int64 {
-	minfileSize,_ := strconv.Atoi(s.context[C.MINFILESIZE].(string))
+	minfileSize, _ := strconv.Atoi(s.context[C.MINFILESIZE].(string))
 	return int64(minfileSize)
 }
 
-func (s *StorageManagerImpl) GetContext() map[string] interface{} {
+func (s *StorageManagerImpl) GetContext() map[string]interface{} {
 	return s.context
 }
 
 func (s *StorageManagerImpl) Init() error {
 	log.Println("StorageManager Init called")
-		
-	if err:= check.CheckFileSystem(s.WorkDir(), MOUNTED); err != nil {
+
+	if err := check.CheckFileSystem(s.WorkDir(), MOUNTED); err != nil {
 		return err
 	}
-	
-	if index, fileList , err := findAndSaveExistingFileNames(s); err != nil {
+
+	if index, fileList, err := findAndSaveExistingFileNames(s); err != nil {
 		return fmt.Errorf("Error reading Work Directory %s\n", s.WorkDir())
 	} else {
 		s.index = index
 		s.fileList = fileList
 	}
-	
+
 	log.Printf("StorageManager: %d previous files found\n", s.index)
-	
-	s.index = s.index + 1;
-	
+
+	s.index = s.index + 1
+
 	log.Printf("StorageManager:%s\n", s.fileList)
-	
+
 	return nil
 }
 
@@ -99,7 +99,7 @@ func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) 
 	if files, err := ioutil.ReadDir(s.WorkDir()); err != nil {
 		return 0, nil, err
 	} else {
-		maxIndex, fileList := sortFilenames(files, s) 
+		maxIndex, fileList := sortFilenames(files, s)
 		return maxIndex, fileList, nil
 	}
 }
@@ -108,28 +108,28 @@ func sortFilenames(files []os.FileInfo, s *StorageManagerImpl) (int, []string) {
 	const NO_INDEX int = 0
 	fileList := []string{}
 	oldList := []string{}
-	
+
 	pattern := s.Prefix() + REGEXP_NUMBER + s.Suffix()
 	maxIndex := 0
 	lastIndex := 0
 	matcher := regexp.MustCompile(pattern)
-	
+
 	for _, file := range files {
-			matches := matcher.FindStringSubmatch(file.Name())
-			if foundVideoFile(matches) {
-				index := getFileNumber(matches[1])
-				fileName := s.WorkDir() + C.SLASH + file.Name()
-				if lastIndex == NO_INDEX || isFileNameIndexConsecutive(lastIndex, index) {
-					fileList = append(fileList, fileName)
-					lastIndex = index
-					if index > maxIndex {
-						maxIndex = index;
-					}
-				} else {
-					oldList = append(oldList, fileName)
-				}		
+		matches := matcher.FindStringSubmatch(file.Name())
+		if foundVideoFile(matches) {
+			index := getFileNumber(matches[1])
+			fileName := s.WorkDir() + C.SLASH + file.Name()
+			if lastIndex == NO_INDEX || isFileNameIndexConsecutive(lastIndex, index) {
+				fileList = append(fileList, fileName)
+				lastIndex = index
+				if index > maxIndex {
+					maxIndex = index
+				}
+			} else {
+				oldList = append(oldList, fileName)
 			}
-			
+		}
+
 	}
 	return maxIndex, append(oldList, fileList...)
 }
@@ -144,19 +144,19 @@ func getFileNumber(filenumberStr string) int {
 }
 
 func isFileNameIndexConsecutive(previousIndex int, index int) bool {
-	return index - previousIndex == 1
+	return index-previousIndex == 1
 }
 
 func (s *StorageManagerImpl) GetNextFileName() string {
 	if s.index > FILENAME_INDEX_LIMIT {
 		s.index = 1
 	}
-	
-	incr := fmt.Sprintf(FILENAME_FORMAT, s.index);
-	s.index = s.index + 1;
-	
-	newFileName := s.WorkDir() + C.SLASH + s.Prefix() + incr + s.Suffix();
-	
+
+	incr := fmt.Sprintf(FILENAME_FORMAT, s.index)
+	s.index = s.index + 1
+
+	newFileName := s.WorkDir() + C.SLASH + s.Prefix() + incr + s.Suffix()
+
 	return newFileName
 }
 
@@ -177,7 +177,7 @@ func (s *StorageManagerImpl) RemoveLRU() {
 }
 
 func (s *StorageManagerImpl) AddCompleteFile(fileName string) error {
-	
+
 	if file, err := os.Stat(fileName); err != nil {
 		return err
 	} else if file.Size() >= s.MinFileSize() {
@@ -185,9 +185,9 @@ func (s *StorageManagerImpl) AddCompleteFile(fileName string) error {
 		removeOldFiles(s)
 		return nil
 	} else if s.Index() > 0 {
-			s.index = s.index - 1
-			log.Println(s.index)
+		s.index = s.index - 1
+		log.Println(s.index)
 	}
-	
+
 	return os.Remove(fileName)
 }

@@ -1,71 +1,70 @@
 package main
 
 import (
+	"log"
+	"os"
+	"os/exec"
 	"testing"
 	"time"
-	"os"
-	"log"
-	"os/exec"
 )
 
 const timeout = 1 * time.Second
 
 func TestRunnerStart(t *testing.T) {
-	
-	myRunner := NewRunner(timeout);
-	
-	command := &CameraCommandImpl {
-		command: "/bin/ls",
-		args: []string{"/tmp"},
+
+	myRunner := NewRunner(timeout)
+
+	command := &CameraCommandImpl{
+		command:        "/bin/ls",
+		args:           []string{"/tmp"},
 		storageManager: GetMockStorageManagerLS(),
-		exec: exec.Command,
+		exec:           exec.Command,
 	}
-	
+
 	myRunner.add(command)
 	err := myRunner.Start()
-	
+
 	if err.Error() != "completed" {
 		t.Fatal("Error stating runner")
 	}
 }
 
+func TestRunnerStartTimeOut(t *testing.T) {
 
-func TestRunnerStartTimeOut(t *testing.T) { 
-	
-	myRunner := NewRunner(timeout);
-	
-	command := &CameraCommandImpl {
-		command: "/bin/dd",
-		args: []string{"if=/dev/urandom"},
+	myRunner := NewRunner(timeout)
+
+	command := &CameraCommandImpl{
+		command:        "/bin/dd",
+		args:           []string{"if=/dev/urandom"},
 		storageManager: GetMockStorageManagerDD(),
-		exec: exec.Command,
+		exec:           exec.Command,
 	}
-	
+
 	myRunner.add(command)
 	err := myRunner.Start()
-	
+
 	if err.Error() != "received timeout" {
 		t.Fatal("Error runner should timeout")
 	}
 }
 
-func TestRunnerStartInterrupted(t *testing.T) { 
-	
-	myRunner := NewRunner(10 * time.Second);
-	
-	command := &CameraCommandImpl {
-		command: "/bin/dd",
-		args: []string{"if=/dev/urandom"},
+func TestRunnerStartInterrupted(t *testing.T) {
+
+	myRunner := NewRunner(10 * time.Second)
+
+	command := &CameraCommandImpl{
+		command:        "/bin/dd",
+		args:           []string{"if=/dev/urandom"},
 		storageManager: GetMockStorageManagerDD(),
-		exec: exec.Command,
+		exec:           exec.Command,
 	}
-	
+
 	myRunner.add(command)
-	
+
 	go interruptCommand(myRunner)
-	
+
 	err := myRunner.Start()
-	
+
 	if err.Error() != "received interrupt" {
 		t.Fatal("Error runner should interupt")
 	} else {
@@ -75,7 +74,6 @@ func TestRunnerStartInterrupted(t *testing.T) {
 
 func interruptCommand(runner *Runner) {
 	time.Sleep(2 * time.Second)
-	log.Println("Trying to interrupt command")	
+	log.Println("Trying to interrupt command")
 	runner.interrupt <- os.Interrupt
 }
-

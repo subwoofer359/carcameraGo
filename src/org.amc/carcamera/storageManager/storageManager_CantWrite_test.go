@@ -6,30 +6,27 @@ import (
 	"testing"
 )
 
+func TestDestinationIsWritable(t *testing.T) {
+	removeTestFiles()
+	const TESTDIR string = T_WORKDIR + "/testdir"
 
-func TestDestinationIsWritable (t *testing.T) {
-	removeTestFiles();
-	const TESTDIR string = T_WORKDIR + "/testdir" 
-	
 	if err := os.RemoveAll(TESTDIR); err != nil {
 		t.Error(err)
 	}
-	
+
 	if err := os.Mkdir(TESTDIR, 0550); err != nil {
 		t.Error(err)
 	}
-	
-	
-	
-	context := map[string] interface{} {
-		C.WORKDIR: TESTDIR,
-		C.TIMEOUT: "5s",
-		C.PREFIX: T_PREFIX,
-		C.SUFFIX: T_SUFFIX,
-		C.MINFILESIZE: "0",
+
+	context := map[string]interface{}{
+		C.WORKDIR:      TESTDIR,
+		C.TIMEOUT:      "5s",
+		C.PREFIX:       T_PREFIX,
+		C.SUFFIX:       T_SUFFIX,
+		C.MINFILESIZE:  "0",
 		C.MAXNOOFFILES: "10",
 	}
-	
+
 	storage := new(StorageManagerImpl)
 	storage.index = 0
 	storage.context = context

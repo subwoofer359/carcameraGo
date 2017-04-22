@@ -26,10 +26,8 @@ func (m *mockStorageManagerForLs) GetNextFileName() string {
 	return "/tmp"
 }
 
-
 //GetMockStorageManagerLS returns mockStorageManagerForLs
 // struct for testing with the linux command 'ls'
 func GetMockStorageManagerLS() *mockStorageManagerForLs {
 	return new(mockStorageManagerForLs)
 }
-

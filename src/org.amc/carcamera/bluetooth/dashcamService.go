@@ -9,17 +9,16 @@ import (
 
 type dashCamBTService struct {
 	statusChanged bool
-	status bool
-	dsStatus chan bool
-	errorChanged bool
-	dsErrorMsg chan string
-	errorMsg string
+	status        bool
+	dsStatus      chan bool
+	errorChanged  bool
+	dsErrorMsg    chan string
+	errorMsg      string
 }
 
-var ( 
+var (
 	attrDCSUUID = gatt.MustParseUUID("0104988e-59eb-4a00-b051-3e7b2565f631")
-	dcBTServ = new (dashCamBTService)
-	
+	dcBTServ    = new(dashCamBTService)
 )
 
 func init() {
@@ -29,25 +28,25 @@ func init() {
 
 func NewDashCamService() *gatt.Service {
 	s := gatt.NewService(attrDCSUUID)
-	
+
 	addStatusCharacteristic(s)
-	
+
 	addErrorCharacteristic(s)
 	return s
 }
 
 func (d *dashCamBTService) Update() {
 	select {
-		case status := <- d.dsStatus:
-			d.setStatus(status)						
-		default:
+	case status := <-d.dsStatus:
+		d.setStatus(status)
+	default:
 	}
-	
+
 	select {
-		case errorMsg := <- d.dsErrorMsg:
-			log.Println("Updating Error message")
-			d.setErrorMsg(errorMsg)
-		default:
+	case errorMsg := <-d.dsErrorMsg:
+		log.Println("Updating Error message")
+		d.setErrorMsg(errorMsg)
+	default:
 	}
 }
 

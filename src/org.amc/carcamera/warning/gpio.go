@@ -3,6 +3,7 @@ package warning
 import (
 	"github.com/stianeikeland/go-rpio"
 )
+
 type Gpio interface {
 	Open() error
 	Close() error

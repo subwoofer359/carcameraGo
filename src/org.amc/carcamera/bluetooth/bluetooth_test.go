@@ -1,43 +1,43 @@
 package bluetooth
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
 	C "org.amc/carcamera/constants"
+	"testing"
 	//"time"
 )
 
 func TestDashCamService(t *testing.T) {
 	d := NewDashCamService()
 	t.Logf("UUID: %s", d.UUID())
-	
+
 	if !d.UUID().Equal(attrDCSUUID) {
 		t.Error("DashCam Serice UUID not set")
 	}
-	
+
 	var check bool = false
-	
-	for _,char := range d.Characteristics() {
+
+	for _, char := range d.Characteristics() {
 		if char.UUID().Equal(attrSTATUSUUID) {
 			check = true
 		}
 	}
-	
+
 	if check == false {
 		t.Error("Characteristic Read UUID not set")
 	}
 }
 
 func TestSetServiceNames(t *testing.T) {
-	var context = map[string] interface {} {} 
+	var context = map[string]interface{}{}
 	gap := "Testing GAP Service"
 	gatt := "Testing GATT Service"
 	context[C.GAP_SERVICE_NAME] = gap
-	
+
 	assert.Equal(t, GAP_SERVICE_NAME, "DashCam")
 	setServiceNames(context)
 	assert.Equal(t, GAP_SERVICE_NAME, gap)
-	
+
 	assert.Equal(t, GATT_SERVICE_NAME, "Dash Cam")
 	context[C.GATT_SERVICE_NAME] = gatt
 	setServiceNames(context)

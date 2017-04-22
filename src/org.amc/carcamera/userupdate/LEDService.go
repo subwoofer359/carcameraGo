@@ -1,7 +1,7 @@
 package userupdate
 
 import (
-	 "org.amc/carcamera/warning"
+	"org.amc/carcamera/warning"
 )
 
 type LEDService struct {
@@ -14,7 +14,7 @@ func (l *LEDService) Init() error {
 	return nil
 }
 
-func (l LEDService)	Error(message string) {
+func (l LEDService) Error(message string) {
 	l.led.Error()
 }
 
@@ -33,5 +33,3 @@ func (l *LEDService) Close() {
 func (l *LEDService) SetGPIO(gpio warning.Gpio) {
 	l.led.SetGPIO(gpio)
 }
-
-

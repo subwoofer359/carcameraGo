@@ -5,12 +5,11 @@ import (
 )
 
 type BTService struct {
-	 dashService interface { 
-	 	SendStatus(val bool)
-	 	SendError(errorMsg string)
-	 }
-	 context map[string] interface{}
-	 
+	dashService interface {
+		SendStatus(val bool)
+		SendError(errorMsg string)
+	}
+	context map[string]interface{}
 }
 
 func (bt *BTService) Init() error {
@@ -19,7 +18,7 @@ func (bt *BTService) Init() error {
 	return nil
 }
 
-func (bt BTService)	Error(message string) {
+func (bt BTService) Error(message string) {
 	bt.dashService.SendError(message)
 }
 
@@ -35,6 +34,6 @@ func (bt *BTService) Close() {
 	//Todo
 }
 
-func (bt *BTService) SetContext(context map[string] interface{}) {
+func (bt *BTService) SetContext(context map[string]interface{}) {
 	bt.context = context
 }
