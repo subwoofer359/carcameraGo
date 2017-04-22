@@ -25,8 +25,8 @@ func removeTestFiles() {
 	}
 }
 
-func getNewStorageManager() StorageManager {
-	context := map[string] interface{} {
+func getTestContext() map[string] interface{} {
+	return map[string] interface{} {
 		C.WORKDIR: T_WORKDIR,
 		C.TIMEOUT: "5s",
 		C.PREFIX: T_PREFIX,
@@ -34,11 +34,26 @@ func getNewStorageManager() StorageManager {
 		C.MINFILESIZE: "0",
 		C.MAXNOOFFILES: "10",
 	}
+}
+
+func getNewStorageManager() StorageManager {
 	storage := new(StorageManagerImpl)
-	storage.index = 0
-	storage.context = context
+	storage.index = 0 
+	
+	storage.context = getTestContext()
 	err := storage.Init()
 	log.Println(err)
+	return storage;
+}
+
+func getNewContextLessStorageManager(context map[string] interface{}) StorageManager {
+	storage := &StorageManagerImpl {
+		index: 0,
+		context: context,
+	}
+	if err := storage.Init(); err != nil {
+		log.Println(err)
+	}
 	return storage;
 }
 

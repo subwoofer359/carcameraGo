@@ -21,7 +21,7 @@ var (
 
 //StorageManager object
 type StorageManagerImpl struct {
-	index 	int
+	index int
 	fileList []string
 	context map[string] interface{}
 }
@@ -180,7 +180,7 @@ func (s *StorageManagerImpl) AddCompleteFile(fileName string) error {
 	
 	if file, err := os.Stat(fileName); err != nil {
 		return err
-	} else if file.Size() > s.MinFileSize() {
+	} else if file.Size() >= s.MinFileSize() {
 		s.fileList = append(s.fileList, fileName)
 		removeOldFiles(s)
 		return nil

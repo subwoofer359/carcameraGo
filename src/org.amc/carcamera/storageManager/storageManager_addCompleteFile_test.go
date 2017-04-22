@@ -1,6 +1,7 @@
 package storageManager
 
 import (
+	C "org.amc/carcamera/constants"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"log"
@@ -14,9 +15,13 @@ func TestAddCompleteFileSizeLessThanAllowed(t *testing.T) {
 	removeTestFiles()
 	t.Log("removing Least recently used")
 	
+	var context = getTestContext()
+	
+	context[C.MINFILESIZE] = "1"
+	
 	index := 1
 	
-	storage := getNewStorageManager()
+	storage := getNewContextLessStorageManager(context)
 	
 	createEmptyTestFile(index, t)
 	
@@ -93,7 +98,10 @@ func TestAddCompleteRemovesEmptyFiles(t *testing.T) {
 		} else {
 			createEmptyTestFile(i, t)
 		}
-		if err := storage.AddCompleteFile(storage.GetNextFileName()); err != nil {
+		
+		nextName := storage.GetNextFileName()
+		log.Printf("----%d : %s", i, nextName) 
+		if err := storage.AddCompleteFile(nextName); err != nil {
 			t.Error(err)
 		}
 	}
