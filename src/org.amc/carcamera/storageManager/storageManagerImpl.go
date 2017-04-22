@@ -27,7 +27,7 @@ type StorageManagerImpl struct {
 }
 
 //New create new StorageManager
-func New(context map[string] interface{}) StorageManager {
+func NewStorageManager(context map[string] interface{}) StorageManager {
 	s := new(StorageManagerImpl)
 	s.context = context
 	return s

@@ -1,12 +1,13 @@
 package main
 
 import (
+	"github.com/stianeikeland/go-rpio"
+    "github.com/stretchr/testify/assert"
 	C "org.amc/carcamera/constants"
 	"org.amc/carcamera/warning"
 	"org.amc/carcamera/userupdate"
     "errors"
     "testing"
-    "github.com/stianeikeland/go-rpio"
     "os"
 	"sort"
 	"log"
@@ -87,13 +88,13 @@ func TestAppInit(t *testing.T) {
 func TestInitStorageManager(t *testing.T) {
 	setup()
 	
-	if err := testapp.InitStorageManager(); err != nil {
-		t.Error("Call to InitStorageManager() shouldn't throw an exception")
-	}
+	testapp.WebCamApp.storageManager = GetMockStorageManagerLS()
+	
+	testapp.InitStorageManager()
 
-	if testapp.WebCamApp.storageManager.WorkDir == nil {
-		t.Error("Work Directory for StorageManager not set")
-	}	
+
+	assert.Equal(t,testapp.WebCamApp.storageManager.WorkDir(), context[C.WORKDIR], 
+		"Work directory not set properly")	
 }
 
 func TestInitStorageManagerError(t *testing.T) {

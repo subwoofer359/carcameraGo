@@ -39,7 +39,7 @@ func createWebCamCommand() *CameraCommandImpl {
 	return &CameraCommandImpl {
 		command: context[C.COMMAND].(string),
 		args: context[C.OPTIONS].([]string),
-		storageManager: storageManager.New(context),
+		storageManager: storageManager.NewStorageManager(context),
 		exec: exec.Command,
 	}
 }
