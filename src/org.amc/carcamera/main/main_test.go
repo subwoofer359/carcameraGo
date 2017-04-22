@@ -151,7 +151,6 @@ type mainMockStorageManager struct {
 
 func (m *mainMockStorageManager) Init() error {
 	return errors.New("Test StorageManager init failed")
-	return nil
 }
 
 func (m *mainMockStorageManager) GetNextFileName() string {

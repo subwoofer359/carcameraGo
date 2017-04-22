@@ -127,7 +127,7 @@ func TestStopped(t *testing.T) {
 	}
 }
 
-func TestisClosed(t *testing.T) {
+func TestIsClosed(t *testing.T) {
 	message := new(Message)
 	tService := new(testService)
 	message.AddService(tService)

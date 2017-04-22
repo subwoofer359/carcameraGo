@@ -72,7 +72,6 @@ func checkIsMounted(path string) (error) {
 			return nil
 		}
 	}
-	return MOUNT_ERROR
 }
 
 // isDirectoryWritable

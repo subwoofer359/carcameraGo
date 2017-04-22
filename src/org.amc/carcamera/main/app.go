@@ -65,8 +65,6 @@ func (a *app) Start() error {
 			return err
 		}
 	}
-	
-	return nil
 }
 
 func (a *app) Close() {
