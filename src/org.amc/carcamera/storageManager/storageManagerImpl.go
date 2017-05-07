@@ -4,19 +4,20 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"org.amc/carcamera/check"
-	C "org.amc/carcamera/constants"
 	"os"
 	"regexp"
 	"strconv"
+
+	"org.amc/carcamera/check"
+	C "org.amc/carcamera/constants"
 )
 
 // Filename is left padding with six zeros
 var (
-	FILENAME_FORMAT      string = "%06d"
-	FILENAME_INDEX_LIMIT int    = 999999
-	MOUNTED              bool   = true
-	REGEXP_NUMBER        string = "(\\d+)\\"
+	FILENAME_FORMAT      = "%06d"
+	FILENAME_INDEX_LIMIT = 999999
+	MOUNTED              = true
+	REGEXP_NUMBER        = "(\\d+)\\"
 )
 
 //StorageManager object
@@ -102,10 +103,11 @@ func findAndSaveExistingFileNames(s *StorageManagerImpl) (int, []string, error) 
 		maxIndex, fileList := sortFilenames(files, s)
 		return maxIndex, fileList, nil
 	}
+
 }
 
 func sortFilenames(files []os.FileInfo, s *StorageManagerImpl) (int, []string) {
-	const NO_INDEX int = 0
+	const NO_INDEX = 0
 	fileList := []string{}
 	oldList := []string{}
 
