@@ -2,6 +2,7 @@ package bluetooth
 
 import (
 	"log"
+	"sync"
 	"testing"
 	"time"
 )
@@ -19,11 +20,15 @@ func testErrorInit() {
 }
 
 func TestSendError(t *testing.T) {
+
+	var wg sync.WaitGroup
+	wg.Add(1)
 	// reduce notify delay
 	oldNotifyDelay := NOTIFY_DELAY
 	NOTIFY_DELAY = 0
 
 	testErrorInit()
+	notifier.wg = &wg
 
 	go notifyError(notifier, service)
 	log.Println("Sending Error message")
@@ -37,7 +42,7 @@ func TestSendError(t *testing.T) {
 		t.Error("Error message not sent")
 	}
 
-	time.Sleep(100 * time.Millisecond)
+	wg.Wait()
 	if len(notifier.written) == 0 {
 		t.Error("No message received through the notify method")
 	} else {
@@ -52,6 +57,7 @@ func TestSendError(t *testing.T) {
  * No notification should be sent if error message is empty
  */
 func TestNoSendNoError(t *testing.T) {
+
 	testErrorInit()
 
 	go notifyError(notifier, service)
@@ -74,9 +80,13 @@ func (m mockErrorNotifier) Done() bool {
 }
 
 func TestSendErrorOnce(t *testing.T) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+
 	testErrorInit()
 
 	n := new(mockErrorNotifier)
+	n.wg = &wg
 
 	go notifyError(n, service)
 
@@ -88,15 +98,16 @@ func TestSendErrorOnce(t *testing.T) {
 		t.Error("Error message not sent")
 	}
 
-	time.Sleep(100 * time.Millisecond)
-	if len(n.written) == 0 {
+	wg.Wait()
+	if !n.wasWritten {
 		t.Error("No message received through the notify method")
 	} else {
 		log.Printf("Message received: %s", string(n.written))
 	}
+
 	n.wasWritten = false
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(1000 * time.Millisecond)
 
 	if n.wasWritten {
 		t.Error("Message should only be set once")

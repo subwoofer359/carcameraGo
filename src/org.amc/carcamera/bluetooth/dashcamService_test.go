@@ -2,8 +2,8 @@ package bluetooth
 
 import (
 	"log"
+	"sync"
 	"testing"
-	"time"
 )
 
 /*
@@ -20,13 +20,15 @@ type mockNotifier struct {
 	wasWritten bool
 	written    []byte
 	check      bool
+	wg         *sync.WaitGroup
 }
 
 func (m *mockNotifier) Write(data []byte) (int, error) {
+	defer m.wg.Done()
 	m.written = data
 	m.wasWritten = true
 	m.check = true
-	return 0, nil
+	return len(data), nil
 }
 
 func (m *mockNotifier) Done() bool {
@@ -38,17 +40,22 @@ func (m mockNotifier) Cap() int {
 }
 
 func TestNotify(t *testing.T) {
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
 	service := getTestDashCamBTService()
-	notifier := new(mockNotifier)
-	go notifyStatus(notifier, service)
+	notifier := mockNotifier{
+		wg: &wg,
+	}
+
+	go notifyStatus(&notifier, service)
+
 	log.Println("Sending message true")
 	service.SendStatus(true)
 	service.Update()
-	log.Println("Sending message false")
-	service.SendStatus(false) // send second message to cause block
-	service.Update()
+	wg.Wait()
 
-	time.Sleep(100 * time.Millisecond)
 	if len(notifier.written) == 0 {
 		t.Error("No message received through the notify method")
 	} else {
@@ -63,7 +70,7 @@ func TestUpdateNoUpdate(t *testing.T) {
 
 	service.Update()
 
-	if service.statusChanged == true {
+	if service.statusChanged {
 		t.Error("statusChanged should be false")
 	}
 
@@ -81,7 +88,7 @@ func TestUpdateUpdate(t *testing.T) {
 
 	service.Update()
 
-	if service.statusChanged != true {
+	if !service.statusChanged {
 		t.Error("statusChanged should be true")
 	}
 
@@ -94,11 +101,11 @@ func TestSetDifferentStatus(t *testing.T) {
 	service := getTestDashCamBTService()
 	service.setStatus(true)
 
-	if service.status != true {
+	if !service.status {
 		t.Error("Boolean value for status wasn't set")
 	}
 
-	if service.statusChanged != true {
+	if !service.statusChanged {
 		t.Error("Change of status value not detected")
 	}
 }
@@ -106,11 +113,11 @@ func TestSetDifferentStatus(t *testing.T) {
 func TestSetSameStatus(t *testing.T) {
 	service := getTestDashCamBTService()
 
-	if service.status != false {
+	if service.status {
 		t.Error("Boolean value for status wasn't set")
 	}
 
-	if service.statusChanged == true {
+	if service.statusChanged {
 		t.Error("Change of status value incorrectly detected")
 	}
 }
