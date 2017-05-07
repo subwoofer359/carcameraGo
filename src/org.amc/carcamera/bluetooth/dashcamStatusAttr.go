@@ -1,10 +1,11 @@
 package bluetooth
 
 import (
-	"github.com/paypal/gatt"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/paypal/gatt"
 )
 
 var (
@@ -29,8 +30,8 @@ func addStatusCharacteristic(s *gatt.Service) {
 
 func notifyStatus(n gatt.Notifier, d *dashCamBTService) {
 	for !n.Done() {
-		if d.statusChanged == true {
-			var statusStr string = strconv.FormatBool(d.getStatus())
+		if d.statusChanged {
+			var statusStr = strconv.FormatBool(d.getStatus())
 			log.Printf("Notify: written message: %s", statusStr)
 			n.Write([]byte(statusStr))
 			d.statusChanged = false

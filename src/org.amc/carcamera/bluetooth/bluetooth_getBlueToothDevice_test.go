@@ -2,11 +2,12 @@ package bluetooth
 
 import (
 	"errors"
-	"github.com/paypal/gatt"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/paypal/gatt"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
@@ -31,15 +32,15 @@ func TestGetBluetooth(t *testing.T) {
 }
 
 func TestGetBluetoothOnSecondCall(t *testing.T) {
-	var called int = 0
+	var called int
 	getMockDeviceOnSecondCall := func(options ...gatt.Option) (gatt.Device, error) {
 		if called == 0 {
 			called++
 			return nil, errors.New("test: no device")
-		} else {
-			mockBT := new(mockBlueToothDevice)
-			return mockBT, nil
 		}
+
+		mockBT := new(mockBlueToothDevice)
+		return mockBT, nil
 	}
 
 	d, err := getBluetoothDevice(getMockDeviceOnSecondCall)
@@ -62,7 +63,7 @@ func TestGetBluetoothReturnsNil(t *testing.T) {
 
 func TestGetBluetoothRetriesNTimes(t *testing.T) {
 	//Should ignore first try
-	var tried int = -1
+	var tried = -1
 	getMockDevice := func(options ...gatt.Option) (gatt.Device, error) {
 		tried++
 		return nil, errors.New("test: no device")

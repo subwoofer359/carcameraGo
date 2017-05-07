@@ -1,9 +1,10 @@
 package bluetooth
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	C "org.amc/carcamera/constants"
-	"testing"
 	//"time"
 )
 
@@ -15,7 +16,7 @@ func TestDashCamService(t *testing.T) {
 		t.Error("DashCam Serice UUID not set")
 	}
 
-	var check bool = false
+	var check = false
 
 	for _, char := range d.Characteristics() {
 		if char.UUID().Equal(attrSTATUSUUID) {

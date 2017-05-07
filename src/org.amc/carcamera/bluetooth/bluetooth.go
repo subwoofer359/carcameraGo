@@ -3,12 +3,13 @@ package bluetooth
 import (
 	"errors"
 	"fmt"
-	"github.com/paypal/gatt"
-	"github.com/paypal/gatt/linux/cmd"
 	"log"
-	C "org.amc/carcamera/constants"
 	"runtime"
 	"time"
+
+	"github.com/paypal/gatt"
+	"github.com/paypal/gatt/linux/cmd"
+	C "org.amc/carcamera/constants"
 )
 
 //============== Main Service ==================
@@ -33,9 +34,9 @@ var (
 
 	NOTIFY_DELAY = 2 * time.Second
 
-	GATT_SERVICE_NAME string = "Dash Cam"
+	GATT_SERVICE_NAME = "Dash Cam"
 
-	GAP_SERVICE_NAME string = "DashCam"
+	GAP_SERVICE_NAME = "DashCam"
 
 	BT_WAIT = 1 * time.Second
 
@@ -46,17 +47,17 @@ var (
 
 func getBluetoothDevice(newDevice func(opts ...gatt.Option) (gatt.Device, error)) (gatt.Device, error) {
 	var (
-		d      gatt.Device
-		bt_err error
+		d     gatt.Device
+		btErr error
 	)
-	d, bt_err = newDevice(DefaultServerOptions...)
-	if bt_err != nil {
-		log.Printf("Failed to open device, err: %s", bt_err)
+	d, btErr = newDevice(DefaultServerOptions...)
+	if btErr != nil {
+		log.Printf("Failed to open device, err: %s", btErr)
 		for i := 0; i < BT_RETRY; i++ {
 			time.Sleep(BT_WAIT)
-			d, bt_err = newDevice(DefaultServerOptions...)
-			if bt_err != nil {
-				log.Printf("Failed to open device, err: %s", bt_err)
+			d, btErr = newDevice(DefaultServerOptions...)
+			if btErr != nil {
+				log.Printf("Failed to open device, err: %s", btErr)
 			} else {
 				break
 			}
@@ -66,9 +67,10 @@ func getBluetoothDevice(newDevice func(opts ...gatt.Option) (gatt.Device, error)
 	if d == nil {
 		log.Println("Could not open bluetooth device")
 		return d, BT_DEVICE_ERROR
-	} else {
-		return d, nil
 	}
+
+	return d, nil
+
 }
 
 func StartBLE(context map[string]interface{}) {

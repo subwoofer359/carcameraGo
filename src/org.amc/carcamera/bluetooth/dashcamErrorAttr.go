@@ -1,15 +1,16 @@
 package bluetooth
 
 import (
-	"github.com/paypal/gatt"
 	"log"
-	"org.amc/carcamera/util"
 	"time"
+
+	"github.com/paypal/gatt"
+	"org.amc/carcamera/util"
 )
 
 var (
-	attrERRORUUID     = gatt.MustParseUUID("bcc13eef-ad4e-45d3-a2b7-a0b4a4d3d296")
-	MESSAGE_SIZE  int = 22
+	attrERRORUUID = gatt.MustParseUUID("bcc13eef-ad4e-45d3-a2b7-a0b4a4d3d296")
+	MESSAGE_SIZE  = 22
 )
 
 func addErrorCharacteristic(s *gatt.Service) {
