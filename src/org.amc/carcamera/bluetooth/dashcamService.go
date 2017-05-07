@@ -1,8 +1,9 @@
 package bluetooth
 
 import (
-	"github.com/paypal/gatt"
 	"log"
+
+	"github.com/paypal/gatt"
 )
 
 //=========== DashCam Service ===================
@@ -50,6 +51,8 @@ func (d *dashCamBTService) Update() {
 	}
 }
 
+//GetDashCamBTService returns a struct
+//for retrieving values from the Bluetooth Service
 func GetDashCamBTService() *dashCamBTService {
 	return dcBTServ
 }

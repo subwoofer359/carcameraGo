@@ -2,11 +2,12 @@ package storageManager
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"log"
-	C "org.amc/carcamera/constants"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	C "org.amc/carcamera/constants"
 )
 
 var (
