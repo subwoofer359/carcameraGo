@@ -43,6 +43,8 @@ var (
 	BT_RETRY = 5
 
 	BT_DEVICE_ERROR = errors.New("Could not open device")
+
+	currentTimeServiceUUID = gatt.UUID16(0x1805)
 )
 
 func getBluetoothDevice(newDevice func(opts ...gatt.Option) (gatt.Device, error)) (gatt.Device, error) {
@@ -73,6 +75,7 @@ func getBluetoothDevice(newDevice func(opts ...gatt.Option) (gatt.Device, error)
 
 }
 
+// StartBLE starts Bluetooth Services
 func StartBLE(context map[string]interface{}) {
 	d, err := getBluetoothDevice(gatt.NewDevice)
 
@@ -86,6 +89,7 @@ func StartBLE(context map[string]interface{}) {
 	d.Handle(
 		gatt.CentralConnected(func(c gatt.Central) { fmt.Println("Connect: ", c.ID()) }),
 		gatt.CentralDisconnected(func(c gatt.Central) { fmt.Println("Disconnect: ", c.ID()) }),
+		gatt.PeripheralDiscovered(timeServiceDiscoveredHandler),
 	)
 
 	onStateChanged := func(d gatt.Device, s gatt.State) {
@@ -126,4 +130,12 @@ func setServiceNames(context map[string]interface{}) {
 			GATT_SERVICE_NAME = context[C.GATT_SERVICE_NAME].(string)
 		}
 	}
+}
+
+func startScanning(device gatt.Device) {
+	device.Scan([]gatt.UUID{currentTimeServiceUUID}, false)
+}
+
+func timeServiceDiscoveredHandler(peripheral gatt.Peripheral, advertisement *gatt.Advertisement, c int) {
+	log.Println("Peripheral:" + peripheral.Name())
 }
