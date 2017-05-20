@@ -2,13 +2,12 @@ package upload
 
 import (
 	"bytes"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"testing"
 
-	"io/ioutil"
 	"os"
-
-	"fmt"
 
 	"github.com/stretchr/testify/assert"
 	C "org.amc/carcamera/constants"
@@ -21,6 +20,8 @@ var (
 	testDestDirectory  = "/tmp/copied"
 	testCopiedFilePath = testDestDirectory + C.SLASH + testFileName
 	testFilePath       = testDir + C.SLASH + testFileName
+
+	updater Updater
 )
 
 func TestMain(m *testing.M) {
@@ -34,23 +35,36 @@ func setUp() {
 	//Replace defaults to test values
 	context[C.WORKDIR] = testDir
 
-	filename = testFileName
-	destinationDirectory = testDestDirectory
+	updater = Updater{
+		filename:        testFileName,
+		destinationPath: testDestDirectory,
+		context:         context,
+	}
 }
 
 func TestCheckExecutableExists(t *testing.T) {
 	context[C.WORKDIR] = "/bin"
-	filename = "ls"
 
-	exists := checkExecutableExists(context)
+	updater = Updater{
+		"ls",
+		testDir,
+		context,
+	}
+
+	exists := updater.checkExecutableExists()
 	assert.True(t, exists, "File should exist")
 }
 
 func TestCheckExecutableNotExists(t *testing.T) {
 	context[C.WORKDIR] = "/bin"
-	filename = "Alf"
 
-	exists := checkExecutableExists(context)
+	updater = Updater{
+		"Alf",
+		testDir,
+		context,
+	}
+
+	exists := updater.checkExecutableExists()
 	assert.False(t, exists, "File should not exist")
 }
 
@@ -58,13 +72,22 @@ func TestCheckExecutableExistsNotDeletable(t *testing.T) {
 	setUp()
 	setUpFileTest()
 	removePermissionsFromFile(t, testFilePath)
-	log.Println(testFilePath)
 
-	exists := checkExecutableExists(context)
+	exists := updater.checkExecutableExists()
 
 	assert.False(t, exists, "File exists but can not be deleted")
 
 	restorePermissionsFromFile(t, testFilePath)
+}
+
+func setUpFileTest() {
+	removeTestDirectory(testDestDirectory)
+	createCopiedDir(testDestDirectory)
+	createTestFile(testFilePath)
+}
+
+func removeTestDirectory(path string) {
+	os.RemoveAll(path)
 }
 
 func createCopiedDir(path string) {
@@ -76,60 +99,11 @@ func createCopiedDir(path string) {
 	}
 }
 
-func removeTestDirectory(path string) {
-	os.RemoveAll(path)
-}
-
 func createTestFile(path string) {
 	data := bytes.NewBufferString("Test File").Bytes()
 	if err := ioutil.WriteFile(path, data, 0775); err != nil {
 		log.Println(err)
 	}
-}
-
-func setUpFileTest() {
-	removeTestDirectory(testDestDirectory)
-	createCopiedDir(testDestDirectory)
-	createTestFile(testFilePath)
-}
-
-func TestCopyNewVersionToDirectory(t *testing.T) {
-	setUp()
-	setUpFileTest()
-
-	err := copyNewVersionToDirectory(context)
-
-	assert.Nil(t, err, "Should be no error on copy")
-
-	_, err = os.Stat(testCopiedFilePath)
-
-	assert.Nil(t, err, fmt.Sprintf("Should exist:%s", testCopiedFilePath))
-}
-
-func TestCopyNewVersionToDirectoryCantRead(t *testing.T) {
-	setUp()
-	setUpFileTest()
-
-	removePermissionsFromFile(t, testFilePath)
-
-	err := copyNewVersionToDirectory(context)
-
-	assert.NotNil(t, err, "Should be error on copy")
-
-	restorePermissionsFromFile(t, testFilePath)
-}
-
-func TestCopyNewVersionToDirectoryCantWrite(t *testing.T) {
-	setUp()
-	setUpFileTest()
-
-	removePermissionsFromFile(t, testDestDirectory)
-
-	err := copyNewVersionToDirectory(context)
-
-	assert.NotNil(t, err, "Should be error on copy")
-
-	restorePermissionsFromFile(t, testDestDirectory)
 }
 
 func removePermissionsFromFile(t *testing.T, path string) {
@@ -144,12 +118,51 @@ func restorePermissionsFromFile(t *testing.T, path string) {
 	}
 }
 
+func TestCopyNewVersionToDirectory(t *testing.T) {
+	setUp()
+	setUpFileTest()
+
+	err := updater.copyNewVersionToDirectory()
+
+	assert.Nil(t, err, "Should be no error on copy")
+
+	_, err = os.Stat(testCopiedFilePath)
+
+	assert.Nil(t, err, fmt.Sprintf("Should exist:%s", testCopiedFilePath))
+}
+
+func TestCopyNewVersionToDirectoryCantRead(t *testing.T) {
+	setUp()
+	setUpFileTest()
+
+	removePermissionsFromFile(t, testFilePath)
+
+	err := updater.copyNewVersionToDirectory()
+
+	assert.NotNil(t, err, "Should be error on copy")
+
+	restorePermissionsFromFile(t, testFilePath)
+}
+
+func TestCopyNewVersionToDirectoryCantWrite(t *testing.T) {
+	setUp()
+	setUpFileTest()
+
+	removePermissionsFromFile(t, testDestDirectory)
+
+	err := updater.copyNewVersionToDirectory()
+
+	assert.NotNil(t, err, "Should be error on copy")
+
+	restorePermissionsFromFile(t, testDestDirectory)
+}
+
 func TestVerfiedCopiedFile(t *testing.T) {
 	setUp()
 	setUpFileTest()
-	copyNewVersionToDirectory(context)
+	updater.copyNewVersionToDirectory()
 
-	assert.Nil(t, verfiedCopiedFile(context), "Files should be the same")
+	assert.Nil(t, updater.verfiedCopiedFile(), "Files should be the same")
 }
 
 func TestVerfiedCopiedFileNotSameAsOriginal(t *testing.T) {
@@ -161,7 +174,7 @@ func TestVerfiedCopiedFileNotSameAsOriginal(t *testing.T) {
 		log.Println(err)
 	}
 
-	assert.NotNil(t, verfiedCopiedFile(context), "Files are not the same")
+	assert.NotNil(t, updater.verfiedCopiedFile(), "Files are not the same")
 }
 
 func TestRemoveOriginalFile(t *testing.T) {
@@ -172,11 +185,48 @@ func TestRemoveOriginalFile(t *testing.T) {
 		assert.Nil(t, err, "File should exist before deletion")
 	}
 
-	err := removeOriginalVersion(context)
+	err := updater.removeOriginalVersion()
 
 	if _, err := os.Stat(testFilePath); err != nil {
 		assert.NotNil(t, err, "File not should exist before deletion")
 	}
 
 	assert.Nil(t, err, "Should be no error on deletion")
+}
+
+func TestUpdateExecutable(t *testing.T) {
+	setUp()
+	setUpFileTest()
+	err := updater.UpdateExecutable()
+
+	assert.NoError(t, err, "Should be no error")
+}
+
+func TestUpdateNoExecutable(t *testing.T) {
+
+	updater.filename = "nofile"
+
+	err := updater.UpdateExecutable()
+
+	assert.NoError(t, err, "Should be no error")
+}
+
+func TestUpdateExecutableError(t *testing.T) {
+	setUp()
+	setUpFileTest()
+
+	//Directory with no permission to write to
+	removePermissionsFromFile(t, testDestDirectory)
+	err := updater.UpdateExecutable()
+
+	restorePermissionsFromFile(t, testDestDirectory)
+	assert.Error(t, err, "Should be an error thrown")
+	log.Println(err)
+}
+
+func TestGetNewUpdater(t *testing.T) {
+	u := GetNewUpdater(context, testDestDirectory, testFileName)
+	assert.Equal(t, testDestDirectory, u.destinationPath, "Paths should be the same")
+	assert.Equal(t, testFileName, u.filename, "Filenames should be the same")
+
 }
