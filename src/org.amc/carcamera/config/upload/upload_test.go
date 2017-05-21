@@ -224,8 +224,8 @@ func TestUpdateExecutableError(t *testing.T) {
 	log.Println(err)
 }
 
-func TestGetNewUpdater(t *testing.T) {
-	u := GetNewUpdater(context, testDestDirectory, testFileName)
+func TestNewUpdater(t *testing.T) {
+	u := NewUpdater(context, testDestDirectory, testFileName)
 	assert.Equal(t, testDestDirectory, u.destinationPath, "Paths should be the same")
 	assert.Equal(t, testFileName, u.filename, "Filenames should be the same")
 }

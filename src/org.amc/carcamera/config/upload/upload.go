@@ -18,8 +18,8 @@ var (
 	readWriteMask  os.FileMode = 0600
 )
 
-//GetNewUpdater returns initialise Updater struct pointer
-func GetNewUpdater(context map[string]interface{}, destinationPath string, filename string) *Updater {
+//NewUpdater returns initialise Updater struct pointer
+func NewUpdater(context map[string]interface{}, destinationPath string, filename string) *Updater {
 	return &Updater{
 		filename,
 		destinationPath,
