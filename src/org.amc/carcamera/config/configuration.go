@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"io"
 	"log"
-	C "org.amc/carcamera/constants"
 	"strings"
+
+	C "org.amc/carcamera/constants"
 )
 
 func ReadConfigurationFile(jsonReader io.Reader) (map[string]interface{}, error) {
@@ -18,7 +19,6 @@ func ReadConfigurationFile(jsonReader io.Reader) (map[string]interface{}, error)
 		return nil, err
 	}
 	//concatenate options string and durations string which are separate
-	log.Println(context[C.VIDEOLENGTH].(string))
 
 	if context[C.OPTIONS] == nil {
 		log.Println("Config: No Options set in configuration file")
