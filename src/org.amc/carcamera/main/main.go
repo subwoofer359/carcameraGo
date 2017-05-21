@@ -3,14 +3,15 @@ package main
 import (
 	"flag"
 	"log"
+	"time"
+
 	"org.amc/carcamera/userupdate"
 	"org.amc/carcamera/warning"
-	"time"
 )
 
 var (
-	myapp    app = app{} //myapp Application object
-	filename     = flag.String("c", "", "Configuration file path")
+	myapp    = app{} //myapp Application object
+	filename = flag.String("c", "", "Configuration file path")
 )
 
 func main() {
@@ -54,5 +55,5 @@ func main() {
 func mainExit() {
 	myapp.message.Stopped()
 	time.Sleep(30 * time.Second)
-	log.Fatal("Program stopped due to error conditions")
+	log.Println("Program stopped due to error conditions")
 }
