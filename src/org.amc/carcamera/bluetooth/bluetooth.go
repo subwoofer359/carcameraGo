@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"runtime"
 	"time"
 
 	"github.com/paypal/gatt"
@@ -115,7 +114,6 @@ func StartBLE(context map[string]interface{}) {
 
 	for {
 		GetDashCamBTService().Update()
-		runtime.Gosched()
 		time.Sleep(UPDATE_DELAY)
 	}
 }
