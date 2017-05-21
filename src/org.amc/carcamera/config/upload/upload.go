@@ -119,6 +119,5 @@ func (u Updater) UpdateExecutable() error {
 	} else {
 		log.Println("No Update file found")
 	}
-	log.Println("No update carried out")
 	return nil
 }
