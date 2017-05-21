@@ -228,5 +228,4 @@ func TestGetNewUpdater(t *testing.T) {
 	u := GetNewUpdater(context, testDestDirectory, testFileName)
 	assert.Equal(t, testDestDirectory, u.destinationPath, "Paths should be the same")
 	assert.Equal(t, testFileName, u.filename, "Filenames should be the same")
-
 }
