@@ -46,6 +46,10 @@ func (m mockStorageManager) RemoveLRU() {
 
 }
 
+func (m mockStorageManager) RemoveOldFiles() {
+
+}
+
 func (m mockStorageManager) AddCompleteFile(fileName string) error {
 	return nil
 }

@@ -12,6 +12,7 @@ type StorageManager interface {
 	MinFileSize() int64
 	GetNextFileName() string
 	RemoveLRU()
+	RemoveOldFiles()
 	AddCompleteFile(fileName string) error
 	GetContext() map[string]interface{}
 }

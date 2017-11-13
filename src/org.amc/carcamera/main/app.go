@@ -2,14 +2,15 @@ package main
 
 import (
 	"log"
+	"os"
+	"os/exec"
+	"time"
+
 	"org.amc/carcamera/config"
 	C "org.amc/carcamera/constants"
 	"org.amc/carcamera/storageManager"
 	"org.amc/carcamera/userupdate"
 	"org.amc/carcamera/warning"
-	"os"
-	"os/exec"
-	"time"
 )
 
 var context map[string]interface{}
@@ -50,6 +51,7 @@ func (a *app) InitStorageManager() error {
 		a.message.Error(err.Error())
 		return err
 	}
+	a.WebCamApp.storageManager.RemoveOldFiles()
 	return nil
 }
 

@@ -1,6 +1,7 @@
 package storageManager
 
 import (
+	"log"
 	"testing"
 )
 
@@ -39,4 +40,36 @@ func TestRemoveLRUFromEmptyList(t *testing.T) {
 
 	storage.RemoveLRU()
 
+}
+
+// TestRemoveOldFile tests if all old files are deleted and reduces the number of files
+// to context.MaxNoOfFiles
+func TestRemoveOldFile(t *testing.T) {
+	removeTestFiles()
+
+	const NumOfFiles int = 20
+
+	t.Log("removing Least recently used")
+
+	storage := getNewStorageManager()
+
+	for i := 1; i <= NumOfFiles; i++ {
+		createTestFile(i, t)
+	}
+
+	storage.Init()
+
+	log.Printf("Number of files before remove call is %d", len(storage.FileList()))
+
+	if len(storage.FileList()) != NumOfFiles {
+		t.Error("Files should have been created")
+	}
+
+	storage.RemoveOldFiles()
+
+	log.Printf("Number of files after remove call is %d", len(storage.FileList()))
+
+	if len(storage.FileList()) != storage.MaxNoOfFiles() {
+		t.Error("Files should have been removed from file list")
+	}
 }

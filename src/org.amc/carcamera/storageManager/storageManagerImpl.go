@@ -162,7 +162,7 @@ func (s *StorageManagerImpl) GetNextFileName() string {
 	return newFileName
 }
 
-func removeOldFiles(s *StorageManagerImpl) {
+func (s *StorageManagerImpl) RemoveOldFiles() {
 	for len(s.fileList) > s.MaxNoOfFiles() {
 		s.RemoveLRU()
 	}
@@ -184,7 +184,7 @@ func (s *StorageManagerImpl) AddCompleteFile(fileName string) error {
 		return err
 	} else if file.Size() >= s.MinFileSize() {
 		s.fileList = append(s.fileList, fileName)
-		removeOldFiles(s)
+		s.RemoveOldFiles()
 		return nil
 	} else if s.Index() > 0 {
 		s.index = s.index - 1
