@@ -25,6 +25,7 @@ func (u *UserDisplay) Ok() {
 }
 
 // PowerError On error turns green light off
+//To replace with a method to make Green Led flash
 func (u *UserDisplay) PowerError() {
 	setLow(u, GreenLED)
 }
