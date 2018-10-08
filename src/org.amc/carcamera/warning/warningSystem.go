@@ -2,7 +2,6 @@ package warning
 
 import (
 	"github.com/stianeikeland/go-rpio"
-	//"log"
 )
 
 const (
@@ -23,6 +22,11 @@ func (u *UserDisplay) Ok() {
 	if !isHigh(u, RedLED) {
 		setHigh(u, GreenLED)
 	}
+}
+
+// PowerError On error turns green light off
+func (u *UserDisplay) PowerError() {
+	setLow(u, GreenLED)
 }
 
 func (u *UserDisplay) Error() {

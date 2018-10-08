@@ -1,8 +1,9 @@
 package warning
 
 import (
-	"github.com/stianeikeland/go-rpio"
 	"testing"
+
+	"github.com/stianeikeland/go-rpio"
 )
 
 func TestReset(t *testing.T) {
@@ -79,5 +80,19 @@ func TestOpenAndClose(t *testing.T) {
 
 	if open != false {
 		t.Error("Close method not called")
+	}
+}
+
+func TestPowerError(t *testing.T) {
+	warning := UserDisplay{
+		gpio: new(MockGpio),
+	}
+
+	warning.Ok()
+
+	warning.PowerError()
+
+	if warning.gpio.Pin(GreenLED).Read() == rpio.High {
+		t.Errorf("Green LED should be off")
 	}
 }
