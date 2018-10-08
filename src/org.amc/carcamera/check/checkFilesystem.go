@@ -2,6 +2,7 @@ package check
 
 import (
 	"errors"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -81,6 +82,18 @@ func isDirectoryWritable(path string) error {
 		TESTFILENAME string = "test"
 		SLASH        string = string(os.PathSeparator)
 	)
+
+	var stat syscall.Statfs_t
+
+	syscall.Statfs(path, &stat)
+
+	spaceRemaining := stat.Bavail * uint64(stat.Bsize)
+
+	if spaceRemaining <= 100 {
+		log.Println("The device space is full")
+		log.Println("Not going to test if the directory is writable")
+		return nil
+	}
 
 	if file, err := os.Create(path + SLASH + TESTFILENAME); err != nil {
 		return err
