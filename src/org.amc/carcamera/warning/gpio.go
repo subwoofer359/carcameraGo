@@ -10,6 +10,16 @@ const (
 	Low State = 0
 )
 
+//Mode of operation of the pin
+type Mode uint8
+
+const (
+	//Input mode
+	Input Mode = 1
+	//Output mode
+	Output Mode = 0
+)
+
 //Gpio interface to the GPIO system
 type Gpio interface {
 	Open() error

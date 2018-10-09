@@ -2,8 +2,10 @@ package warning
 
 var open bool
 
+const pinArraySize = 48
+
 type MockGpio struct {
-	pins [48]GpioPin
+	pins [pinArraySize]GpioPin
 }
 
 func (m *MockGpio) Open() error {
@@ -27,8 +29,15 @@ func (m *MockGpio) Pin(i int) GpioPin {
 	return m.pins[i]
 }
 
+func (m *MockGpio) AddPin(i int, pin GpioPin) {
+	if i < pinArraySize {
+		m.pins[i] = pin
+	}
+}
+
 type MockGpioPin struct {
 	state State
+	Mode  Mode
 }
 
 func (m *MockGpioPin) High() {
@@ -39,12 +48,12 @@ func (m *MockGpioPin) Low() {
 	m.state = Low
 }
 
-func (m MockGpioPin) Input() {
-
+func (m *MockGpioPin) Input() {
+	m.Mode = Input
 }
 
-func (m MockGpioPin) Output() {
-
+func (m *MockGpioPin) Output() {
+	m.Mode = Output
 }
 
 func (m MockGpioPin) Read() State {
