@@ -2,15 +2,15 @@ package main
 
 import (
 	"errors"
-	"github.com/stianeikeland/go-rpio"
-	"github.com/stretchr/testify/assert"
 	"log"
-	C "org.amc/carcamera/constants"
-	"org.amc/carcamera/userupdate"
-	"org.amc/carcamera/warning"
 	"os"
 	"sort"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/userupdate"
+	"org.amc/carcamera/warning"
 )
 
 var mockGPIO *warning.MockGpio
@@ -71,11 +71,11 @@ func TestAppInit(t *testing.T) {
 		t.Error("GPIO should be set to open")
 	}
 
-	if mockGPIO.Pin(warning.RedLED).Read() != rpio.Low {
+	if mockGPIO.Pin(warning.RedLED).Read() != warning.Low {
 		t.Error("Red light should be off")
 	}
 
-	if mockGPIO.Pin(warning.GreenLED).Read() != rpio.Low {
+	if mockGPIO.Pin(warning.GreenLED).Read() != warning.Low {
 		t.Error("Green light should be off")
 	}
 
@@ -102,7 +102,7 @@ func TestInitStorageManagerError(t *testing.T) {
 
 	testapp.InitStorageManager()
 
-	if mockGPIO.Pin(warning.RedLED).Read() != rpio.High {
+	if mockGPIO.Pin(warning.RedLED).Read() != warning.High {
 		t.Error("Red light not turned on")
 	}
 
@@ -120,7 +120,7 @@ func TestStartError(t *testing.T) {
 		t.Error("An error should have been thrown")
 	}
 
-	if mockGPIO.Pin(warning.RedLED).Read() != rpio.High {
+	if mockGPIO.Pin(warning.RedLED).Read() != warning.High {
 		t.Error("Red led should be light as there is an error in execution")
 	}
 }

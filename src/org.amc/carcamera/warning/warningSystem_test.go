@@ -2,8 +2,6 @@ package warning
 
 import (
 	"testing"
-
-	"github.com/stianeikeland/go-rpio"
 )
 
 func TestReset(t *testing.T) {
@@ -16,8 +14,8 @@ func TestReset(t *testing.T) {
 
 	warning.Reset()
 
-	if warning.gpio.Pin(GreenLED).Read() == rpio.Low &&
-		warning.gpio.Pin(RedLED).Read() == rpio.Low {
+	if warning.gpio.Pin(GreenLED).Read() == Low &&
+		warning.gpio.Pin(RedLED).Read() == Low {
 
 	} else {
 
@@ -32,11 +30,11 @@ func TestOk(t *testing.T) {
 
 	warning.Ok()
 
-	if warning.gpio.Pin(GreenLED).Read() != rpio.High {
+	if warning.gpio.Pin(GreenLED).Read() != High {
 		t.Errorf("Pin %d not set high\n", GreenLED)
 	}
 
-	if warning.gpio.Pin(RedLED).Read() == rpio.High {
+	if warning.gpio.Pin(RedLED).Read() == High {
 		t.Error("Yellow and Red light still on")
 	}
 }
@@ -48,7 +46,7 @@ func TestNotOk(t *testing.T) {
 	warning.Error()
 	warning.Ok()
 
-	if warning.gpio.Pin(GreenLED).Read() == rpio.High {
+	if warning.gpio.Pin(GreenLED).Read() == High {
 		t.Errorf("Green Led shouldnt be light when Red Led is light")
 	}
 }
@@ -60,7 +58,7 @@ func TestError(t *testing.T) {
 
 	warning.Error()
 
-	if warning.gpio.Pin(RedLED).Read() == rpio.Low {
+	if warning.gpio.Pin(RedLED).Read() == Low {
 		t.Errorf("Red Led should light")
 	}
 }
@@ -92,7 +90,7 @@ func TestPowerError(t *testing.T) {
 
 	warning.PowerError()
 
-	if warning.gpio.Pin(GreenLED).Read() == rpio.High {
+	if warning.gpio.Pin(GreenLED).Read() == High {
 		t.Errorf("Green LED should be off")
 	}
 }

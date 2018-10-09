@@ -1,7 +1,5 @@
 package warning
 
-import "github.com/stianeikeland/go-rpio"
-
 var open bool
 
 type MockGpio struct {
@@ -30,22 +28,26 @@ func (m *MockGpio) Pin(i int) GpioPin {
 }
 
 type MockGpioPin struct {
-	state rpio.State
+	state State
 }
 
 func (m *MockGpioPin) High() {
-	m.state = rpio.High
+	m.state = High
 }
 
 func (m *MockGpioPin) Low() {
-	m.state = rpio.Low
+	m.state = Low
+}
+
+func (m MockGpioPin) Input() {
+
 }
 
 func (m MockGpioPin) Output() {
 
 }
 
-func (m MockGpioPin) Read() rpio.State {
+func (m MockGpioPin) Read() State {
 	return m.state
 }
 

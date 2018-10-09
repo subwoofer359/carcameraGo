@@ -1,9 +1,9 @@
 package userupdate
 
 import (
-	"github.com/stianeikeland/go-rpio"
-	"org.amc/carcamera/warning"
 	"testing"
+
+	"org.amc/carcamera/warning"
 )
 
 func TestLEDServiceInit(t *testing.T) {
@@ -43,13 +43,13 @@ func TestLEDServiceNotStarted(t *testing.T) {
 
 	greenPin := mockGPIO.Pin(warning.GreenLED)
 
-	if greenPin.Read() != rpio.Low {
+	if greenPin.Read() != warning.Low {
 		t.Error("Green light should be off")
 	}
 
 	redPin := mockGPIO.Pin(warning.RedLED)
 
-	if redPin.Read() != rpio.Low {
+	if redPin.Read() != warning.Low {
 		t.Error("Red light should be off")
 	}
 }
@@ -75,13 +75,13 @@ func TestLEDServiceStarted(t *testing.T) {
 
 	greenPin := mockGPIO.Pin(warning.GreenLED)
 
-	if greenPin.Read() != rpio.High {
+	if greenPin.Read() != warning.High {
 		t.Error("Green light should be on")
 	}
 
 	redPin := mockGPIO.Pin(warning.RedLED)
 
-	if redPin.Read() != rpio.Low {
+	if redPin.Read() != warning.Low {
 		t.Error("Red light should be off")
 	}
 }
@@ -109,7 +109,7 @@ func TestLEDServiceError(t *testing.T) {
 
 	redPin := mockGPIO.Pin(warning.RedLED)
 
-	if redPin.Read() != rpio.High {
+	if redPin.Read() != warning.High {
 		t.Error("Red light should be on")
 	}
 }
@@ -127,13 +127,13 @@ func TestLEDServiceStopped(t *testing.T) {
 
 	redPin := mockGPIO.Pin(warning.RedLED)
 
-	if redPin.Read() == rpio.High {
+	if redPin.Read() == warning.High {
 		t.Error("Red light should not be on")
 	}
 
 	ledService.Stopped()
 
-	if redPin.Read() != rpio.High {
+	if redPin.Read() != warning.High {
 		t.Error("Red light should be on")
 	}
 }

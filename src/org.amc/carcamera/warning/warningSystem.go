@@ -1,9 +1,5 @@
 package warning
 
-import (
-	"github.com/stianeikeland/go-rpio"
-)
-
 const (
 	GreenLED int = 24
 
@@ -62,10 +58,10 @@ func setLow(u *UserDisplay, colour int) {
 	u.gpio.Pin(colour).Low()
 }
 
-func read(u *UserDisplay, colour int) rpio.State {
+func read(u *UserDisplay, colour int) State {
 	return u.gpio.Pin(colour).Read()
 }
 
 func isHigh(u *UserDisplay, colour int) bool {
-	return read(u, colour) == rpio.High
+	return read(u, colour) == High
 }
