@@ -25,16 +25,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	btService := new(userupdate.BTService)
-
-	ledService := new(userupdate.LEDService)
-	ledService.SetGPIO(warning.RpioImpl{})
-
 	myapp.Init()
 
-	btService.SetContext(context)
-	myapp.message.AddService(ledService)
-	myapp.message.AddService(btService)
+	setUpServices()
 
 	if err := myapp.message.Init(); err != nil {
 		log.Fatal(err)
@@ -50,6 +43,17 @@ func main() {
 		myapp.message.Error(err.Error())
 		mainExit()
 	}
+}
+
+func setUpServices() {
+	btService := new(userupdate.BTService)
+
+	ledService := new(userupdate.LEDService)
+	ledService.SetGPIO(warning.RpioImpl{})
+
+	btService.SetContext(context)
+	myapp.message.AddService(ledService)
+	myapp.message.AddService(btService)
 }
 
 func mainExit() {
