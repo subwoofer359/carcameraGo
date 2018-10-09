@@ -13,6 +13,9 @@ import (
 	"org.amc/carcamera/warning"
 )
 
+// cOMPLETED returned by command running successfully
+const cOMPLETED string = "completed"
+
 var context map[string]interface{}
 
 type app struct {
@@ -30,9 +33,7 @@ func (a *app) Init() {
 
 	a.WebCamApp = createWebCamCommand()
 
-	timeout, _ := time.ParseDuration(context[C.TIMEOUT].(string))
-
-	a.appTimeOut = timeout
+	a.appTimeOut, _ = time.ParseDuration(context[C.TIMEOUT].(string))
 
 }
 
@@ -62,7 +63,7 @@ func (a *app) Start() error {
 
 		err := a.runner.Start()
 
-		if err != nil && err.Error() != "completed" {
+		if err != nil && err.Error() != cOMPLETED {
 			a.message.Error(err.Error())
 			return err
 		}

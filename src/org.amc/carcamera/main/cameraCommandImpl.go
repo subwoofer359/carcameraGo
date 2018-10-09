@@ -5,10 +5,11 @@ import (
 	"errors"
 	"io"
 	"log"
-	"org.amc/carcamera/storageManager"
 	"os"
 	"os/exec"
 	"strings"
+
+	"org.amc/carcamera/storageManager"
 )
 
 type CameraCommandImpl struct {
@@ -54,7 +55,7 @@ func (c *CameraCommandImpl) Run() error {
 	}
 
 	c.storageManager.AddCompleteFile(filename)
-	return errors.New("completed")
+	return errors.New(cOMPLETED)
 }
 
 type commandObject interface {

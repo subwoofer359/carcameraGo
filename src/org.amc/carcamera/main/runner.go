@@ -15,9 +15,13 @@ type Runner struct {
 	command   CameraCommand
 }
 
-var ErrTimeout = errors.New("received timeout")
+var (
+	//ErrTimeout error due to process timing out
+	ErrTimeout = errors.New("received timeout")
 
-var ErrInterrupt = errors.New("received interrupt")
+	//ErrInterrupt error due to process bring send a interrupt signal
+	ErrInterrupt = errors.New("received interrupt")
+)
 
 func NewRunner(d time.Duration) *Runner {
 	return &Runner{
