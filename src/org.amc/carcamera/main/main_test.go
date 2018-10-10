@@ -5,6 +5,7 @@ import (
 	"os"
 	"sort"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	C "org.amc/carcamera/constants"
@@ -16,9 +17,7 @@ import (
 var mockGPIO *warning.MockGpio
 var testapp *app
 
-func setup() {
-	mockGPIO = warning.NewMockGPIO()
-
+func contextTestSetup() {
 	context = make(map[string]interface{})
 
 	context[C.COMMAND] = "/bin/ls"
@@ -27,6 +26,12 @@ func setup() {
 	context[C.SUFFIX] = ".h264"
 	context[C.OPTIONS] = []string{"-ss", "70000", "-rot", "90"}
 	context[C.TIMEOUT] = "1000"
+}
+
+func setup() {
+	mockGPIO = warning.NewMockGPIO()
+
+	contextTestSetup()
 
 	log.Println(context)
 	testapp = new(app)
@@ -83,6 +88,37 @@ func TestAppInit(t *testing.T) {
 	if testapp.WebCamApp == nil {
 		t.Error("WebCamApp should not be nil")
 	}
+
+	if testapp.runnerFactory != defaultFactory {
+		t.Error("WebCamApp runnerFactory not set to default")
+	}
+}
+
+func TestAppInitNewFactory(t *testing.T) {
+	contextTestSetup()
+	testapp = new(app)
+
+	myMockRunner := new(mockRunner)
+
+	assert.Nil(t, testapp.runnerFactory)
+
+	testapp.runnerFactory = myMockRunner
+
+	testapp.Init()
+
+	assert.NotEqual(t, myMockRunner, defaultFactory)
+
+	assert.Equal(t, myMockRunner, testapp.runnerFactory)
+}
+
+type mockRunner struct{}
+
+func (m mockRunner) Start() error {
+	return nil
+}
+
+func (m mockRunner) NewRunner(d time.Duration) runner.Runner {
+	return nil
 }
 
 func TestInitStorageManager(t *testing.T) {

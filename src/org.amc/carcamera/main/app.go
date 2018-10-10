@@ -16,7 +16,6 @@ import (
 
 var context map[string]interface{}
 
-//Todo remove to main
 var defaultFactory runner.RunnerFactory = new(runner.SimpleRunnerFactory)
 
 type app struct {
