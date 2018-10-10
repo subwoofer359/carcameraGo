@@ -5,6 +5,10 @@ import (
 	"os/exec"
 	"strings"
 	"testing"
+
+	"org.amc/carcamera/storageManager"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCameraCommandRun(t *testing.T) {
@@ -89,4 +93,35 @@ func TestStderrPipe(t *testing.T) {
 	} else {
 		log.Printf("Error message (%s) was returned which is correct", err.Error())
 	}
+}
+
+func TestSetCommand(t *testing.T) {
+	c := new(CameraCommandImpl)
+
+	command := "/bin/shout"
+
+	c.SetCommand(command)
+
+	assert.Equal(t, command, c.Command())
+}
+
+func TestSetStorageManager(t *testing.T) {
+	s := new(storageManager.StorageManagerImpl)
+
+	c := new(CameraCommandImpl)
+
+	assert.Nil(t, c.StorageManager())
+
+	c.SetStorageManager(s)
+
+	assert.Equal(t, s, c.StorageManager())
+}
+
+func TestGetArgs(t *testing.T) {
+	c := new(CameraCommandImpl)
+
+	testArgs := []string{"hello", "wolrd"}
+	c.args = testArgs
+
+	assert.Equal(t, c.Args(), testArgs)
 }
