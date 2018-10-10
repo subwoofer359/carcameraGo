@@ -35,6 +35,17 @@ func (r *RunnerImpl) Start() error {
 	}()
 	log.Println("command started")
 
+	return r.Handle()
+}
+
+func (r *RunnerImpl) Stop() {
+	if r.command.Process() != nil {
+		r.command.Process().Kill()
+	}
+}
+
+//Handle return messages from external process
+func (r *RunnerImpl) Handle() error {
 	select {
 	case err := <-r.complete:
 		log.Println("command completed")
@@ -50,11 +61,5 @@ func (r *RunnerImpl) Start() error {
 		r.Stop()
 		signal.Stop(r.interrupt)
 		return ErrInterrupt
-	}
-}
-
-func (r *RunnerImpl) Stop() {
-	if r.command.Process() != nil {
-		r.command.Process().Kill()
 	}
 }
