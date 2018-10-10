@@ -8,22 +8,23 @@ import (
 
 	"org.amc/carcamera/config"
 	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/runner"
 	"org.amc/carcamera/storageManager"
 	"org.amc/carcamera/userupdate"
 	"org.amc/carcamera/warning"
 )
 
-// cOMPLETED returned by command running successfully
-const cOMPLETED string = "completed"
-
 var context map[string]interface{}
 
+//Todo remove to main
+var defaultFactory runner.RunnerFactory = new(runner.SimpleRunnerFactory)
+
 type app struct {
-	runner     *Runner
-	lights     warning.UserDisplay
-	message    *userupdate.Message
-	WebCamApp  *CameraCommandImpl
-	appTimeOut time.Duration
+	runnerFactory runner.RunnerFactory
+	lights        warning.UserDisplay
+	message       *userupdate.Message
+	WebCamApp     *runner.CameraCommandImpl
+	appTimeOut    time.Duration
 }
 
 func (a *app) Init() {
@@ -35,35 +36,38 @@ func (a *app) Init() {
 
 	a.appTimeOut, _ = time.ParseDuration(context[C.TIMEOUT].(string))
 
+	if a.runnerFactory == nil {
+		a.runnerFactory = defaultFactory
+	}
+
 }
 
-func createWebCamCommand() *CameraCommandImpl {
-	return &CameraCommandImpl{
-		command:        context[C.COMMAND].(string),
-		args:           context[C.OPTIONS].([]string),
-		storageManager: storageManager.NewStorageManager(context),
-		exec:           exec.Command,
-	}
+func createWebCamCommand() *runner.CameraCommandImpl {
+	return runner.NewCameraCommand(
+		context[C.COMMAND].(string),
+		context[C.OPTIONS].([]string),
+		storageManager.NewStorageManager(context),
+		exec.Command)
 }
 
 func (a *app) InitStorageManager() error {
-	a.WebCamApp.storageManager.SetWorkDir(context[C.WORKDIR].(string))
-	if err := a.WebCamApp.storageManager.Init(); err != nil {
+	a.WebCamApp.StorageManager().SetWorkDir(context[C.WORKDIR].(string))
+	if err := a.WebCamApp.StorageManager().Init(); err != nil {
 		a.message.Error(err.Error())
 		return err
 	}
-	a.WebCamApp.storageManager.RemoveOldFiles()
+	a.WebCamApp.StorageManager().RemoveOldFiles()
 	return nil
 }
 
 func (a *app) Start() error {
 	for {
-		a.runner = NewRunner(a.appTimeOut)
-		a.runner.add(a.WebCamApp)
+		var arunner = a.runnerFactory.NewRunner(a.appTimeOut)
+		arunner.Add(a.WebCamApp)
 
-		err := a.runner.Start()
+		err := arunner.Start()
 
-		if err != nil && err.Error() != cOMPLETED {
+		if err != nil && err.Error() != runner.COMPLETED {
 			a.message.Error(err.Error())
 			return err
 		}

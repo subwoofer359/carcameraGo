@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"os"
 	"sort"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/runner"
 	"org.amc/carcamera/userupdate"
 	"org.amc/carcamera/warning"
 )
@@ -39,6 +39,7 @@ func setup() {
 	testapp.message.AddService(ledService)
 
 	testapp.message.Init()
+
 }
 
 func TestCreateCameraCommand(t *testing.T) {
@@ -50,15 +51,15 @@ func TestCreateCameraCommand(t *testing.T) {
 		t.Error("Command not created")
 	}
 
-	if sort.SearchStrings(command.args, "-rot") >= len(command.args) {
+	if sort.SearchStrings(command.Args(), "-rot") >= len(command.Args()) {
 		t.Error("Option Rotate not found")
 	}
 
-	if sort.SearchStrings(command.args, "90") >= len(command.args) {
+	if sort.SearchStrings(command.Args(), "90") >= len(command.Args()) {
 		t.Error("Option Rotate argument not found")
 	}
 
-	if sort.SearchStrings(command.args, "help") < len(command.args) {
+	if sort.SearchStrings(command.Args(), "help") < len(command.Args()) {
 		t.Error("Unspecified option found")
 	}
 
@@ -87,18 +88,18 @@ func TestAppInit(t *testing.T) {
 func TestInitStorageManager(t *testing.T) {
 	setup()
 
-	testapp.WebCamApp.storageManager = GetMockStorageManagerLS()
+	testapp.WebCamApp.SetStorageManager(runner.GetMockStorageManagerLS())
 
 	testapp.InitStorageManager()
 
-	assert.Equal(t, testapp.WebCamApp.storageManager.WorkDir(), context[C.WORKDIR],
+	assert.Equal(t, testapp.WebCamApp.StorageManager().WorkDir(), context[C.WORKDIR],
 		"Work directory not set properly")
 }
 
 func TestInitStorageManagerError(t *testing.T) {
 	setup()
 
-	testapp.WebCamApp.storageManager = new(mainMockStorageManager)
+	testapp.WebCamApp.SetStorageManager(new(runner.MainMockStorageManager))
 
 	testapp.InitStorageManager()
 
@@ -111,8 +112,8 @@ func TestInitStorageManagerError(t *testing.T) {
 func TestStartError(t *testing.T) {
 	setup()
 
-	testapp.WebCamApp.command = "/bin/l"
-	testapp.WebCamApp.storageManager = GetMockStorageManagerLS()
+	testapp.WebCamApp.SetCommand("/bin/l")
+	testapp.WebCamApp.SetStorageManager(runner.GetMockStorageManagerLS())
 
 	testapp.InitStorageManager()
 
@@ -138,17 +139,4 @@ func TestLoadConfiguration(t *testing.T) {
 		t.Errorf("%s shouldn't be empty\n", C.COMMAND)
 	}
 
-}
-
-//mainMockStorageManager Mock StorageManager
-type mainMockStorageManager struct {
-	mockStorageManager
-}
-
-func (m *mainMockStorageManager) Init() error {
-	return errors.New("Test StorageManager init failed")
-}
-
-func (m *mainMockStorageManager) GetNextFileName() string {
-	return ""
 }

@@ -1,9 +1,11 @@
-package main
+package runner
+
+import "errors"
 
 //mockStorageManagerForDD Mock StorageManager to work with the
 //linux command dd
 type mockStorageManagerForDD struct {
-	mockStorageManager
+	MockStorageManager
 }
 
 func (m *mockStorageManagerForDD) GetNextFileName() string {
@@ -19,7 +21,7 @@ func GetMockStorageManagerDD() *mockStorageManagerForDD {
 //mockStorageManagerForLs Mock StorageManager
 // to work with the linux command 'ls'
 type mockStorageManagerForLs struct {
-	mockStorageManager
+	MockStorageManager
 }
 
 func (m *mockStorageManagerForLs) GetNextFileName() string {
@@ -30,4 +32,17 @@ func (m *mockStorageManagerForLs) GetNextFileName() string {
 // struct for testing with the linux command 'ls'
 func GetMockStorageManagerLS() *mockStorageManagerForLs {
 	return new(mockStorageManagerForLs)
+}
+
+//MainMockStorageManager Mock StorageManager
+type MainMockStorageManager struct {
+	MockStorageManager
+}
+
+func (m *MainMockStorageManager) Init() error {
+	return errors.New("Test StorageManager init failed")
+}
+
+func (m *MainMockStorageManager) GetNextFileName() string {
+	return ""
 }

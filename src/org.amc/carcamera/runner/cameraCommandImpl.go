@@ -1,4 +1,4 @@
-package main
+package runner
 
 import (
 	"bufio"
@@ -22,6 +22,26 @@ type CameraCommandImpl struct {
 
 func (c CameraCommandImpl) Process() *os.Process {
 	return c.process
+}
+
+func (c *CameraCommandImpl) StorageManager() storageManager.StorageManager {
+	return c.storageManager
+}
+
+func (c *CameraCommandImpl) SetStorageManager(storageManager storageManager.StorageManager) {
+	c.storageManager = storageManager
+}
+
+func (c CameraCommandImpl) Args() []string {
+	return c.args
+}
+
+func (c CameraCommandImpl) Command() string {
+	return c.command
+}
+
+func (c *CameraCommandImpl) SetCommand(command string) {
+	c.command = command
 }
 
 func (c *CameraCommandImpl) Run() error {
@@ -55,7 +75,7 @@ func (c *CameraCommandImpl) Run() error {
 	}
 
 	c.storageManager.AddCompleteFile(filename)
-	return errors.New(cOMPLETED)
+	return errors.New(COMPLETED)
 }
 
 type commandObject interface {
@@ -102,4 +122,14 @@ func readErrPipe(pipe io.Reader) error {
 		return errors.New(strings.Join(errorMsg, ""))
 	}
 	return in.Err()
+}
+
+//To be moved to a factory
+func NewCameraCommand(command string, args []string, storageManager storageManager.StorageManager, exec func(string, ...string) *exec.Cmd) *CameraCommandImpl {
+	return &CameraCommandImpl{
+		command:        command,
+		args:           args,
+		storageManager: storageManager,
+		exec:           exec,
+	}
 }

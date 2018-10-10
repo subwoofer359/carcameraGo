@@ -1,4 +1,4 @@
-package main
+package runner
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Runner struct {
+type RunnerImpl struct {
 	interrupt chan os.Signal
 	complete  chan error
 	timeout   <-chan time.Time
@@ -23,19 +23,11 @@ var (
 	ErrInterrupt = errors.New("received interrupt")
 )
 
-func NewRunner(d time.Duration) *Runner {
-	return &Runner{
-		interrupt: make(chan os.Signal, 1),
-		complete:  make(chan error),
-		timeout:   time.After(d),
-	}
-}
-
-func (r *Runner) add(command CameraCommand) {
+func (r *RunnerImpl) Add(command CameraCommand) {
 	r.command = command
 }
 
-func (r *Runner) Start() error {
+func (r *RunnerImpl) Start() error {
 	signal.Notify(r.interrupt, os.Interrupt)
 	log.Println("Signal Notified")
 	go func() {
@@ -50,18 +42,18 @@ func (r *Runner) Start() error {
 
 	case <-r.timeout:
 		log.Println("command Timed out")
-		r.stop()
+		r.Stop()
 		return ErrTimeout
 
 	case <-r.interrupt:
 		log.Println("command interrupted")
-		r.stop()
+		r.Stop()
 		signal.Stop(r.interrupt)
 		return ErrInterrupt
 	}
 }
 
-func (r *Runner) stop() {
+func (r *RunnerImpl) Stop() {
 	if r.command.Process() != nil {
 		r.command.Process().Kill()
 	}

@@ -1,4 +1,4 @@
-package main
+package runner
 
 import (
 	"log"
@@ -10,9 +10,16 @@ import (
 
 const timeout = 1 * time.Second
 
+func getNewRunner(d time.Duration) Runner {
+
+	factory := new(SimpleRunnerFactory)
+
+	return factory.NewRunner(d)
+}
+
 func TestRunnerStart(t *testing.T) {
 
-	myRunner := NewRunner(timeout)
+	myRunner := getNewRunner(timeout)
 
 	command := &CameraCommandImpl{
 		command:        "/bin/ls",
@@ -21,7 +28,7 @@ func TestRunnerStart(t *testing.T) {
 		exec:           exec.Command,
 	}
 
-	myRunner.add(command)
+	myRunner.Add(command)
 	err := myRunner.Start()
 
 	if err.Error() != "completed" {
@@ -31,7 +38,7 @@ func TestRunnerStart(t *testing.T) {
 
 func TestRunnerStartTimeOut(t *testing.T) {
 
-	myRunner := NewRunner(timeout)
+	myRunner := getNewRunner(timeout)
 
 	command := &CameraCommandImpl{
 		command:        "/bin/dd",
@@ -40,7 +47,7 @@ func TestRunnerStartTimeOut(t *testing.T) {
 		exec:           exec.Command,
 	}
 
-	myRunner.add(command)
+	myRunner.Add(command)
 	err := myRunner.Start()
 
 	if err.Error() != "received timeout" {
@@ -50,7 +57,11 @@ func TestRunnerStartTimeOut(t *testing.T) {
 
 func TestRunnerStartInterrupted(t *testing.T) {
 
-	myRunner := NewRunner(10 * time.Second)
+	myRunner := RunnerImpl{
+		interrupt: make(chan os.Signal, 1),
+		complete:  make(chan error),
+		timeout:   time.After(10 * time.Second),
+	}
 
 	command := &CameraCommandImpl{
 		command:        "/bin/dd",
@@ -59,7 +70,7 @@ func TestRunnerStartInterrupted(t *testing.T) {
 		exec:           exec.Command,
 	}
 
-	myRunner.add(command)
+	myRunner.Add(command)
 
 	go interruptCommand(myRunner)
 
@@ -72,7 +83,7 @@ func TestRunnerStartInterrupted(t *testing.T) {
 	}
 }
 
-func interruptCommand(runner *Runner) {
+func interruptCommand(runner RunnerImpl) {
 	time.Sleep(2 * time.Second)
 	log.Println("Trying to interrupt command")
 	runner.interrupt <- os.Interrupt
