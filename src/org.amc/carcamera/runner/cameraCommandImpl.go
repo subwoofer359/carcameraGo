@@ -123,13 +123,3 @@ func readErrPipe(pipe io.Reader) error {
 	}
 	return in.Err()
 }
-
-//To be moved to a factory
-func NewCameraCommand(command string, args []string, storageManager storageManager.StorageManager, exec func(string, ...string) *exec.Cmd) *CameraCommandImpl {
-	return &CameraCommandImpl{
-		command:        command,
-		args:           args,
-		storageManager: storageManager,
-		exec:           exec,
-	}
-}

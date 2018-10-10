@@ -22,7 +22,7 @@ type app struct {
 	runnerFactory runner.RunnerFactory
 	lights        warning.UserDisplay
 	message       *userupdate.Message
-	WebCamApp     *runner.CameraCommandImpl
+	WebCamApp     runner.CameraCommand
 	appTimeOut    time.Duration
 }
 
@@ -41,8 +41,9 @@ func (a *app) Init() {
 
 }
 
-func createWebCamCommand() *runner.CameraCommandImpl {
-	return runner.NewCameraCommand(
+func createWebCamCommand() runner.CameraCommand {
+	commandFactory := new(runner.SimpleCameraCommandFactory)
+	return commandFactory.NewCameraCommand(
 		context[C.COMMAND].(string),
 		context[C.OPTIONS].([]string),
 		storageManager.NewStorageManager(context),
