@@ -3,20 +3,35 @@ package main
 import (
 	"log"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 
 	"org.amc/carcamera/warning"
 )
 
-func TestPowerControlInit(t *testing.T) {
-	m := new(warning.MockGpio)
+var powerControl PowerControl
+var m *warning.MockGpio
+var tpin *warning.MockGpioPin
 
-	tpin := &warning.MockGpioPin{}
+func powerControlSetup() {
 
-	m.AddPin(usbPowerOn, tpin)
+	m = new(warning.MockGpio)
 
-	powerControl := PowerControl{
+	tpin = &warning.MockGpioPin{
+		Mode: warning.Input,
+	}
+
+	m.AddPin(uSBPOWERON, tpin)
+
+	powerControl = PowerControl{
 		gpio: m,
 	}
+}
+
+func TestPowerControlInit(t *testing.T) {
+
+	powerControlSetup()
 
 	if err := powerControl.Init(); err != nil {
 		t.Error(err)
@@ -30,5 +45,43 @@ func TestPowerControlInit(t *testing.T) {
 
 	if tpin.Mode != warning.Input {
 		t.Error("GPIO pin not set to Input mode")
+	}
+
+	//Has poweroff been initialised
+
+	if powerControl.poweroff == nil {
+		t.Error("Poweroff channel not initialised")
+	}
+
+	if powerControl.usbPowerOn == nil {
+		t.Error("UsbPowerOn shouldn't be nil")
+	}
+}
+
+func TestPowerControlStart(t *testing.T) {
+	powerControlSetup()
+
+	wAITTIME = 10 * time.Millisecond
+
+	if err := powerControl.Init(); err != nil {
+		t.Error(err)
+	}
+
+	assert.Equal(t, warning.Low, powerControl.usbPowerOn.Read())
+
+	go func() {
+		powerControl.Start()
+
+	}()
+
+	time.Sleep(1 * time.Second)
+	//Set pin high
+	powerControl.usbPowerOn = &warning.MockGpioPin{State: warning.High}
+
+	select {
+	case state := <-powerControl.poweroff:
+		log.Println(state)
+	case <-time.After(3 * time.Second):
+		log.Fatal("Test timed out")
 	}
 }
