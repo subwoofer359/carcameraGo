@@ -36,16 +36,16 @@ func (m *MockGpio) AddPin(i int, pin GpioPin) {
 }
 
 type MockGpioPin struct {
-	state State
+	State State
 	Mode  Mode
 }
 
 func (m *MockGpioPin) High() {
-	m.state = High
+	m.State = High
 }
 
 func (m *MockGpioPin) Low() {
-	m.state = Low
+	m.State = Low
 }
 
 func (m *MockGpioPin) Input() {
@@ -57,7 +57,7 @@ func (m *MockGpioPin) Output() {
 }
 
 func (m MockGpioPin) Read() State {
-	return m.state
+	return m.State
 }
 
 func NewMockGPIO() *MockGpio {
