@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"os"
 	"os/exec"
@@ -24,6 +25,7 @@ type app struct {
 	message       *userupdate.Message
 	WebCamApp     runner.CameraCommand
 	appTimeOut    time.Duration
+	powerControl  PowerControl
 }
 
 func (a *app) Init() {
@@ -38,7 +40,6 @@ func (a *app) Init() {
 	if a.runnerFactory == nil {
 		a.runnerFactory = defaultFactory
 	}
-
 }
 
 func createWebCamCommand() runner.CameraCommand {
@@ -61,6 +62,12 @@ func (a *app) InitStorageManager() error {
 }
 
 func (a *app) Start() error {
+	if a.powerControl == nil {
+		return errors.New("PowerControl is nil")
+	} else {
+		a.powerControl.Start()
+	}
+
 	for {
 		var arunner = a.runnerFactory.NewRunner(a.appTimeOut)
 		arunner.Add(a.WebCamApp)
@@ -79,6 +86,8 @@ func (a *app) Start() error {
 
 				return err
 			}
+		case <-a.powerControl.PowerOff():
+			return errors.New("Power Control Interrupt")
 		}
 
 		close(result)

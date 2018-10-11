@@ -37,6 +37,10 @@ func setup() {
 	log.Println(context)
 	testapp = new(app)
 
+	testapp.powerControl = new(mockPowerControl)
+
+	testapp.powerControl.Init()
+
 	ledService := new(userupdate.LEDService)
 	ledService.SetGPIO(mockGPIO)
 
@@ -92,6 +96,10 @@ func TestAppInit(t *testing.T) {
 
 	if testapp.runnerFactory != defaultFactory {
 		t.Error("WebCamApp runnerFactory not set to default")
+	}
+
+	if testapp.powerControl == nil {
+		t.Error("PowerControl not set up")
 	}
 }
 
@@ -189,6 +197,54 @@ func TestStart(t *testing.T) {
 
 	//Set up test time out
 	testTimeout := 5 * time.Second
+
+	timeoutChan := make(<-chan time.Time)
+
+	timeoutChan = time.After(testTimeout)
+
+	result := make(chan error)
+
+	defer close(result)
+
+	go func() {
+		result <- testapp.Start()
+	}()
+
+	select {
+	case <-timeoutChan:
+		t.Fatal("Test timed out")
+	case err := <-result:
+		if err != nil && err != errTestStopped {
+			t.Error(err)
+		}
+	}
+}
+
+type pPowerControl struct {
+	mockPowerControl
+}
+
+func (p *pPowerControl) Start() {
+	go func() {
+		log.Println("Start called on PowerControl")
+		time.Sleep(10 * time.Millisecond)
+		p.poweroff <- true
+	}()
+}
+
+func TestStartPowerOff(t *testing.T) {
+	setup()
+
+	testapp.runnerFactory = new(mockRunnerFactory)
+
+	newPowerControl := new(pPowerControl)
+
+	newPowerControl.Init()
+
+	testapp.powerControl = newPowerControl
+
+	//Set up test time out
+	testTimeout := 10 * time.Second
 
 	timeoutChan := make(<-chan time.Time)
 

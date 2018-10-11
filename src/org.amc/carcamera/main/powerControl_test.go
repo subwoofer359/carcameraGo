@@ -10,7 +10,7 @@ import (
 	"org.amc/carcamera/warning"
 )
 
-var powerControl PowerControl
+var powerControl PowerControlImpl
 var m *warning.MockGpio
 var tpin *warning.MockGpioPin
 
@@ -24,7 +24,7 @@ func powerControlSetup() {
 
 	m.AddPin(uSBPOWERON, tpin)
 
-	powerControl = PowerControl{
+	powerControl = PowerControlImpl{
 		gpio: m,
 	}
 }
@@ -69,10 +69,7 @@ func TestPowerControlStart(t *testing.T) {
 
 	assert.Equal(t, warning.Low, powerControl.usbPowerOn.Read())
 
-	go func() {
-		powerControl.Start()
-
-	}()
+	powerControl.Start()
 
 	time.Sleep(1 * time.Second)
 	//Set pin high
