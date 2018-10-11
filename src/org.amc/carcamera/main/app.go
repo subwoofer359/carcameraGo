@@ -65,12 +65,23 @@ func (a *app) Start() error {
 		var arunner = a.runnerFactory.NewRunner(a.appTimeOut)
 		arunner.Add(a.WebCamApp)
 
-		err := arunner.Start()
+		result := make(chan error)
 
-		if err != nil && err.Error() != runner.COMPLETED {
-			a.message.Error(err.Error())
-			return err
+		go func() {
+			result <- arunner.Start()
+		}()
+
+		select {
+		case err := <-result:
+			//If  Completed received then keep looping
+			if err != nil && err.Error() != runner.COMPLETED {
+				a.message.Error(err.Error())
+
+				return err
+			}
 		}
+
+		close(result)
 	}
 }
 

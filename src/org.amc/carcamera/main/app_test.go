@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"os"
 	"sort"
@@ -98,7 +99,7 @@ func TestAppInitNewFactory(t *testing.T) {
 	contextTestSetup()
 	testapp = new(app)
 
-	myMockRunner := new(mockRunner)
+	myMockRunner := new(mockRunnerFactory)
 
 	assert.Nil(t, testapp.runnerFactory)
 
@@ -111,14 +112,35 @@ func TestAppInitNewFactory(t *testing.T) {
 	assert.Equal(t, myMockRunner, testapp.runnerFactory)
 }
 
+// Test stopped error
+var errTestStopped = errors.New("Test Stopped")
+
+//runnerCalls to keep track of calls to runner.Start()
+var runnerCalls int
+
 type mockRunner struct{}
 
-func (m mockRunner) Start() error {
+func (m *mockRunner) Start() error {
+	log.Printf("M Calls:%d", runnerCalls)
+	if runnerCalls > 5 {
+		return errTestStopped
+	}
+	runnerCalls++
+	return errors.New(runner.COMPLETED)
+}
+
+func (m mockRunner) Stop() {}
+
+func (m mockRunner) Handle() error {
 	return nil
 }
 
-func (m mockRunner) NewRunner(d time.Duration) runner.Runner {
-	return nil
+func (m *mockRunner) Add(command runner.CameraCommand) {}
+
+type mockRunnerFactory struct{}
+
+func (m mockRunnerFactory) NewRunner(d time.Duration) runner.Runner {
+	return &mockRunner{}
 }
 
 func TestInitStorageManager(t *testing.T) {
@@ -162,9 +184,37 @@ func TestStartError(t *testing.T) {
 	}
 }
 
+func TestStart(t *testing.T) {
+	testapp.runnerFactory = new(mockRunnerFactory)
+
+	//Set up test time out
+	testTimeout := 5 * time.Second
+
+	timeoutChan := make(<-chan time.Time)
+
+	timeoutChan = time.After(testTimeout)
+
+	result := make(chan error)
+
+	defer close(result)
+
+	go func() {
+		result <- testapp.Start()
+	}()
+
+	select {
+	case <-timeoutChan:
+		t.Fatal("Test timed out")
+	case err := <-result:
+		if err != nil && err != errTestStopped {
+			t.Error(err)
+		}
+	}
+}
+
 func TestLoadConfiguration(t *testing.T) {
 	testapp = new(app)
-	var filename string = os.ExpandEnv("$GOPATH") + "/configuration.json"
+	var filename = os.ExpandEnv("$GOPATH") + "/configuration.json"
 	err := testapp.LoadConfiguration(filename)
 
 	if err != nil {
@@ -174,5 +224,4 @@ func TestLoadConfiguration(t *testing.T) {
 	if context[C.COMMAND] == "" {
 		t.Errorf("%s shouldn't be empty\n", C.COMMAND)
 	}
-
 }
