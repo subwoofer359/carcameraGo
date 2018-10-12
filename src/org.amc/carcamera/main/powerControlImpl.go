@@ -22,7 +22,7 @@ type PowerControlImpl struct {
 	poweroff   chan bool
 }
 
-func SetGPIO(p *PowerControlImpl, gpio warning.Gpio) {
+func (p *PowerControlImpl) SetGPIO(gpio warning.Gpio) {
 	p.gpio = gpio
 }
 

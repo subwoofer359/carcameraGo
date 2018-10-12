@@ -9,7 +9,7 @@ import (
 var ErrPowerFault = errors.New("Power Control Interrupt")
 
 type PowerControl interface {
-	SetGPIO(p *PowerControlImpl, gpio warning.Gpio)
+	SetGPIO(gpio warning.Gpio)
 	Init() error
 	IsStarted() bool
 	PowerOff() chan bool

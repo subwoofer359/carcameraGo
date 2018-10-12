@@ -13,7 +13,7 @@ type mockPowerControl struct {
 	poweroff chan bool
 }
 
-func (m *mockPowerControl) SetGPIO(p *PowerControlImpl, gpio warning.Gpio) {}
+func (m *mockPowerControl) SetGPIO(gpio warning.Gpio) {}
 
 func (m *mockPowerControl) Init() error {
 	m.poweroff = make(chan bool)
