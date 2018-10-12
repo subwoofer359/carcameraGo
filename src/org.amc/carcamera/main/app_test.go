@@ -123,34 +123,6 @@ func TestAppInitNewFactory(t *testing.T) {
 // Test stopped error
 var errTestStopped = errors.New("Test Stopped")
 
-//runnerCalls to keep track of calls to runner.Start()
-var runnerCalls int
-
-type mockRunner struct{}
-
-func (m *mockRunner) Start() error {
-	log.Printf("M Calls:%d", runnerCalls)
-	if runnerCalls > 5 {
-		return errTestStopped
-	}
-	runnerCalls++
-	return errors.New(runner.COMPLETED)
-}
-
-func (m mockRunner) Stop() {}
-
-func (m mockRunner) Handle() error {
-	return nil
-}
-
-func (m *mockRunner) Add(command runner.CameraCommand) {}
-
-type mockRunnerFactory struct{}
-
-func (m mockRunnerFactory) NewRunner(d time.Duration) runner.Runner {
-	return &mockRunner{}
-}
-
 func TestInitStorageManager(t *testing.T) {
 	setup()
 
@@ -233,34 +205,6 @@ func checkRunnerReturn(t *testing.T, err error) {
 	default:
 		t.Error(err)
 	}
-}
-
-type pPowerControl struct {
-	mockPowerControl
-}
-
-func (p *pPowerControl) Start() {
-	log.Println("Start called on PowerControl")
-	go func() {
-		log.Println("PowerControl poweroff message sent")
-		time.Sleep(10 * time.Millisecond)
-		p.poweroff <- true
-	}()
-}
-
-type slowMockRunnerFactory struct{}
-
-func (m slowMockRunnerFactory) NewRunner(d time.Duration) runner.Runner {
-	return &slowMockRunner{}
-}
-
-type slowMockRunner struct {
-	mockRunner
-}
-
-func (m *slowMockRunner) Start() error {
-	time.Sleep(1 * time.Second)
-	return m.mockRunner.Start()
 }
 
 func TestStartPowerOff(t *testing.T) {
