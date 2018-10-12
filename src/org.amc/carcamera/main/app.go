@@ -87,7 +87,9 @@ func (a *app) Start() error {
 				return err
 			}
 		case <-a.powerControl.PowerOff():
-			return errors.New("Power Control Interrupt")
+			cmd := exec.Command("sync")
+			cmd.Run()
+			return ErrPowerFault
 		}
 
 		close(result)

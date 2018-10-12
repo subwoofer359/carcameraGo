@@ -193,6 +193,8 @@ func TestStartError(t *testing.T) {
 }
 
 func TestStart(t *testing.T) {
+	setup()
+
 	testapp.runnerFactory = new(mockRunnerFactory)
 
 	//Set up test time out
@@ -214,9 +216,22 @@ func TestStart(t *testing.T) {
 	case <-timeoutChan:
 		t.Fatal("Test timed out")
 	case err := <-result:
-		if err != nil && err != errTestStopped {
-			t.Error(err)
-		}
+		checkRunnerReturn(t, err)
+	}
+}
+
+func checkRunnerReturn(t *testing.T, err error) {
+	switch err {
+	case nil:
+		break
+	case ErrPowerFault:
+		log.Println("TestStartPowerOff: Power fault error returned ")
+		break
+	case errTestStopped:
+		log.Println("TestStartPowerOff: test Stopped ")
+		break
+	default:
+		t.Error(err)
 	}
 }
 
@@ -225,17 +240,33 @@ type pPowerControl struct {
 }
 
 func (p *pPowerControl) Start() {
+	log.Println("Start called on PowerControl")
 	go func() {
-		log.Println("Start called on PowerControl")
+		log.Println("PowerControl poweroff message sent")
 		time.Sleep(10 * time.Millisecond)
 		p.poweroff <- true
 	}()
 }
 
+type slowMockRunnerFactory struct{}
+
+func (m slowMockRunnerFactory) NewRunner(d time.Duration) runner.Runner {
+	return &slowMockRunner{}
+}
+
+type slowMockRunner struct {
+	mockRunner
+}
+
+func (m *slowMockRunner) Start() error {
+	time.Sleep(1 * time.Second)
+	return m.mockRunner.Start()
+}
+
 func TestStartPowerOff(t *testing.T) {
 	setup()
 
-	testapp.runnerFactory = new(mockRunnerFactory)
+	testapp.runnerFactory = new(slowMockRunnerFactory)
 
 	newPowerControl := new(pPowerControl)
 
@@ -262,9 +293,7 @@ func TestStartPowerOff(t *testing.T) {
 	case <-timeoutChan:
 		t.Fatal("Test timed out")
 	case err := <-result:
-		if err != nil && err != errTestStopped {
-			t.Error(err)
-		}
+		checkRunnerReturn(t, err)
 	}
 }
 
