@@ -12,6 +12,7 @@ import (
 var (
 	myapp    = app{} //myapp Application object
 	filename = flag.String("c", "", "Configuration file path")
+	appGpio  = warning.RpioImpl{}
 )
 
 func main() {
@@ -26,6 +27,8 @@ func main() {
 	}
 
 	myapp.Init()
+
+	addPowerControl()
 
 	setUpServices()
 
@@ -45,11 +48,19 @@ func main() {
 	}
 }
 
+func addPowerControl() {
+	pc := &PowerControlImpl{
+		gpio: appGpio,
+	}
+
+	myapp.powerControl = pc
+}
+
 func setUpServices() {
 	btService := new(userupdate.BTService)
 
 	ledService := new(userupdate.LEDService)
-	ledService.SetGPIO(warning.RpioImpl{})
+	ledService.SetGPIO(appGpio)
 
 	btService.SetContext(context)
 	myapp.message.AddService(ledService)
