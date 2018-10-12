@@ -21,7 +21,7 @@ var testapp *app
 func contextTestSetup() {
 	context = make(map[string]interface{})
 
-	context[C.COMMAND] = "/bin/ls"
+	context[C.COMMAND] = "/bin/l"
 	context[C.WORKDIR] = "/tmp" // set workdir to /tmp for testing
 	context[C.PREFIX] = "video"
 	context[C.SUFFIX] = ".h264"
@@ -30,6 +30,8 @@ func contextTestSetup() {
 }
 
 func setup() {
+	//disable shutdown command
+	shutdownCMD = []string{"ls", "-l", "-a"}
 	mockGPIO = warning.NewMockGPIO()
 
 	contextTestSetup()

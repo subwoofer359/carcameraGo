@@ -15,9 +15,11 @@ import (
 	"org.amc/carcamera/warning"
 )
 
-var context map[string]interface{}
-
-var defaultFactory runner.RunnerFactory = new(runner.SimpleRunnerFactory)
+var (
+	context        map[string]interface{}
+	defaultFactory runner.RunnerFactory = new(runner.SimpleRunnerFactory)
+	shutdownCMD                         = []string{"shutdown", "-h", "now"}
+)
 
 type app struct {
 	runnerFactory runner.RunnerFactory
@@ -89,6 +91,10 @@ func (a *app) Start() error {
 		case <-a.powerControl.PowerOff():
 			cmd := exec.Command("sync")
 			cmd.Run()
+
+			cmd = exec.Command(shutdownCMD[0], shutdownCMD[1:]...)
+			err := cmd.Run()
+			log.Println(err)
 			return ErrPowerFault
 		}
 
