@@ -84,7 +84,7 @@ func TestRunnerStartInterrupted(t *testing.T) {
 }
 
 func interruptCommand(runner RunnerImpl) {
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Millisecond)
 	log.Println("Trying to interrupt command")
 	runner.interrupt <- os.Interrupt
 }
