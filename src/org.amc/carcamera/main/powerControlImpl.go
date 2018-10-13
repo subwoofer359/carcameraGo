@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	uSBPOWERON int = 9 // Input pin to receive USB power signal
+	uSBPOWERON   int = 9  // Input pin to receive USB power signal
+	stayOnSignal int = 11 // Signal to PowetBoost to stay on
 )
 
 var wAITTIME = 10 * time.Second
@@ -30,12 +31,26 @@ func (p *PowerControlImpl) Init() error {
 	if err := p.gpio.Open(); err != nil {
 		return err
 	}
+
+	p.setUsbPowerOnPin()
+
+	//Set the stay on pin to high
+	p.setStayOnPin()
+
+	return nil
+}
+
+func (p *PowerControlImpl) setUsbPowerOnPin() {
 	p.usbPowerOn = p.gpio.Pin(uSBPOWERON)
 	p.usbPowerOn.Input()
 
 	p.poweroff = make(chan bool)
+}
 
-	return nil
+func (p *PowerControlImpl) setStayOnPin() {
+	stayOnPin := p.gpio.Pin(stayOnSignal)
+	stayOnPin.Output()
+	stayOnPin.High()
 }
 
 func (p *PowerControlImpl) Start() {
