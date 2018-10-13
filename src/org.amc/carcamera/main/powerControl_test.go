@@ -67,13 +67,16 @@ func TestPowerControlStart(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.Equal(t, warning.Low, powerControl.usbPowerOn.Read())
+	powerControl.usbPowerOn = &warning.MockGpioPin{State: warning.High}
+
+	assert.Equal(t, warning.High, powerControl.usbPowerOn.Read())
 
 	powerControl.Start()
 
 	time.Sleep(1 * time.Second)
-	//Set pin high
-	powerControl.usbPowerOn = &warning.MockGpioPin{State: warning.High}
+	//Set pin Low
+
+	powerControl.usbPowerOn = &warning.MockGpioPin{State: warning.Low}
 
 	select {
 	case state := <-powerControl.poweroff:

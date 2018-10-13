@@ -45,10 +45,10 @@ func (p *PowerControlImpl) Start() {
 			time.Sleep(wAITTIME)
 			if p.usbPowerOn.Read() == warning.High {
 				log.Println("Power is on")
-				p.poweroff <- true
-				break
 			} else {
 				log.Println("Power is off")
+				p.poweroff <- true
+				break
 			}
 		}
 	}()
