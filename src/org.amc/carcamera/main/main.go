@@ -53,6 +53,12 @@ func addPowerControl() {
 		gpio: appGpio,
 	}
 
+	if err := pc.Init(); err != nil {
+		log.Println(err)
+		myapp.message.Error(err.Error())
+		mainExit()
+	}
+
 	myapp.powerControl = pc
 }
 
