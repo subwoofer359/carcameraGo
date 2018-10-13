@@ -14,6 +14,7 @@ const (
 	stayOnSignal int = 11 // Signal pin to PowetBoost to stay on
 )
 
+//wAITTIME time period between checks
 var wAITTIME = 10 * time.Second
 
 type PowerControlImpl struct {
@@ -58,10 +59,8 @@ func (p *PowerControlImpl) Start() {
 	go func() {
 		for {
 			time.Sleep(wAITTIME)
-			if p.usbPowerOn.Read() == warning.High {
-				log.Println("Power is on")
-			} else {
-				log.Println("Power is off")
+			if p.usbPowerOn.Read() != warning.High {
+				log.Println("PowerControl: External USB Power is off")
 				p.poweroff <- true
 				break
 			}
