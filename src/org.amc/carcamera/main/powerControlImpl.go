@@ -11,7 +11,7 @@ import (
 
 const (
 	uSBPOWERON   int = 9  // Input pin to receive USB power signal
-	stayOnSignal int = 11 // Signal to PowetBoost to stay on
+	stayOnSignal int = 11 // Signal pin to PowetBoost to stay on
 )
 
 var wAITTIME = 10 * time.Second
