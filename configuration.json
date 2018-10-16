@@ -7,5 +7,6 @@
 	"SUFFIX": ".h264",
 	"MINFILESIZE": "1",
 	"MAXNOOFFILES": "30",
-	"OPTIONS": "-fps 25 -ex night -rot 90 -pf high -n -a 12 -o"
+	"OPTIONS": "-fps 25 -ex night -rot 90 -pf high -n -a 12 -o",
+	"BLUETOOTH": "off"
 }
