@@ -28,6 +28,7 @@ func (p *PowerControlImpl) SetGPIO(gpio warning.Gpio) {
 	p.gpio = gpio
 }
 
+//Init initialise struct and poweroff chan is created
 func (p *PowerControlImpl) Init() error {
 	if err := p.gpio.Open(); err != nil {
 		return err
