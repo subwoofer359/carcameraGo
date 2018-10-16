@@ -27,7 +27,7 @@ type app struct {
 	message       *userupdate.Message
 	WebCamApp     runner.CameraCommand
 	appTimeOut    time.Duration
-	powerControl  PowerControl
+	powerControl  chan bool
 }
 
 func (a *app) Init() {
@@ -66,8 +66,6 @@ func (a *app) InitStorageManager() error {
 func (a *app) Start() error {
 	if a.powerControl == nil {
 		return errors.New("PowerControl is nil")
-	} else {
-		a.powerControl.Start()
 	}
 
 	for {
@@ -88,7 +86,7 @@ func (a *app) Start() error {
 
 				return err
 			}
-		case <-a.powerControl.PowerOff():
+		case <-a.powerControl:
 			cmd := exec.Command("sync")
 			cmd.Run()
 

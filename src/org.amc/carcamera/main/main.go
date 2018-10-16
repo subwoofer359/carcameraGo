@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	C "org.amc/carcamera/constants"
 	"org.amc/carcamera/userupdate"
 	"org.amc/carcamera/warning"
 )
@@ -59,18 +60,20 @@ func addPowerControl() {
 		mainExit()
 	}
 
-	myapp.powerControl = pc
+	myapp.powerControl = pc.poweroff
 }
 
 func setUpServices() {
-	btService := new(userupdate.BTService)
+	if context[C.BLUETOOTH] != C.OFF {
+		btService := new(userupdate.BTService)
+		btService.SetContext(context)
+		myapp.message.AddService(btService)
+	}
 
 	ledService := new(userupdate.LEDService)
 	ledService.SetGPIO(appGpio)
-
-	btService.SetContext(context)
 	myapp.message.AddService(ledService)
-	myapp.message.AddService(btService)
+
 }
 
 func mainExit() {

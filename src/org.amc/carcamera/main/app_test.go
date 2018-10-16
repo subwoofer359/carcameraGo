@@ -37,11 +37,16 @@ func setup() {
 	contextTestSetup()
 
 	log.Println(context)
+
 	testapp = new(app)
 
-	testapp.powerControl = new(mockPowerControl)
+	pc := new(mockPowerControl)
 
-	testapp.powerControl.Init()
+	pc.Init()
+
+	testapp.powerControl = pc.poweroff
+
+	pc.Start()
 
 	ledService := new(userupdate.LEDService)
 	ledService.SetGPIO(mockGPIO)
@@ -101,6 +106,7 @@ func TestAppInit(t *testing.T) {
 	}
 
 	if testapp.powerControl == nil {
+
 		t.Error("PowerControl not set up")
 	}
 }
@@ -218,7 +224,7 @@ func TestStartPowerOff(t *testing.T) {
 
 	newPowerControl.Init()
 
-	testapp.powerControl = newPowerControl
+	testapp.powerControl = newPowerControl.poweroff
 
 	//Set up test time out
 	testTimeout := 10 * time.Second
@@ -235,10 +241,14 @@ func TestStartPowerOff(t *testing.T) {
 		result <- testapp.Start()
 	}()
 
+	newPowerControl.Start()
 	select {
 	case <-timeoutChan:
 		t.Fatal("Test timed out")
 	case err := <-result:
+		if err == errTestStopped {
+			t.Fatal(err)
+		}
 		checkRunnerReturn(t, err)
 	}
 }
