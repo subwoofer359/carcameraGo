@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -18,7 +20,7 @@ import (
 var (
 	context        map[string]interface{}
 	defaultFactory runner.RunnerFactory = new(runner.SimpleRunnerFactory)
-	shutdownCMD                         = []string{"shutdown", "-h", "now"}
+	shutdownCMD                         = []string{"/usr/bin/sudo", "/sbin/shutdown", "-h", "+1"}
 )
 
 type app struct {
@@ -87,12 +89,21 @@ func (a *app) Start() error {
 				return err
 			}
 		case <-a.powerControl:
-			cmd := exec.Command("sync")
-			cmd.Run()
+			arunner.Stop()
 
-			cmd = exec.Command(shutdownCMD[0], shutdownCMD[1:]...)
-			err := cmd.Run()
+			syncCmd := exec.Command("/bin/sync")
+			err := syncCmd.Run()
 			log.Println(err)
+
+			shutdownCmd := exec.Command(shutdownCMD[0], shutdownCMD[1:]...)
+			var stdout, stderr bytes.Buffer
+			shutdownCmd.Stdout = &stdout
+			shutdownCmd.Stderr = &stderr
+
+			err = shutdownCmd.Run()
+			log.Println(err)
+			outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
+			fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 			return ErrPowerFault
 		}
 
