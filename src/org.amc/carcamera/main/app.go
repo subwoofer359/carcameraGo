@@ -88,7 +88,7 @@ func (a *app) Start() error {
 			}
 		case <-a.powerControl:
 			arunner.Stop()
-			a.endCmd.Stop()
+			a.endCmd.Run()
 			return ErrPowerFault
 		}
 

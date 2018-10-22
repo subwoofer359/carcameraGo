@@ -5,5 +5,5 @@ type mockEndCmd struct {
 	syncCMD     []string
 }
 
-func (m *mockEndCmd) Stop() {
+func (m *mockEndCmd) Run() {
 }
