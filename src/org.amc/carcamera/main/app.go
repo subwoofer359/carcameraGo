@@ -9,6 +9,7 @@ import (
 
 	"org.amc/carcamera/config"
 	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/powercontrol"
 	"org.amc/carcamera/runner"
 	"org.amc/carcamera/storageManager"
 	"org.amc/carcamera/userupdate"
@@ -89,7 +90,7 @@ func (a *app) Start() error {
 		case <-a.powerControl:
 			arunner.Stop()
 			a.endCmd.Run()
-			return ErrPowerFault
+			return powercontrol.ErrPowerFault
 		}
 
 		close(result)

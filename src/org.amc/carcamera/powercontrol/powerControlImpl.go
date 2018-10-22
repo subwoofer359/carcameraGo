@@ -1,6 +1,6 @@
 // To signal the PowerBoost card to turn on and stay on
 // To detect when external power is off and alert user
-package main
+package powercontrol
 
 import (
 	"log"

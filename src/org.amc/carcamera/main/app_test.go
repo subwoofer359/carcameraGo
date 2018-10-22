@@ -10,6 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/powercontrol"
 	"org.amc/carcamera/runner"
 	"org.amc/carcamera/userupdate"
 	"org.amc/carcamera/warning"
@@ -44,13 +45,13 @@ func setup() {
 
 	testapp = new(app)
 
-	pc := new(mockPowerControl)
+	pc := new(powercontrol.MockPowerControl)
 
 	pc.Init()
 
 	testapp.endCmd = mockEndCommand
 
-	testapp.powerControl = pc.poweroff
+	testapp.powerControl = pc.PowerOff()
 
 	pc.Start()
 
@@ -210,7 +211,7 @@ func checkRunnerReturn(t *testing.T, err error) {
 	switch err {
 	case nil:
 		break
-	case ErrPowerFault:
+	case powercontrol.ErrPowerFault:
 		log.Println("TestStartPowerOff: Power fault error returned ")
 		break
 	case errTestStopped:
@@ -226,11 +227,11 @@ func TestStartPowerOff(t *testing.T) {
 
 	testapp.runnerFactory = new(slowMockRunnerFactory)
 
-	newPowerControl := new(pPowerControl)
+	newPowerControl := new(powercontrol.PPowerControl)
 
 	newPowerControl.Init()
 
-	testapp.powerControl = newPowerControl.poweroff
+	testapp.powerControl = newPowerControl.PowerOff()
 
 	//Set up test time out
 	testTimeout := 10 * time.Second

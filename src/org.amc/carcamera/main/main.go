@@ -6,6 +6,7 @@ import (
 	"time"
 
 	C "org.amc/carcamera/constants"
+	"org.amc/carcamera/powercontrol"
 	"org.amc/carcamera/userupdate"
 	"org.amc/carcamera/warning"
 )
@@ -52,9 +53,9 @@ func main() {
 }
 
 func addPowerControl() {
-	pc := &PowerControlImpl{
-		gpio: appGpio,
-	}
+	pc := &powercontrol.PowerControlImpl{}
+
+	pc.SetGPIO(appGpio)
 
 	if err := pc.Init(); err != nil {
 		log.Println(err)
@@ -62,7 +63,7 @@ func addPowerControl() {
 		mainExit()
 	}
 
-	myapp.powerControl = pc.poweroff
+	myapp.powerControl = pc.PowerOff()
 	pc.Start()
 }
 

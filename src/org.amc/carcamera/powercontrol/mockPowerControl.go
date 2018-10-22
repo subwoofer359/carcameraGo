@@ -1,4 +1,4 @@
-package main
+package powercontrol
 
 import (
 	"log"
@@ -8,32 +8,32 @@ import (
 )
 
 //mockPowerControl PowerControl object that doesnt nothing
-type mockPowerControl struct {
+type MockPowerControl struct {
 	started  bool
 	poweroff chan bool
 }
 
-func (m *mockPowerControl) SetGPIO(gpio warning.Gpio) {}
+func (m *MockPowerControl) SetGPIO(gpio warning.Gpio) {}
 
-func (m *mockPowerControl) Init() error {
+func (m *MockPowerControl) Init() error {
 	m.poweroff = make(chan bool)
 	return nil
 }
-func (m mockPowerControl) IsStarted() bool { return m.started }
+func (m MockPowerControl) IsStarted() bool { return m.started }
 
-func (m *mockPowerControl) PowerOff() chan bool {
+func (m *MockPowerControl) PowerOff() chan bool {
 	return m.poweroff
 }
 
-func (m *mockPowerControl) Start() {}
+func (m *MockPowerControl) Start() {}
 
 //mockPowerControl PowerControl object that sends a poweroff message after a period time
-type pPowerControl struct {
-	mockPowerControl
+type PPowerControl struct {
+	MockPowerControl
 }
 
 //Start starts a thread and sends a message after a set time
-func (p *pPowerControl) Start() {
+func (p *PPowerControl) Start() {
 	log.Println("Start called on PowerControl")
 	go func() {
 		log.Println("PowerControl poweroff message sent")
