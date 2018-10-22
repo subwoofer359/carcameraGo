@@ -40,7 +40,7 @@ func (r *RunnerImpl) Start() error {
 
 func (r *RunnerImpl) Stop() {
 	if r.command.Process() != nil {
-		r.command.Process().Kill()
+		r.command.Process().Signal(os.Interrupt)
 	}
 }
 
