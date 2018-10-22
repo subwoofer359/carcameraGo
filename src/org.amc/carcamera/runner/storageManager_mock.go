@@ -1,8 +1,9 @@
 package runner
 
+import C "org.amc/carcamera/constants"
+
 type MockStorageManager struct {
 	index   int
-	workDir string
 	context map[string]interface{}
 }
 
@@ -23,11 +24,11 @@ func (m MockStorageManager) Index() int {
 }
 
 func (m MockStorageManager) WorkDir() string {
-	return m.workDir
+	return m.context[C.WORKDIR].(string)
 }
 
 func (m *MockStorageManager) SetWorkDir(workDir string) {
-	m.workDir = workDir
+	m.context[C.WORKDIR] = workDir
 }
 
 func (m MockStorageManager) FileList() []string {

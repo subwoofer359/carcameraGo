@@ -24,7 +24,7 @@ func TestRunnerStart(t *testing.T) {
 	command := &CameraCommandImpl{
 		command:        "/bin/ls",
 		args:           []string{"/tmp"},
-		storageManager: GetMockStorageManagerLS(),
+		storageManager: GetMockStorageManagerLS(testContext),
 		exec:           exec.Command,
 	}
 

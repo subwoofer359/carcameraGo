@@ -11,10 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var testContext = make(map[string]interface{})
+
 func TestCameraCommandRun(t *testing.T) {
 	command := CameraCommandImpl{
 		command:        "/bin/ls",
-		storageManager: GetMockStorageManagerLS(),
+		storageManager: GetMockStorageManagerLS(testContext),
 		exec:           exec.Command,
 	}
 
@@ -28,7 +30,7 @@ func TestCameraCommandRun(t *testing.T) {
 func TestCameraCommandRunError(t *testing.T) {
 	command := CameraCommandImpl{
 		command:        "/bin/l",
-		storageManager: GetMockStorageManagerLS(),
+		storageManager: GetMockStorageManagerLS(testContext),
 		exec:           exec.Command,
 	}
 
@@ -56,7 +58,7 @@ func TestStdoutPipeError(t *testing.T) {
 func runPipeTest(newCmd *exec.Cmd) error {
 	command := CameraCommandImpl{
 		command:        "/bin/l",
-		storageManager: GetMockStorageManagerLS(),
+		storageManager: GetMockStorageManagerLS(testContext),
 		exec:           func(name string, args ...string) *exec.Cmd { return newCmd },
 	}
 

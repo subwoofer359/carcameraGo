@@ -141,7 +141,7 @@ var errTestStopped = errors.New("Test Stopped")
 func TestInitStorageManager(t *testing.T) {
 	setup()
 
-	testapp.WebCamApp.SetStorageManager(runner.GetMockStorageManagerLS())
+	testapp.WebCamApp.SetStorageManager(runner.GetMockStorageManagerLS(context))
 
 	testapp.InitStorageManager()
 
@@ -166,7 +166,7 @@ func TestStartError(t *testing.T) {
 	setup()
 
 	testapp.WebCamApp.SetCommand("/bin/l")
-	testapp.WebCamApp.SetStorageManager(runner.GetMockStorageManagerLS())
+	testapp.WebCamApp.SetStorageManager(runner.GetMockStorageManagerLS(context))
 
 	testapp.InitStorageManager()
 

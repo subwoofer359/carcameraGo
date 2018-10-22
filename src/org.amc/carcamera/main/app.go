@@ -55,7 +55,6 @@ func createWebCamCommand() runner.CameraCommand {
 }
 
 func (a *app) InitStorageManager() error {
-	a.WebCamApp.StorageManager().SetWorkDir(context[C.WORKDIR].(string))
 	if err := a.WebCamApp.StorageManager().Init(); err != nil {
 		a.message.Error(err.Error())
 		return err

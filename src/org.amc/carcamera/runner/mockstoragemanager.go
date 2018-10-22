@@ -30,8 +30,10 @@ func (m *mockStorageManagerForLs) GetNextFileName() string {
 
 //GetMockStorageManagerLS returns mockStorageManagerForLs
 // struct for testing with the linux command 'ls'
-func GetMockStorageManagerLS() *mockStorageManagerForLs {
-	return new(mockStorageManagerForLs)
+func GetMockStorageManagerLS(context map[string]interface{}) *mockStorageManagerForLs {
+	t := new(mockStorageManagerForLs)
+	t.context = context
+	return t
 }
 
 //MainMockStorageManager Mock StorageManager
