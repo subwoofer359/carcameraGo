@@ -29,6 +29,8 @@ func main() {
 
 	myapp.Init()
 
+	myapp.endCmd = GetEndCmdImpl()
+
 	addPowerControl()
 
 	setUpServices()

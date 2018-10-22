@@ -31,7 +31,11 @@ func contextTestSetup() {
 
 func setup() {
 	//disable shutdown command
-	shutdownCMD = []string{"ls", "-l", "-a"}
+	mockEndCommand := &mockEndCmd{
+		shutdownCMD: []string{"ls", "-l", "-a"},
+		syncCMD:     []string{"ls"},
+	}
+
 	mockGPIO = warning.NewMockGPIO()
 
 	contextTestSetup()
@@ -43,6 +47,8 @@ func setup() {
 	pc := new(mockPowerControl)
 
 	pc.Init()
+
+	testapp.endCmd = mockEndCommand
 
 	testapp.powerControl = pc.poweroff
 

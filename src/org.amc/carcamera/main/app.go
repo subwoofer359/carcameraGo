@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -20,7 +18,6 @@ import (
 var (
 	context        map[string]interface{}
 	defaultFactory runner.RunnerFactory = new(runner.SimpleRunnerFactory)
-	shutdownCMD                         = []string{"/usr/bin/sudo", "/sbin/shutdown", "-h", "+1"}
 )
 
 type app struct {
@@ -30,6 +27,7 @@ type app struct {
 	WebCamApp     runner.CameraCommand
 	appTimeOut    time.Duration
 	powerControl  chan bool
+	endCmd        EndCmd
 }
 
 func (a *app) Init() {
@@ -90,20 +88,7 @@ func (a *app) Start() error {
 			}
 		case <-a.powerControl:
 			arunner.Stop()
-
-			syncCmd := exec.Command("/bin/sync")
-			err := syncCmd.Run()
-			log.Println(err)
-
-			shutdownCmd := exec.Command(shutdownCMD[0], shutdownCMD[1:]...)
-			var stdout, stderr bytes.Buffer
-			shutdownCmd.Stdout = &stdout
-			shutdownCmd.Stderr = &stderr
-
-			err = shutdownCmd.Run()
-			log.Println(err)
-			outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-			fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
+			a.endCmd.Stop()
 			return ErrPowerFault
 		}
 
