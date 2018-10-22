@@ -3,11 +3,9 @@ package main
 import (
 	"errors"
 	"log"
-	"os"
 	"os/exec"
 	"time"
 
-	"org.amc/carcamera/config"
 	C "org.amc/carcamera/constants"
 	"org.amc/carcamera/powercontrol"
 	"org.amc/carcamera/runner"
@@ -99,20 +97,4 @@ func (a *app) Start() error {
 func (a *app) Close() {
 	a.message.Stopped()
 	a.message.Close()
-}
-
-func (a app) LoadConfiguration(filename string) error {
-	file, err := os.Open(filename)
-	defer file.Close()
-
-	if err != nil {
-		return err
-	}
-	if tempContext, err := config.ReadConfigurationFile(file); err != nil {
-		return err
-	} else {
-		context = tempContext
-	}
-	return nil
-
 }

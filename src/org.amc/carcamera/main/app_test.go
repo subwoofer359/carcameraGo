@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"log"
-	"os"
 	"sort"
 	"testing"
 	"time"
@@ -257,19 +256,5 @@ func TestStartPowerOff(t *testing.T) {
 			t.Fatal(err)
 		}
 		checkRunnerReturn(t, err)
-	}
-}
-
-func TestLoadConfiguration(t *testing.T) {
-	testapp = new(app)
-	var filename = os.ExpandEnv("$GOPATH") + "/configuration.json"
-	err := testapp.LoadConfiguration(filename)
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	if context[C.COMMAND] == "" {
-		t.Errorf("%s shouldn't be empty\n", C.COMMAND)
 	}
 }

@@ -12,24 +12,31 @@ import (
 )
 
 var (
-	myapp    = app{} //myapp Application object
+	myapp    app //myapp Application object
 	filename = flag.String("c", "", "Configuration file path")
 	appGpio  = warning.RpioImpl{}
 )
 
 func main() {
+	var err error
 	flag.Parse()
 
 	if *filename == "" {
 		log.Fatal("No configuraton file specified in the command arguments")
 	}
 
-	if err := myapp.LoadConfiguration(*filename); err != nil {
+	if myapp, err = GetNewApplication(*filename); err != nil {
 		log.Fatal(err)
 	}
 
-	myapp.Init()
+	defer myapp.Close()
 
+	setUpApplication()
+
+	startApplication()
+}
+
+func setUpApplication() {
 	myapp.endCmd = GetEndCmdImpl()
 
 	addPowerControl()
@@ -40,16 +47,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	defer myapp.Close()
 	myapp.message.Started()
-
-	if err := myapp.InitStorageManager(); err != nil {
-		myapp.message.Error(err.Error())
-		mainExit()
-	} else if err := myapp.Start(); err != nil {
-		myapp.message.Error(err.Error())
-		mainExit()
-	}
 }
 
 func addPowerControl() {
@@ -78,6 +76,16 @@ func setUpServices() {
 	ledService.SetGPIO(appGpio)
 	myapp.message.AddService(ledService)
 
+}
+
+func startApplication() {
+	if err := myapp.InitStorageManager(); err != nil {
+		myapp.message.Error(err.Error())
+		mainExit()
+	} else if err := myapp.Start(); err != nil {
+		myapp.message.Error(err.Error())
+		mainExit()
+	}
 }
 
 func mainExit() {
