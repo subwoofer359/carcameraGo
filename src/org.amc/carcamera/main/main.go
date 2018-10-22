@@ -61,6 +61,7 @@ func addPowerControl() {
 	}
 
 	myapp.powerControl = pc.poweroff
+	pc.Start()
 }
 
 func setUpServices() {
