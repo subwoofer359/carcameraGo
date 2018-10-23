@@ -66,12 +66,18 @@ func addPowerControl() {
 }
 
 func setUpServices() {
+	//Add Console Logging
+	consoleService := new(userupdate.ConsoleService)
+	myapp.message.AddService(consoleService)
+
+	//Add Bluetooth logging if set in configuration
 	if context[C.BLUETOOTH] != C.OFF {
 		btService := new(userupdate.BTService)
 		btService.SetContext(context)
 		myapp.message.AddService(btService)
 	}
 
+	//Add Led lights messaging
 	ledService := new(userupdate.LEDService)
 	ledService.SetGPIO(appGpio)
 	myapp.message.AddService(ledService)
@@ -90,6 +96,7 @@ func startApplication() {
 
 func mainExit() {
 	myapp.message.Stopped()
+	myapp.endCmd.Run()
 	time.Sleep(30 * time.Second)
 	log.Println("Program stopped due to error conditions")
 }
