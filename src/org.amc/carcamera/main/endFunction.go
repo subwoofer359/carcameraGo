@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"log"
 	"os/exec"
 )
@@ -34,15 +35,18 @@ func (e *endCmdImpl) Run() {
 }
 
 func (e *endCmdImpl) runCmd(cmd *exec.Cmd) {
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
+	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 
 	err := cmd.Run()
 	e.logError(err)
 
-	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-	log.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
+	errStr := string(stderr.Bytes())
+
+	if len(errStr) > 0 {
+		e.logError(errors.New(errStr))
+	}
+
 }
 
 func (e *endCmdImpl) logError(err error) {
