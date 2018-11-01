@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	uSBPOWERON   int = 9  // Input pin to receive USB power signal
-	stayOnSignal int = 11 // Signal pin to PowetBoost to stay on
+	uSBPOWERON   int = 9 // Input pin to receive USB power signal
+	stayOnSignal int = 5 // Signal pin to PowetBoost to stay on
 )
 
 //wAITTIME time period between checks

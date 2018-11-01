@@ -1,9 +1,9 @@
 package warning
 
 const (
-	GreenLED int = 22
+	GreenLED int = 17
 
-	RedLED int = 17
+	RedLED int = 22
 )
 
 type UserDisplay struct {
